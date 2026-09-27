@@ -1,0 +1,5 @@
+# private material: worksheet scans with the student's name
+*.pdf
+dist/
+.claude/
+.DS_Store

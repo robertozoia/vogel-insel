@@ -1,0 +1,23 @@
+<div id="app">
+  <div id="stage">
+    <canvas id="cv" aria-label="Spielwelt der Vogel-Insel"></canvas>
+    <div id="hud" hidden>
+      <div class="hud-group">
+        <div class="pill" id="h-hearts" aria-label="Herzen"></div>
+        <div class="pill" title="Federn">🪶 <span id="h-feathers">0</span></div>
+        <div class="pill"><span id="h-level">Lv 1</span><span class="xpbar"><i id="h-xp"></i></span></div>
+        <div class="pill" id="h-combo" hidden></div>
+      </div>
+      <div class="hud-group">
+        <button class="iconbtn" id="b-sound" type="button" aria-label="Geräusche">🔔</button>
+        <button class="iconbtn" id="b-tts" type="button" aria-label="Deutsche Stimme an oder aus" title="Deutsche Stimme">🗣</button>
+        <button class="iconbtn" id="b-lex" type="button" aria-label="Lexikon öffnen" title="Lexikon (B)">📖</button>
+        <button class="iconbtn" id="b-menu" type="button" aria-label="Menü öffnen" title="Menü (Esc)">☰</button>
+      </div>
+    </div>
+    <div id="quest" hidden></div>
+    <div id="toasts" aria-live="polite"></div>
+    <div id="panel" hidden></div>
+    <div id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+  </div>
+</div>
