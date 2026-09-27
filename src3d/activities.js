@@ -41,6 +41,9 @@ async function runActivity(act){
 function hudTime(t){ const m = Math.floor(t / 60), s = Math.floor(t % 60); return `${m}:${String(s).padStart(2, '0')}`; }
 
 /* ============ ARTIKEL-OBBY ============ */
+// Layout chosen so that EVERY platform of the next row is reachable with a normal jump (no sprint):
+// worst case (side -> opposite side) edge gap ~4.8 m vs. ~6.5 m jump range.
+const OBBY = { px:4.0, w:3.2, dz:6.2, rise:0.4 };
 class Obby extends Activity {
   constructor(topic){ super(); this.ids = pickWords(topicIds(topic, w => !!w.art), 12); this.total = this.ids.length; this.rows = []; this.falling = []; }
   setup(){
@@ -54,19 +57,19 @@ class Obby extends Activity {
         z += 1; y += 0.4;
         const cp = this.B(0, y - 0.3, z - 2.5, 13, 0.6, 5, '#374151'); cp.cp = this.W(0, y, z - 2.5);
         const fl = new THREE.Group(); mesh(G('cyl', 0.08, 0.08, 3, 5), M('#ddd'), 0, 1.5, 0, fl); mesh(G('box', 1.2, 0.8, 0.05), M('#a6ff4d', { em:'#a6ff4d', emi:0.5 }), 0.6, 2.6, 0, fl); this.put(fl, 5.5, y, z - 2.5);
-        z -= 11;
+        z -= 9.5;
       }
       const w = WMAP[id], row = { id, art:w.art, done:false, missed:false, plats:[] };
       shuffle(['der', 'die', 'das']).forEach((a, i) => {
-        const x = (i - 1) * 4.8;
-        const c = this.B(x, y - 0.3, z, 3.4, 0.6, 3.4, ART_HEX[a], { rough:0.45 });
+        const x = (i - 1) * OBBY.px;
+        const c = this.B(x, y - 0.3, z, OBBY.w, 0.6, OBBY.w, ART_HEX[a], { rough:0.45 });
         c.row = row; c.art = a; c.home = new V3(AO.x + x, AO.y + y - 0.3, AO.z + z); row.plats.push(c);
         const lab = textSprite(a.toUpperCase(), { size:0.6, color:'#fff' }); lab.position.set(AO.x + x, AO.y + y + 0.8, AO.z + z); this.group.add(lab); c.lab = lab;
       });
       row.sign = textSprite(w.po ? w.de + ' (Plural)' : w.de, { size:1, color:'#fff', bg:'rgba(10,16,32,.82)', border:'#ffc83d' });
       row.sign.position.set(AO.x, AO.y + y + 4.3, AO.z + z); this.group.add(row.sign);
       row.y = y; row.z = z; this.rows.push(row);
-      z -= 7.5; y += 0.55;
+      z -= OBBY.dz; y += OBBY.rise;
     });
     const end = this.B(0, y - 0.5, z - 3, 13, 1, 10, '#4b5563'); end.end = true;
     const tro = portalModel('#ffc83d', '🏆 Ziel'); this.put(tro, 0, y, z - 5);
