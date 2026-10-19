@@ -4,7 +4,7 @@
 const fs = require('fs'), path = require('path'), os = require('os');
 const { execFile } = require('child_process');
 const ROOT = path.join(__dirname, '..');
-eval(fs.readFileSync(path.join(ROOT, 'src/content.js'), 'utf8') + ';global.__C={WORDS,WMAP,DIAGRAMS,CLOZE,TF,BEAKS,BEAK_FIX,MERKMALE,NPCS,BOSSES,GEIER,STATION_INFO};');
+eval(fs.readFileSync(path.join(ROOT, 'src/content.js'), 'utf8') + ';global.__C={WORDS,WMAP,DIAGRAMS,CLOZE,TF,BEAKS,BEAK_FIX,FIXES,FACTS,TIMELINE,SENTENCES,PROCESSES,MERKMALE,NPCS,BOSSES,GEIER,STATION_INFO};');
 const C = global.__C;
 const VOICE = process.argv[2] || 'Anna';
 const norm = s => String(s).replace(/\s+/g, ' ').trim();
@@ -19,7 +19,11 @@ Object.values(C.BOSSES).forEach(b => { add(b.intro[0]); add(b.win[0]); });
 C.GEIER.intro.forEach(l => add(l[0]));
 C.TF.forEach(t => { add(t.s); if (t.why) add(t.why); });
 C.BEAKS.forEach(b => { add(`${b.art} ${b.name} hat ${b.beakAcc}, um ${b.foodAcc} zu fressen.`); add(b.name); });
-C.BEAK_FIX.forEach(f => add(f.s.replace('___', f.a)));
+Object.values(C.FIXES).forEach(list => list.forEach(f => add(f.s.replace('___', f.a))));
+C.FACTS.forEach(f => add(f.say));
+C.TIMELINE.forEach(e => { add(e.short); add(e.de); });
+Object.values(C.SENTENCES).forEach(list => list.forEach(s => add(s.target.join(' '))));
+C.PROCESSES.forEach(P => { add(P.q); add(P.model); });
 C.MERKMALE.forEach(m => add(m.de));
 Object.values(C.STATION_INFO).forEach(i => add(i.de));
 ['Der Schnabel. Die Kloake. Das Brustbein.', 'Sie sind zu schwer.', 'Der Buntspecht hat einen kräftigen Meißelschnabel, um Larven zu fressen.',

@@ -47,8 +47,9 @@ async function talkNPC(z){
   const N = NPCS[z];
   if (!S.met[z]){ await dialogLines(N.name, N.lines, N.kind); S.met[z] = true; save(); refreshObjective(); if (z > 0) toast('📘 Die Lernkarte dieser Zone findest du beim Vogel oder im Menü (M).'); return; }
   openModal(`<div class="dlg"><div class="dlg-face">${faceImg(N.kind)}</div><div class="dlg-body"><div class="who">${esc(N.name)}</div><p class="de">Was brauchst du?</p><p class="es">¿Qué necesitas?</p>
-    <div class="menu-list">${z > 0 ? '<button class="btn" id="n-card" type="button">📘 Lernkarte</button>' : ''}<button class="btn alt" id="n-again" type="button">🔁 Nochmal erklären</button><button class="btn ghost" id="n-bye" type="button">Tschüss</button></div></div></div>`, '', { closable:true });
-  if (z > 0) $('#n-card').onclick = () => openLernkarte(z);
+    <div class="menu-list">${z > 0 ? '<button class="btn" id="n-card" type="button">📘 Lernkarte</button>' : '<button class="btn" id="n-train" type="button">🎓 Erklär-Training</button>'}<button class="btn alt" id="n-again" type="button">🔁 Nochmal erklären</button><button class="btn ghost" id="n-bye" type="button">Tschüss</button></div>
+    ${z === 0 ? '<p class="es">Erklär-Training: explicar procesos en frases completas, como en el examen.</p>' : ''}</div></div>`, '', { closable:true });
+  if (z > 0) $('#n-card').onclick = () => openLernkarte(z); else $('#n-train').onclick = () => { closeModal(); startExplainTraining(); };
   $('#n-again').onclick = async () => { closeModal(); await dialogLines(N.name, N.lines, N.kind); };
   $('#n-bye').onclick = closeModal;
 }
@@ -59,12 +60,18 @@ function openLernkarte(z){
   const lines = N.lines.slice(0, -1).map(([de, es]) => `<li><span class="de">${esc(de)}</span> ${speakBtn(de)}<br><span class="es">${esc(es)}</span></li>`).join('');
   const terms = WORDS.filter(w => w.t === Z.topic).map(w => `<button class="term ${artClass(w.art)}" type="button" data-say="${esc(nounLabel(w))}">${esc(nounLabel(w))}<small>${esc(w.es)}</small></button>`).join('');
   let extra = '';
-  if (z <= 3){ const D = DIAGRAMS[Z.topic]; extra = `<h3>${esc(D.title)}</h3><div class="label-wrap"><div>${diagramSVG(Z.topic)}</div><ol class="slots">${D.labels.map(L => `<li><span class="num">${L.n}</span> ${labelHTML(L)} ${speakBtn(labelText(L))}</li>`).join('')}</ol></div>`; }
+  const dk = DIAG_OF_TOPIC[Z.topic];
+  if (dk){ const D = DIAGRAMS[dk]; extra = `<h3>${esc(D.title)}</h3><div class="label-wrap"><div>${diagramSVG(dk)}</div><ol class="slots">${D.labels.map(L => `<li><span class="num">${L.n}</span> ${labelHTML(L)} ${speakBtn(labelText(L))}</li>`).join('')}</ol></div>`; }
+  if (z === 6) extra += `<h3>Zeitleiste: von der Paarung bis zum Küken</h3><ol class="card-lines">${TIMELINE.map(e => `<li><span class="de">${esc(e.title.replace(/^\d+\. /, ''))}</span> – ${esc(e.de)} ${speakBtn(e.de)}<br><span class="es">${esc(e.es)}</span></li>`).join('')}</ol>
+    <h3>Nestflüchter oder Nesthocker?</h3><table class="beak-table"><tr><th></th><th>Nestflüchter</th><th>Nesthocker</th></tr><tr><td>nach dem Schlüpfen</td><td>verlassen schnell das Nest</td><td>bleiben im Nest, weil ihr Federkleid noch nicht entwickelt ist</td></tr><tr><td>Beispiele</td><td>Huhn, Ente</td><td>Amsel</td></tr><tr><td class="es">español</td><td class="es">nidífugos: dejan pronto el nido</td><td class="es">nidícolas: se quedan en el nido</td></tr></table>
+    <h3>Die Entwicklung im Hühnerei (Blatt 6)</h3><ol class="card-lines">${SENTENCES.huehnerei.map(s => `<li><span class="de">${esc(s.target.join(' '))}</span> ${speakBtn(s.target.join(' '))}<br><span class="es">${esc(s.es)}</span></li>`).join('')}</ol>`;
   if (z === 3) extra += `<h3>Der Weg der Nahrung</h3><p class="path">Schnabel → <b class="art-der">der Kropf</b> → <b class="art-der">der Drüsenmagen</b> → <b class="art-der">der Kaumagen</b> → <b class="art-der">der Darm</b> → <b class="art-die">die Kloake</b></p><p class="es">pico → buche → proventrículo → molleja → intestino → cloaca</p>`;
   if (z === 4) extra = `<h3>Schnabel und Nahrung</h3><table class="beak-table"><tr><th>Vogel</th><th>Schnabelform</th><th>Nahrung</th></tr>${BEAKS.map(b => `<tr><td>${birdHTML(b)}<br><small class="muted">${esc(WMAP[b.id].es)}</small></td><td>${esc(b.beakName)}</td><td>${esc(b.food)}</td></tr>`).join('')}</table>
     <h3>So schreibst du den Satz</h3><p class="path">Der Buntspecht hat einen kräftig<b>en</b> Meißelschnabel, <b>um</b> Larven <b>zu</b> fressen. ${speakBtn('Der Buntspecht hat einen kräftigen Meißelschnabel, um Larven zu fressen.')}</p><p class="es">«einen» + adjetivo con <b>-en</b> + Schnabel. «um … zu» + infinitivo = «para …».</p>`;
   if (z === 5) extra = `<h3>Die 10 Merkmale der Vögel</h3><ol>${MERKMALE.map(m => `<li>${esc(m.de)} ${speakBtn(m.de)} <span class="es-inline">${esc(m.es)}</span></li>`).join('')}</ol><p><b>Flugunfähig:</b> der Strauß, der Emu, der Pinguin, der Kiwi – weil sie zu schwer sind.</p>
     <h3>Aufgaben-Wörter</h3><div class="terms">${WORDS.filter(w => w.t === 'op').map(w => `<button class="term" type="button" data-say="${esc(nounLabel(w))}">${esc(nounLabel(w))}<small>${esc(w.es)}</small></button>`).join('')}</div>`;
+  const procs = PROCESSES.filter(P => P.t === Z.topic);
+  if (procs.length) extra += `<h3>🎓 So erklärst du es <span class="muted">(lies laut mit)</span></h3><ul class="card-lines">${procs.map(P => `<li><b>${esc(P.q)}</b> <span class="tier-tag" title="Dein Stand">${['·', '🥉', '🥈', '🥇'][tier(P.id)]}</span><br><span class="de">${esc(P.model)}</span> ${speakBtn(P.model)}<br><span class="es">${esc(P.modelEs)}</span></li>`).join('')}</ul>`;
   openModal(`<div class="series-head"><h2>📘 ${esc(TOPICS[Z.topic])}</h2><div class="prog">${esc(Z.page)}</div></div><ul class="card-lines">${lines}</ul>${extra}
     <h3>Fachbegriffe <span class="muted">(klicken = anhören)</span></h3><div class="terms">${terms}</div><div class="fb-actions"><button class="btn" id="lk-ok" type="button">Schließen</button></div>`, 'wide', { closable:true });
   $('#lk-ok').onclick = closeModal;
@@ -77,10 +84,12 @@ function openLexikon(){
   const render = () => {
     const q = fold(lexQ.trim());
     const list = WORDS.filter(w => q ? (fold(w.de).includes(q) || fold(w.es).includes(q)) : w.t === lexTab);
-    const cards = list.map(w => { const tr = tier(w.id); return `<button class="lcard t${tr} ${artClass(w.art)}" type="button" data-say="${esc(nounLabel(w))}"><span class="tier">${['·', '🥉', '🥈', '🥇'][tr]}</span><b class="${artClass(w.art)}">${esc(nounLabel(w))}</b>${w.pl ? `<small>Pl.: die ${esc(w.pl)}</small>` : w.po ? '<small>nur Plural</small>' : ''}<span class="es">${esc(w.es)}</span></button>`; }).join('');
-    openModal(`<div class="series-head"><h2>📖 Wort-Inventar</h2><div class="prog">🥇 ${counts[3]} · 🥈 ${counts[2]} · 🥉 ${counts[1]} / ${WORDS.length}</div></div>
+    let cards = list.map(w => { const tr = tier(w.id); return `<button class="lcard t${tr} ${artClass(w.art)}" type="button" data-say="${esc(nounLabel(w))}"><span class="tier">${['·', '🥉', '🥈', '🥇'][tr]}</span><b class="${artClass(w.art)}">${esc(nounLabel(w))}</b>${w.pl ? `<small>Pl.: die ${esc(w.pl)}</small>` : w.po ? '<small>nur Plural</small>' : ''}<span class="es">${esc(w.es)}</span></button>`; }).join('');
+    if (lexTab === 'erklaeren' && !q) cards = `<div class="plist">${PROCESSES.map(P => { const tr = tier(P.id), open = unlockedTopics().includes(P.t); return `<div class="pcard t${tr}"><span class="tier">${['·', '🥉', '🥈', '🥇'][tr]}</span><b>${esc(P.q)}</b><small class="muted">${esc(TOPICS[P.t])}</small>${open ? `<p class="de">${esc(P.model)} ${speakBtn(P.model)}</p><p class="es">${esc(P.modelEs)}</p>` : '<p class="muted">🔒 Zone noch nicht offen.</p>'}</div>`; }).join('')}</div>`;
+    const pc = PROCESSES.filter(P => tier(P.id) === 3).length;
+    openModal(`<div class="series-head"><h2>📖 Wort-Inventar</h2><div class="prog">🥇 ${counts[3]} · 🥈 ${counts[2]} · 🥉 ${counts[1]} / ${WORDS.length} · 🎓 ${pc}/${PROCESSES.length}</div></div>
       <p class="sub">Jedes Wort levelt auf: Bronze → Silber → Gold, wenn du es mehrmals mit Pausen richtig weißt. Klick = anhören. <span class="es-inline">Cada palabra sube de nivel cuando la aciertas varias veces.</span></p>
-      <div class="tabs">${Object.keys(TOPICS).map(t => `<button class="tab ${t === lexTab && !lexQ ? 'on' : ''}" type="button" data-t="${t}">${esc(TOPICS[t])}</button>`).join('')}<input type="search" id="lex-q" placeholder="Suchen (Deutsch oder Spanisch)" value="${esc(lexQ)}" aria-label="Suchen"></div>
+      <div class="tabs">${[...Object.keys(TOPICS), 'erklaeren'].map(t => `<button class="tab ${t === lexTab && !lexQ ? 'on' : ''}" type="button" data-t="${t}">${t === 'erklaeren' ? '🎓 Erklären' : esc(TOPICS[t])}</button>`).join('')}<input type="search" id="lex-q" placeholder="Suchen (Deutsch oder Spanisch)" value="${esc(lexQ)}" aria-label="Suchen"></div>
       <div class="lgrid">${cards || '<p>Nichts gefunden.</p>'}</div>
       <div class="fb-actions"><span class="score-note"><span class="art-der">der</span> · <span class="art-die">die</span> · <span class="art-das">das</span></span><button class="btn" id="lx-ok" type="button">Schließen</button></div>`, 'wide', { closable:true });
     $$('.tab', sheet).forEach(b => b.onclick = () => { lexTab = b.dataset.t; lexQ = ''; render(); });
@@ -140,7 +149,7 @@ function arenaConfirm(){
 
 /* ---------- menu ---------- */
 function openMenu(){
-  const zs = [1, 2, 3, 4, 5].filter(z => z <= S.zone || S.met[z]);
+  const zs = [1, 2, 3, 4, 5, 6].filter(z => z <= S.zone || S.met[z] || S.unlockAll);
   openModal(`<h2>Menü</h2><div class="menu-grid">
       <button class="btn" id="m-resume" type="button">▶ Weiter</button>
       ${activity ? '<button class="btn ghost" id="m-quit" type="button">🏳 Aufgeben</button>' : '<button class="btn alt" id="m-lex" type="button">📖 Wort-Inventar</button>'}
@@ -191,8 +200,8 @@ function controlsHTML(){
 }
 function openHelp(){
   openModal(`<h2>🎮 Steuerung</h2>${controlsHTML()}
-    <h3>Plan bis zum Test</h3><ol><li><b>Tag 1:</b> Federwiese + Knochenhöhle (Körper außen, Skelett).</li><li><b>Tag 2:</b> Tages-Run, dann Magen-Moor + Schnabel-Wald.</li><li><b>Tag 3:</b> Tages-Run, Merkmal-Gipfel, dann der Prüfungsturm. Danach: Arena, bis das Inventar golden ist.</li></ol>
-    <p class="es">Día 1: cuerpo y esqueleto · día 2: órganos y picos · día 3: características y examen de prueba. Cada día empieza con el Tages-Run.</p>
+    <h3>Plan bis zum Test</h3><ol><li><b>Tag 1:</b> Federwiese + Knochenhöhle (Körper außen, Skelett). Danach: Erklär-Training bei Professorin Eule.</li><li><b>Tag 2:</b> Tages-Run, dann Magen-Moor + Schnabel-Wald. Erklär-Training.</li><li><b>Tag 3:</b> Tages-Run, Merkmal-Gipfel + Nest-Bucht (Fortpflanzung). Erklär-Training.</li><li><b>Tag 4:</b> Tages-Run, Erklär-Training, dann der Prüfungsturm. Danach: Arena, bis das Inventar golden ist.</li></ol>
+    <p class="es">Día 1: cuerpo y esqueleto · día 2: órganos y picos · día 3: características y reproducción · día 4: examen de prueba. Cada día: Tages-Run + Erklär-Training (explicar procesos en alemán).</p>
     <p><b>Drohnen überall:</b> Wähle mit 1/2/3 die Munition <span class="art-der">der</span> / <span class="art-die">die</span> / <span class="art-das">das</span> und schieß die Drohnen mit dem richtigen Artikel ab.</p>
     <div class="fb-actions"><button class="btn" id="hp-ok" type="button">Zurück</button></div>`, 'wide', { closable:true });
   $('#hp-ok').onclick = openMenu;
@@ -203,17 +212,19 @@ function openParents(){
   const topicRows = Object.keys(TOPICS).map(t => { const s = S.stats.topic[t] || { r:0, w:0 }, n = s.r + s.w, p = n ? Math.round(s.r / n * 100) : 0;
     return `<tr><td>${esc(TOPICS[t])}</td><td><div class="pbar"><i style="width:${p}%"></i></div></td><td class="num">${n ? p + ' %' : '–'}</td><td class="num muted">${n}</td></tr>`; }).join('');
   const weak = WORDS.filter(w => S.words[w.id] && S.words[w.id].w > 0).sort((a, b) => (S.words[b.id].w - S.words[b.id].r * 0.3) - (S.words[a.id].w - S.words[a.id].r * 0.3)).slice(0, 15);
-  const st = [1, 2, 3, 4, 5].map(z => `<tr><td>${esc(ZONES[z].name)}</td>${[0, 1, 2, 3].map(i => `<td>${'★'.repeat(S.stations[z + '-' + i] || 0) || '·'}</td>`).join('')}<td>${S.bosses[z] ? '✔' : '–'}</td></tr>`).join('');
+  const st = [1, 2, 3, 4, 5, 6].map(z => `<tr><td>${esc(ZONES[z].name)}</td>${[0, 1, 2, 3].map(i => `<td>${'★'.repeat(S.stations[z + '-' + i] || 0) || '·'}</td>`).join('')}<td>${S.bosses[z] ? '✔' : '–'}</td></tr>`).join('');
+  const procRows = PROCESSES.map(P => { const s = S.words[P.id] || { r:0, w:0 }; return `<tr><td>${esc(P.q)}</td><td class="num">✔ ${s.r} / ✘ ${s.w}</td><td>${TIER_NAME[tier(P.id)]}</td></tr>`; }).join('');
   openModal(`<div class="series-head"><h2>👪 Eltern-Bereich</h2><div class="prog">${esc(S.name)}</div></div>
     <p class="muted">Spielzeit: ${h} h ${m} min · Trainingstage: ${Object.keys(S.stats.days).length} (${Object.keys(S.stats.days).slice(-5).join(', ') || '–'}) · Inventar: 🥇 ${counts[3]} 🥈 ${counts[2]} 🥉 ${counts[1]} von ${WORDS.length}</p>
     <h3>Treffer pro Thema</h3><table class="res-table">${topicRows}</table>
     <h3>Schwierige Wörter</h3>${weak.length ? `<table class="res-table">${weak.map(w => `<tr><td>${wordHTML(w)}</td><td>${esc(w.es)}</td><td class="num">✘ ${S.words[w.id].w} / ✔ ${S.words[w.id].r}</td><td>${TIER_NAME[tier(w.id)]}</td></tr>`).join('')}</table>` : '<p class="muted">Noch keine Fehler gespeichert.</p>'}
+    <h3>Prozesse erklären</h3><p class="muted">Erklär-Antworten: ${S.explainDone} · davon vollständig: ${S.explainPerfect}</p><table class="res-table">${procRows}</table>
     <h3>Portale und Bosse</h3><table class="res-table"><tr><th>Zone</th><th>1</th><th>2</th><th>3</th><th>4</th><th>Boss</th></tr>${st}</table>
     <h3>Prüfungsturm</h3><p>${S.exams.length ? S.exams.slice(-6).map(e => `${e.date}: <b>${e.pct} %</b> (Note ~${e.note})`).join(' · ') : '<span class="muted">Noch nicht gemacht.</span>'}</p>
     <h3>Werkzeuge</h3><div class="menu-grid"><button class="btn alt" id="pa-unlock" type="button">🔓 Alles freischalten</button><button class="btn alt" id="pa-export" type="button">💾 Spielstand sichern</button><button class="btn alt" id="pa-import" type="button">📥 Spielstand laden</button><button class="btn ghost" id="pa-reset" type="button">🗑 Alles zurücksetzen</button></div>
     <div id="pa-io"></div><div class="fb-actions"><button class="btn" id="pa-ok" type="button">Schließen</button></div>`, 'wide', { closable:true });
   $('#pa-ok').onclick = closeModal;
-  $('#pa-unlock').onclick = () => { S.zone = 5; S.unlockAll = true; save(); refreshObjective(); toast('🔓 Alle Zonen und der Prüfungsturm sind offen.', 'ok'); };
+  $('#pa-unlock').onclick = () => { S.zone = ZN; S.unlockAll = true; save(); refreshObjective(); toast('🔓 Alle Zonen und der Prüfungsturm sind offen.', 'ok'); };
   $('#pa-export').onclick = () => {
     const code = exportCode();
     $('#pa-io').innerHTML = `<p>Kopiere diesen Code und bewahre ihn auf. Damit lädst du den Spielstand auf einem anderen Gerät oder in der anderen Version (Datei / Link).</p><textarea id="pa-code" rows="4" readonly>${code}</textarea><button class="btn tiny" id="pa-copy" type="button">Kopieren</button>`;
@@ -234,8 +245,8 @@ function openParents(){
 function showTitle(){
   $('#hud').hidden = true; $('#quest').hidden = true; $('#crosshair').hidden = true; $('#ammo').hidden = true;
   openModal(`<div class="center"><p class="eyebrow">Biologie · Die Vögel</p><h1>Die Vogel-Insel</h1>
-    <p>Fünf Inseln. Fünf Bosse. Ein Prüfungsturm. Alles auf Deutsch – wie im Test.</p>
-    <p class="es">Cinco islas, cinco jefes y una torre de examen. Todo en alemán, como en la prueba.</p>
+    <p>Sechs Inseln. Sechs Bosse. Ein Prüfungsturm. Alles auf Deutsch – wie im Test.</p>
+    <p class="es">Seis islas, seis jefes y una torre de examen. Todo en alemán, como en la prueba.</p>
     <label class="name-row">Spielername <input type="text" id="t-name" value="${esc(S.name)}" maxlength="20"></label>
     ${controlsHTML()}
     <div class="fb-actions center-actions"><button class="btn big" id="t-go" type="button">${S.started ? 'Weiterspielen ▶' : 'Spielen ▶'}</button></div>

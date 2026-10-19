@@ -6,33 +6,38 @@ function noteOf(pct){ return NOTEN.find(n => pct >= n[0]); }
 
 async function startExam(){
   await dialogLines('Der Vergess-Geier', GEIER.intro, 'geier');
-  const E = { got:0, max:55, idx:0, rows:[] };
+  const E = { got:0, max:0, idx:0, n:0, rows:[] };
+  // every section declares its maximum so the vulture's health bar is exact
   const sections = [
-    () => secLabel(E, 'skelett', 'Beschrifte die Abbildung 2. Nenne den Fachbegriff mit Artikel.', 'Rotula la figura 2 (el esqueleto). Escribe el término técnico con su artículo.'),
-    () => secLabel(E, 'organe', 'Beschrifte die Abbildung 3. Nenne den Fachbegriff mit Artikel.', 'Rotula la figura 3 (los órganos). Escribe el término técnico con su artículo.'),
-    () => secMerkmale(E),
-    () => secText(E, 'Was ist eine Kloake? Erkläre in einem Satz.', 'Explica en una frase qué es la cloaca.', 3,
-      t => { let p = 0; const n = [/kot/, /urin|harn/, /\beier?\b/, /sperma|samen/].filter(r => r.test(t)).length; if (/oeffnung|ausgang|loch|ausfuehr|verlass|raus|heraus|ausgeschieden/.test(t)) p++; if (n >= 2) p++; if (n >= 3) p++; return p; },
-      'Die Kloake ist eine gemeinsame Körperöffnung. Durch sie verlassen Kot, Urin und Eier (beim Männchen die Spermazellen) den Körper.'),
-    () => secText(E, 'Welche Vögel können nicht fliegen? Begründe.', 'Nombra las aves que no pueden volar y explica por qué (con «weil»).', 3,
-      t => { let p = 0; ['strauss', 'emu', 'pinguin', 'kiwi'].forEach(k => { if (t.includes(k)) p += 0.5; }); if (/schwer/.test(t)) p += 1; return p; },
-      'Der Strauß, der Emu, der Pinguin und der Kiwi können nicht fliegen, weil sie zu schwer sind.'),
-    () => secBeaks(E),
-    () => secSentences(E),
-    () => secOrder(E),
-    () => secArticles(E),
+    { m:DIAGRAMS.skelett.labels.length, run:() => secLabel(E, 'skelett', 'Beschrifte die Abbildung 2. Nenne den Fachbegriff mit Artikel.', 'Rotula la figura 2 (el esqueleto). Escribe el término técnico con su artículo.') },
+    { m:DIAGRAMS.organe.labels.length, run:() => secLabel(E, 'organe', 'Beschrifte die Abbildung 3. Nenne den Fachbegriff mit Artikel.', 'Rotula la figura 3 (los órganos). Escribe el término técnico con su artículo.') },
+    { m:10, run:() => secMerkmale(E) },
+    { m:PMAP['p-kloake'].max, run:() => secText(E, PMAP['p-kloake']) },
+    { m:PMAP['p-flug'].max, run:() => secText(E, PMAP['p-flug']) },
+    { m:6, run:() => secBeaks(E) },
+    { m:4, run:() => secSentences(E) },
+    { m:PMAP['p-nahrung'].max, run:() => secText(E, PMAP['p-nahrung']) },
+    { m:5, run:() => secArticles(E) },
+    { m:4, run:() => secCloze12(E) },
+    { m:4, run:() => secNest(E) },
+    { m:DIAGRAMS.ei.labels.length, run:() => secLabel(E, 'ei', 'Beschrifte den Aufbau eines Eis mit den angegebenen Begriffen. Nenne den Fachbegriff mit Artikel.', 'Rotula las partes del huevo con los términos dados, con su artículo.', DIAGRAMS.ei.labels.map(L => labelText(L).replace(/^(der|die|das) /, ''))) },
+    { m:4, run:() => secBuild(E) },
+    { m:PMAP['p-paarung'].max, run:() => secText(E, PMAP['p-paarung']) },
   ];
-  for (let k = 0; k < sections.length; k++){ E.idx = k + 1; await sections[k](); }
+  E.max = sections.reduce((a, s) => a + s.m, 0); E.n = sections.length;
+  for (let k = 0; k < sections.length; k++){ E.idx = k + 1; await sections[k].run(); }
   const pct = Math.round(E.got / E.max * 100), N = noteOf(pct), won = pct >= 60;
   S.exams.push({ date:todayStr(), pct, note:N[1] }); if (pct >= 80) badge('exam80');
-  if (won) addFeathers(200); else addFeathers(40);
+  if (won) addFeathers(250); else addFeathers(50);
   save();
   if (won) SFX.win(); else SFX.bad();
+  const weakest = E.rows.slice().sort((a, b) => a.p / a.m - b.p / b.m).slice(0, 3);
   await new Promise(res => {
     openModal(`<div class="center"><div class="big-emoji">${won ? '🏆' : '🌫️'}</div><h2>${won ? 'Der Vergess-Geier ist besiegt!' : 'Der Vergess-Geier ist noch da …'}</h2>
       <p class="score-big">${pct} %</p><p>${Math.round(E.got * 10) / 10} von ${E.max} Punkten · Notenschätzung: <b>${N[1]} (${N[2]})</b></p>
       <p class="es">${won ? '¡Venciste al Buitre del Olvido! Las palabras vuelven a la isla.' : 'Todavía no. Repasa las tareas con menos puntos y vuelve a intentarlo.'}</p>
-      <table class="res-table">${E.rows.map(r => `<tr><td>${esc(r.t)}</td><td>${Math.round(r.p * 10) / 10} / ${r.m}</td></tr>`).join('')}</table>
+      <table class="res-table">${E.rows.map(r => `<tr><td>${esc(r.t)}</td><td class="num">${Math.round(r.p * 10) / 10} / ${r.m}</td></tr>`).join('')}</table>
+      <p class="gold-note">Üben: ${weakest.map(r => esc(r.t)).join(' · ')}</p>
       <p class="muted">Die Note ist nur eine Schätzung. Deine Lehrerin oder dein Lehrer bewertet vielleicht anders.</p>
       <div class="fb-actions"><button class="btn" id="ex-end" type="button">Zurück zur Insel</button></div></div>`);
     $('#ex-end').onclick = () => { closeModal(); refreshObjective(); res(); };
@@ -40,7 +45,7 @@ async function startExam(){
 }
 function examFrame(E, title, task, taskEs, body){
   const hp = Math.max(0, 100 - E.got / E.max * 100 / 0.6);
-  return `<div class="exam-head"><div class="geier"><span>Vergess-Geier</span><div class="bar"><i style="width:${hp}%"></i></div></div><div class="exam-meta">Aufgabe ${E.idx} / 9 · 🃏 ${S.jokers}</div></div>
+  return `<div class="exam-head"><div class="geier"><span>Vergess-Geier</span><div class="bar"><i style="width:${hp}%"></i></div></div><div class="exam-meta">Aufgabe ${E.idx} / ${E.n} · 🃏 ${S.jokers}</div></div>
     <h2>${title}</h2><p class="task">${task}</p><div class="task-es" hidden>${taskEs}</div>
     <button class="btn tiny joker" type="button" ${S.jokers ? '' : 'disabled'}>🃏 Joker: auf Spanisch</button>
     <div class="exam-body">${body}</div><div class="fb-actions" id="ex-actions"><button class="btn" id="ex-submit" type="button">Abgeben</button></div>`;
@@ -60,9 +65,9 @@ function wireFrame(onSubmit){
 }
 async function runSection(E, title, r0){ const r = await r0; E.got += r.p; E.rows.push({ t:title, p:r.p, m:r.m }); }
 
-function secLabel(E, key, task, taskEs){
+function secLabel(E, key, task, taskEs, bank){
   const D = DIAGRAMS[key];
-  const body = `<div class="label-wrap"><div class="diag-box">${diagramSVG(key)}</div><ol class="slots exam">${D.labels.map(L => `<li><span class="num">${L.n}</span><input type="text" id="lb-${key}-${L.n}" autocomplete="off" spellcheck="false" aria-label="Nummer ${L.n}"><span class="fix"></span></li>`).join('')}</ol></div>${umlautBar()}`;
+  const body = `${bank ? `<p class="wordbank">${bank.map(b => `<span>${esc(b)}</span>`).join('')}</p>` : ''}<div class="label-wrap"><div class="diag-box">${diagramSVG(key)}</div><ol class="slots exam">${D.labels.map(L => `<li><span class="num">${L.n}</span><input type="text" id="lb-${key}-${L.n}" autocomplete="off" spellcheck="false" aria-label="Nummer ${L.n}"><span class="fix"></span></li>`).join('')}</ol></div>${umlautBar()}`;
   openModal(examFrame(E, D.title, task, taskEs, body), 'wide exam');
   return runSection(E, D.title, wireFrame(() => {
     let p = 0;
@@ -92,14 +97,16 @@ function secMerkmale(E){
     return { p:Math.min(10, p), m:10 };
   }));
 }
-function secText(E, task, taskEs, max, rubric, model){
+// free-text explanation, scored with the rubric of a PROCESSES entry
+function secText(E, P){
   const body = `<textarea id="tx-a" rows="4" spellcheck="false" aria-label="Antwort"></textarea>${umlautBar()}<div id="tx-sol"></div>`;
-  openModal(examFrame(E, 'Schreibaufgabe', task, taskEs, body), 'exam');
+  openModal(examFrame(E, 'Erklären', P.q, P.es, body), 'exam');
   setTimeout(() => $('#tx-a') && $('#tx-a').focus(), 50);
-  return runSection(E, task, wireFrame(() => {
-    const p = Math.min(max, rubric(fold($('#tx-a').value)));
-    $('#tx-sol').innerHTML = `<p class="sol"><b>Musterlösung:</b> ${esc(model)} ${speakBtn(model)}</p>`;
-    return { p, m:max };
+  return runSection(E, P.q, wireFrame(() => {
+    const r = scoreExplain($('#tx-a').value, P);
+    grade(P.id, r.p >= r.max ? 'right' : r.p >= r.max / 2 ? 'close' : 'wrong');
+    $('#tx-sol').innerHTML = `<div class="rubric">${r.hits.map(x => `<span class="rk hit">✔ ${esc(x)}</span>`).join('')}${r.misses.map(x => `<span class="rk miss">✘ fehlt: ${esc(x)}</span>`).join('')}</div><p class="sol"><b>Musterlösung:</b> ${esc(P.model)} ${speakBtn(P.model)}</p>`;
+    return { p:r.p, m:r.max };
   }));
 }
 function secBeaks(E){
@@ -134,28 +141,20 @@ function secSentences(E){
     return { p, m:4 };
   }));
 }
-function secOrder(E){
-  const right = ['kropf', 'druesenmagen', 'kaumagen', 'darm', 'kloake'];
-  const items = shuffle(right.slice()); const order = [];
-  openModal(examFrame(E, 'Der Weg der Nahrung', 'Bringe die Organe in die richtige Reihenfolge. Die Nahrung kommt vom Schnabel …', 'Ordena los órganos: ¿por dónde pasa la comida después del pico?',
-    `<div class="order-line" id="ord-line"></div><div class="chips" id="ord-chips"></div><button class="btn tiny ghost" id="ord-reset" type="button">Neu ordnen</button><div id="ord-sol"></div>`), 'exam');
+// generic "put the chips in order" widget (used by secBuild)
+function orderWidget(lineId, chipsId, resetId, items, labelOf, prefix){
+  const order = [];
   const render = () => {
-    $('#ord-line').innerHTML = 'Schnabel → ' + (order.length ? order.map(id => `<b>${esc(WMAP[id].de)}</b>`).join(' → ') : '…');
-    $('#ord-chips').innerHTML = items.filter(id => !order.includes(id)).map(id => `<button class="chip" type="button" data-id="${id}">${wordHTML(WMAP[id])}</button>`).join('');
-    $$('#ord-chips .chip').forEach(b => b.onclick = () => { order.push(b.dataset.id); SFX.click(); render(); });
+    $('#' + lineId).innerHTML = (prefix || '') + (order.length ? order.map(i => `<b>${labelOf(i)}</b>`).join(' ') : '…');
+    $('#' + chipsId).innerHTML = items.filter(i => !order.includes(i)).map(i => `<button class="chip" type="button" data-i="${i}">${labelOf(i)}</button>`).join('');
+    $$('#' + chipsId + ' .chip').forEach(b => b.onclick = () => { order.push(+b.dataset.i); SFX.click(); render(); });
   };
   render();
-  $('#ord-reset').onclick = () => { order.length = 0; render(); };
-  return runSection(E, 'Weg der Nahrung', wireFrame(() => {
-    const ok = right.filter((id, k) => order[k] === id).length;
-    const p = ok === 5 ? 2 : ok >= 3 ? 1 : 0;
-    $('#ord-chips').innerHTML = ''; $('#ord-reset').hidden = true;
-    $('#ord-sol').innerHTML = `<p class="sol"><b>Richtig:</b> Schnabel → Kropf → Drüsenmagen → Kaumagen → Darm → Kloake</p>`;
-    return { p, m:2 };
-  }));
+  $('#' + resetId).onclick = () => { order.length = 0; render(); };
+  return { order, lock(){ $('#' + chipsId).innerHTML = ''; $('#' + resetId).hidden = true; } };
 }
 function secArticles(E){
-  const ts = ['aussen', 'skelett', 'organe', 'schnabel', 'merkmale'];
+  const ts = ['aussen', 'skelett', 'organe', 'schnabel', 'merkmale', 'fortpflanzung'];
   const ids = pickWords(WORDS.filter(w => w.art && !w.po && ts.includes(w.t)).map(w => w.id), 10);
   const body = `<div class="grid2">${ids.map((id, k) => `<label class="art-row"><select id="ar-${k}" aria-label="Artikel für ${esc(WMAP[id].de)}"><option value="">–</option><option>der</option><option>die</option><option>das</option></select> <b>${esc(WMAP[id].de)}</b><span class="fix"></span></label>`).join('')}</div>`;
   openModal(examFrame(E, 'Die Artikel', 'Ergänze den richtigen Artikel.', 'Completa con el artículo correcto (der, die, das).', body), 'wide exam');
@@ -167,5 +166,57 @@ function secArticles(E){
       if (!ok) s.parentElement.querySelector('.fix').innerHTML = ' → ' + wordHTML(WMAP[id]);
     });
     return { p, m:5 };
+  }));
+}
+/* ---- Seite 12, Aufgabe 1: Lückentext Fortpflanzung (getippt) ---- */
+function secCloze12(E){
+  const gaps = [['innere'], ['Kloaken'], ['Kalk'], ['Dottersack']];
+  const text = ['Bei den Vögeln findet eine ', ' Befruchtung statt. Dabei werden die ', ' der beiden Partner aufeinander gedrückt. Die von dem Weibchen gelegten Eier bestehen aus ', '. Der Embryo ernährt sich von Nährstoffen, welche sich im ', ' befinden.'];
+  const body = `<p class="cloze-text">${text.map((t, i) => esc(t) + (i < gaps.length ? `<input type="text" class="gapin" id="cz-${i}" autocomplete="off" spellcheck="false" aria-label="Lücke ${i + 1}"><span class="fix"></span>` : '')).join('')}</p>${umlautBar()}`;
+  openModal(examFrame(E, 'Die Fortpflanzung', 'Ergänze die Lücken mit den passenden Begriffen.', 'Completa los huecos con los términos correctos (sin artículo).', body), 'wide exam');
+  setTimeout(() => $('#cz-0') && $('#cz-0').focus(), 50);
+  return runSection(E, 'Lückentext Fortpflanzung', wireFrame(() => {
+    let p = 0; const ids = ['innere-befruchtung', 'kloake', 'kalk', 'dottersack'];
+    gaps.forEach((acc, i) => {
+      const inp = $('#cz-' + i), r = checkTyped(inp.value, acc), pts = typedPoints(r); p += pts; grade(ids[i], r.res);
+      inp.classList.add(pts === 1 ? 'right' : pts > 0 ? 'close' : 'wrong');
+      if (pts < 1) inp.nextElementSibling.textContent = acc[0];
+    });
+    return { p, m:4 };
+  }));
+}
+/* ---- Seite 12, Aufgabe 2: Nestflüchter / Nesthocker ---- */
+function secNest(E){
+  const row = (k, name) => `<div class="nest-row"><b>${name}:</b><input type="text" id="ne-${k}" placeholder="Erklärung" autocomplete="off" spellcheck="false" aria-label="${name} Erklärung"><span>Beispiel:</span><input type="text" id="nb-${k}" placeholder="Vogel" autocomplete="off" spellcheck="false" aria-label="${name} Beispiel"><div class="fix" id="nf-${k}"></div></div>`;
+  openModal(examFrame(E, 'Die Fortpflanzung', 'Erkläre die Begriffe Nestflüchter und Nesthocker und nenne je ein Beispiel.', 'Explica los dos términos (¿qué hacen esos polluelos después de salir del huevo?) y da un ejemplo de ave para cada uno.', row(0, 'Nestflüchter') + row(1, 'Nesthocker') + umlautBar()), 'wide exam');
+  return runSection(E, 'Nestflüchter / Nesthocker', wireFrame(() => {
+    let p = 0;
+    const checks = [
+      { ex:/verlass|verlaess|schnell|weg|sofort|gleich/, bsp:/huhn|huehn|ente|hahn|henne|kueken|gans|strauss|kiwi/, fix:'Ein Vogel, der nach dem Schlüpfen schnell das Nest verlässt. Beispiel: Huhn, Ente.' },
+      { ex:/bleib|lang|nest|federkleid|nicht entwickelt|federn/, bsp:/amsel|sing|taube|spatz|sperling|meise|adler|storch|specht|falke|elster/, fix:'Ein Vogel, der nach dem Schlüpfen im Nest bleibt, weil sein Federkleid noch nicht entwickelt ist. Beispiel: Amsel.' },
+    ];
+    checks.forEach((c, k) => {
+      const e = $('#ne-' + k), b = $('#nb-' + k), okE = c.ex.test(fold(e.value)), okB = c.bsp.test(fold(b.value));
+      p += (okE ? 1 : 0) + (okB ? 1 : 0); e.classList.add(okE ? 'right' : 'wrong'); b.classList.add(okB ? 'right' : 'wrong');
+      if (!okE || !okB) $('#nf-' + k).textContent = c.fix;
+    });
+    grade('nestfluechter', p >= 3 ? 'right' : 'wrong'); grade('nesthocker', p >= 3 ? 'right' : 'wrong');
+    return { p, m:4 };
+  }));
+}
+/* ---- Blatt 6: Die Entwicklung im Hühnerei — Sätze aus den Wortgeländern bauen ---- */
+function secBuild(E){
+  const items = sample(SENTENCES.huehnerei, 2);
+  const body = items.map((it, k) => `<p class="task2">${esc(it.title)}</p><div class="order-line" id="bl-${k}"></div><div class="chips" id="bc-${k}"></div><button class="btn tiny ghost" id="br-${k}" type="button">Neu ordnen</button><div id="bs-${k}"></div>`).join('');
+  openModal(examFrame(E, 'Die Entwicklung im Hühnerei', 'Beschreibe die Bilder der Filmleiste mit Hilfe der angegebenen Wortgeländer. Der Anfang und das Ende eines Satzes sind jeweils gekennzeichnet.', 'Construye las frases con los bloques dados. El inicio lleva mayúscula y el final lleva punto.', body), 'wide exam');
+  const ws = items.map((it, k) => orderWidget('bl-' + k, 'bc-' + k, 'br-' + k, shuffle(it.target.map((_, i) => i)), i => esc(it.target[i])));
+  return runSection(E, 'Entwicklung im Hühnerei', wireFrame(() => {
+    let p = 0;
+    items.forEach((it, k) => {
+      const ok = it.target.filter((_, i) => ws[k].order[i] === i).length, full = ok === it.target.length;
+      const q = full ? 2 : ok >= Math.ceil(it.target.length / 2) ? 1 : 0; p += q; ws[k].lock();
+      $('#bs-' + k).innerHTML = `<p class="sol">${q} / 2 · <b>Muster:</b> ${esc(it.target.join(' '))} ${speakBtn(it.target.join(' '))}</p>`;
+    });
+    return { p, m:4 };
   }));
 }

@@ -343,6 +343,118 @@ class LabelRaid extends Activity {
   }
 }
 
+/* ============ BRUT-ZEITLEISTE (Seite 10) ============ */
+// draws the timeline billboard: a line with 7 nodes; placed events show their title
+function drawTimeline(g, W2, placed){
+  const H2 = W2 * 0.42, n = TIMELINE.length, x0 = W2 * 0.08, x1 = W2 * 0.92, y = H2 * 0.5, s = W2 / 1260;
+  g.fillStyle = '#fbf4e2'; g.fillRect(0, 0, W2, H2);
+  g.fillStyle = '#e9d9b8'; g.fillRect(0, 0, W2, 54 * s);
+  g.fillStyle = '#3a2e22'; g.font = `700 ${30 * s}px "Atkinson Hyperlegible", sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillText('Zeitleiste: von der Paarung bis zum Küken', W2 / 2, 27 * s);
+  g.strokeStyle = '#b4531a'; g.lineWidth = 8 * s; g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.stroke();
+  g.fillStyle = '#b4531a'; g.beginPath(); g.moveTo(x1 + 4 * s, y); g.lineTo(x1 - 26 * s, y - 20 * s); g.lineTo(x1 - 26 * s, y + 20 * s); g.fill();
+  g.font = `700 ${22 * s}px "Atkinson Hyperlegible", sans-serif`; g.fillStyle = '#6b5a45'; g.textAlign = 'left'; g.fillText('Anfang', x0, y + 56 * s); g.textAlign = 'right'; g.fillText('Ende', x1, y + 56 * s);
+  for (let i = 0; i < n; i++){
+    const x = x0 + (x1 - x0) * (i + 0.5) / n, up = i % 2 === 0, ok = !!placed[i];
+    g.strokeStyle = '#3a2e22'; g.lineWidth = 3 * s; g.beginPath(); g.moveTo(x, y); g.lineTo(x, up ? y - 70 * s : y + 70 * s); g.stroke();
+    g.fillStyle = ok ? '#9be3ae' : '#fffaf0'; g.beginPath(); g.arc(x, y, 22 * s, 0, 7); g.fill(); g.lineWidth = 3.5 * s; g.stroke();
+    g.fillStyle = '#1d1712'; g.font = `700 ${22 * s}px "Atkinson Hyperlegible", sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(i + 1), x, y + 1 * s);
+    const bw = (x1 - x0) / n * 1.12, bh = 118 * s, by = up ? y - 70 * s - bh : y + 70 * s;
+    g.fillStyle = ok ? '#dff5e4' : '#f3ead6'; g.strokeStyle = ok ? '#2f9e55' : '#c9b58e'; g.lineWidth = 3 * s;
+    g.beginPath(); g.roundRect ? g.roundRect(x - bw / 2, by, bw, bh, 12 * s) : g.rect(x - bw / 2, by, bw, bh); g.fill(); g.stroke();
+    g.fillStyle = ok ? '#1d1712' : '#9a8a70';
+    if (ok){
+      g.font = `700 ${20 * s}px "Atkinson Hyperlegible", sans-serif`;
+      const lines = wrapLines(g, TIMELINE[i].title.replace(/^\d+\. /, '') + '\n' + TIMELINE[i].short, bw - 20 * s).slice(0, 4);
+      lines.forEach((l, k) => { if (k === 1) g.font = `400 ${18 * s}px "Atkinson Hyperlegible", sans-serif`; g.fillText(l, x, by + 22 * s + k * 24 * s); });
+    } else { g.font = `700 ${30 * s}px "Atkinson Hyperlegible", sans-serif`; g.fillText('?', x, by + bh / 2); }
+  }
+}
+class TimelineRaid extends Activity {
+  constructor(){ super(); this.n = TIMELINE.length; this.total = this.n + 2; this.placed = {}; this.missed = {}; this.pads = []; this.cards = []; this.carry = null; this.phase = 1; this.fallPenalty = false; }
+  setup(){
+    setSky('#ff9f6e', '#ffe7c4', '#f2c9a0', 60, 220);
+    this.B(0, -0.5, 0, 48, 1, 36, '#c9b27c');
+    [[-24, 0, 1, 36], [24, 0, 1, 36], [0, 18, 48, 1]].forEach(([x, z, sx, sz]) => this.B(x, 1, z, sx, 2, sz, '#8a7352'));
+    for (let i = 0; i < 6; i++) reeds(this.group, AO.x - 20 + i * 8, AO.y, AO.z + 15);
+    this.cvs = document.createElement('canvas'); this.cvs.width = 1260; this.cvs.height = 530; this.ctx2 = this.cvs.getContext('2d');
+    this.tex = new THREE.CanvasTexture(this.cvs); this.tex.encoding = THREE.sRGBEncoding; this.tex.anisotropy = 8;
+    const bb = new THREE.Mesh(G('plane', 26, 10.9), new THREE.MeshBasicMaterial({ map:this.tex })); bb.userData.ownMat = true;
+    this.put(bb, 0, 7, -16.5);
+    this.B(0, 7, -17, 27, 11.9, 0.4, '#5a3d25');
+    [-12, 12].forEach(x => this.B(x, 0.6, -16.8, 0.6, 1.2, 0.6, '#5a3d25'));
+    this.redraw();
+    for (let i = 0; i < this.n; i++){
+      const x = (i - (this.n - 1) / 2) * 5.4, z = -6;
+      const pad = mesh(G('cyl', 1.5, 1.6, 0.3, 12), M('#3a4150'), AO.x + x, AO.y + 0.15, AO.z + z, this.group);
+      const num = textSprite(String(i + 1), { size:1, color:'#fff' }); num.position.set(AO.x + x, AO.y + 1.4, AO.z + z); this.group.add(num);
+      this.pads.push({ i, x, z, mesh:pad, state:'' });
+    }
+    const lab = (t, x) => { const s = textSprite(t, { size:0.5, color:'#ffc83d' }); s.position.set(AO.x + x, AO.y + 2.4, AO.z - 6); this.group.add(s); };
+    lab('Anfang →', -(this.n - 1) / 2 * 5.4 - 1.5); lab('→ Ende', (this.n - 1) / 2 * 5.4 + 1.5);
+    shuffle(TIMELINE.map((e, i) => i)).forEach((i, k) => {
+      const x = -18 + (k % 4) * 12 + (Math.random() - 0.5) * 3, z = 5 + Math.floor(k / 4) * 6 + (Math.random() - 0.5) * 2;
+      const g = new THREE.Group();
+      mesh(G('box', 1.3, 1.7, 0.12), M('#fff6dc', { em:'#ffd27a', emi:0.25, rough:0.5 }), 0, 0, 0, g);
+      mesh(G('box', 1.3, 0.3, 0.14), M('#b4531a'), 0, 0.7, 0, g);
+      const sp = textSprite(TIMELINE[i].short, { size:0.42, color:'#fff', bg:'rgba(60,30,10,.85)', maxW:520 }); sp.position.set(0, 1.9, 0); g.add(sp);
+      this.put(g, x, 1.3, z);
+      this.cards.push({ i, g, hx:x, hz:z, placed:false });
+    });
+    this.spawn = this.W(0, 0.05, 13);
+    banner('Teil 1: Ordne die Ereignisse der Fortpflanzung', 'Lauf in eine Karte, dann auf die richtige Nummer: 1 = Anfang, 7 = Ende');
+  }
+  redraw(){ drawTimeline(this.ctx2, 1260, this.placed); this.tex.needsUpdate = true; }
+  update(dt){
+    this.baseUpdate(dt);
+    this.cards.forEach((c, k) => {
+      if (c.placed) return;
+      if (c === this.carry){ c.g.position.set(P.pos.x, P.pos.y + 4, P.pos.z); c.g.rotation.y = P.face; return; }
+      c.g.position.set(AO.x + c.hx, AO.y + 1.3 + Math.sin(this.t * 2 + k) * 0.2, AO.z + c.hz); c.g.rotation.y += dt * 0.8;
+    });
+    if (this.phase === 1){
+      if (!this.carry){
+        const c = this.cards.find(c => !c.placed && Math.hypot(P.pos.x - c.g.position.x, P.pos.z - c.g.position.z) < 1.6 && P.pos.y < AO.y + 3);
+        if (c){ this.carry = c; SFX.pick(); speak(TIMELINE[c.i].short); banner(`📜 ${esc(TIMELINE[c.i].short)}`, `Wohin gehört das? <span class="es-inline">${esc(TIMELINE[c.i].es)}</span>`); }
+      } else if (P.grounded){
+        const pad = this.pads.find(p => Math.hypot(P.pos.x - (AO.x + p.x), P.pos.z - (AO.z + p.z)) < 1.6);
+        if (pad && pad.state !== 'ok') this.drop(pad);
+      }
+      astat(`⏱ ${hudTime(this.t)} · Platziert ${Object.keys(this.placed).length}/${this.n}`);
+    }
+  }
+  drop(pad){
+    const c = this.carry, E = TIMELINE[c.i];
+    if (c.i === pad.i){
+      c.placed = true; this.carry = null; c.g.position.set(AO.x + pad.x, AO.y + 1.2, AO.z + pad.z); c.g.rotation.y = 0;
+      pad.state = 'ok'; pad.mesh.material = M('#22c76b', { em:'#22c76b', emi:0.4 }); this.placed[c.i] = true; this.redraw();
+      if (!this.missed[c.i]) this.correct++;
+      SFX.ok(); addFeathers(this.missed[c.i] ? 2 : 6); speak(E.de); popText(c.g.position.clone().add(new V3(0, 1.5, 0)), `✔ ${esc(E.title)}`);
+      banner(`✔ ${esc(E.title)}: ${esc(E.de)}`, esc(E.es));
+      if (this.cards.every(x => x.placed)) this.part2();
+    } else {
+      if (!this.missed[c.i]){ this.missed[c.i] = true; combo = 0; }
+      SFX.bad(); this.carry = null;
+      const dir = c.i < pad.i ? 'FRÜHER' : 'SPÄTER';
+      banner(`✘ Das passiert ${dir} – nicht an Stelle ${pad.i + 1}.`, `Tipp: ${esc(TIMELINE[pad.i].time === 'Anfang' || TIMELINE[pad.i].time === 'Ende' ? 'Stelle ' + (pad.i + 1) + ' ist ' + (pad.i === 0 ? 'der Anfang' : 'das Ende') : 'Stelle ' + (pad.i + 1) + ' = ' + TIMELINE[pad.i].time)} · <span class="es-inline">${c.i < pad.i ? 'Esto pasa antes.' : 'Esto pasa después.'}</span>`);
+      pad.mesh.material = M('#ff4d5e'); setTimeout(() => { if (pad.state !== 'ok') pad.mesh.material = M('#3a4150'); }, 900);
+    }
+  }
+  async part2(){
+    this.phase = 2; P.frozen = true; SFX.win();
+    banner('Teil 2: Erklär-Phase ✍️', 'Erkläre zwei Schritte mit eigenen Worten');
+    const Ps = pickWords(PROCESSES.filter(P => P.t === 'fortpflanzung').map(P => P.id), 2).map(id => PMAP[id]);
+    let k = 0;
+    for (const P of Ps){
+      openModal(`<div class="series-head"><h2>✍️ Erklär-Phase ${++k} / 2</h2></div><p class="sub">Schreib ganze Sätze. Die Stichwörter helfen dir. <span class="es-inline">Escribe frases completas. Las palabras clave te ayudan.</span></p><div id="qmount"></div>`, 'wide');
+      const r = await askQ(qExplain(P, { bank:tier(P.id) < 2 }), $('#qmount'));
+      if (r.result === 'right') this.correct++; else if (r.result === 'close') this.correct += 0.5;
+    }
+    closeModal(); P.frozen = false;
+    this.finish();
+  }
+}
+
 /* ============ SCHNABEL-BLASTER ============ */
 class BeakBlaster extends Activity {
   constructor(){ super(); this.total = 18; this.shooting = true; this.sel = 0; this.queue = Array.from({ length:this.total }, () => { const b = pick(BEAKS); return { b, f:pick(b.foods) }; }); this.active = []; this.spawnT = 1; this.done2 = 0; this.said = {}; this.fallPenalty = false; }
@@ -470,12 +582,17 @@ function qFix(item){
   return { type:'mc', prompt:`Welches Wort ist richtig?<div class="def">„${esc(item.s)}“</div>`, options:shuffle(item.o.map(o => ({ html:esc(o), val:o }))), correct:item.a,
     answerHTML:`<b>${esc(item.a)}</b>`, explain:esc(item.s.replace('___', item.a)), explainEs:esc(item.es), es:'¿Qué palabra es correcta?', sayAfter:item.s.replace('___', item.a) };
 }
+// one explain question of this topic, the least-known first (Leitner)
+function qExplainTopic(topic, o){ const Ps = PROCESSES.filter(P => P.t === topic); return qExplain(PMAP[pickWords(Ps.map(P => P.id), 1)[0]], o); }
 function bossQ(z, phase){
-  const r = Math.random();
+  const r = Math.random(), topic = ZONES[z].topic;
+  // phase 3 of every boss: one in three questions is "explain the process" (typed, rubric)
+  if (phase === 2 && Math.random() < 0.34 && !bossQ.lastExplain){ bossQ.lastExplain = true; return qExplainTopic(topic); }
+  bossQ.lastExplain = false;
   if (z <= 3){
-    const key = ZONES[z].topic, ids = topicIds(key), tf = TF.filter(x => x.t === key);
+    const key = topic, ids = topicIds(key), tf = TF.filter(x => x.t === key), fx = FIXES[key] || [];
     if (phase === 0) return r < 0.35 ? qLabel(key) : wq(ids, ['es2de', 'de2es', 'art', 'def']);
-    if (phase === 1) return r < 0.4 ? qLabel(key) : r < 0.7 ? qTF(pick(tf)) : wq(ids, ['art', 'ex', 'audio']);
+    if (phase === 1) return r < 0.35 ? qLabel(key) : r < 0.6 ? qTF(pick(tf)) : r < 0.75 && fx.length ? qFix(pick(fx)) : wq(ids, ['art', 'ex', 'audio']);
     return r < 0.5 ? qLabelType(key) : wq(ids, ['type']);
   }
   if (z === 4){
@@ -484,10 +601,17 @@ function bossQ(z, phase){
     if (phase === 1) return r < 0.5 ? qBeak() : qTF(pick(TF.filter(x => x.t === 'schnabel')));
     return r < 0.45 ? wq(ids.filter(id => WMAP[id].art), ['type']) : r < 0.75 ? qFix(pick(BEAK_FIX)) : qBeak();
   }
-  const ids = topicIds('merkmale');
-  if (phase === 0) return qMerkmal();
-  if (phase === 1) return r < 0.55 ? qTF(pick(TF.filter(x => x.t === 'merkmale'))) : qMerkmal();
-  return r < 0.5 ? wq(ids, ['type']) : qMerkmal();
+  if (z === 5){
+    const ids = topicIds('merkmale');
+    if (phase === 0) return qMerkmal();
+    if (phase === 1) return r < 0.55 ? qTF(pick(TF.filter(x => x.t === 'merkmale'))) : qMerkmal();
+    return r < 0.5 ? wq(ids, ['type']) : qMerkmal();
+  }
+  // zone 6: Fortpflanzung — egg diagram, facts, timeline order, spelling traps, typing
+  const ids = topicIds('fortpflanzung'), tf = TF.filter(x => x.t === 'fortpflanzung');
+  if (phase === 0) return r < 0.3 ? qLabel('ei') : r < 0.6 ? qFact(pick(FACTS)) : wq(ids, ['es2de', 'de2es', 'art', 'def']);
+  if (phase === 1) return r < 0.25 ? qSeq() : r < 0.5 ? qTF(pick(tf)) : r < 0.7 ? qFix(pick(FIXES.fortpflanzung)) : r < 0.85 ? qFact(pick(FACTS)) : qLabel('ei');
+  return r < 0.4 ? qLabelType('ei') : r < 0.7 ? wq(ids.filter(id => WMAP[id].art), ['type']) : qSeq();
 }
 class BossFight extends Activity {
   constructor(z){ super(); this.z = z; this.Bdef = BOSSES[z]; this.hp = this.Bdef.hp; this.max = this.Bdef.hp; this.shooting = true; this.qCool = 3; this.volT = 3; this.waveT = 9; this.answers = []; this.q = null; this.waves = []; }
@@ -538,11 +662,13 @@ class BossFight extends Activity {
   }
   async ask(){
     const q = bossQ(this.z, this.phase());
-    if (q.type === 'type'){
+    if (q.type === 'type' || q.type === 'explain'){
       this.typing = true; P.frozen = true; clearOrbs();
-      openModal(`<div class="series-head"><h2>⚡ Schwachstelle! Schreib die Antwort</h2></div><p class="sub">Richtig = doppelter Schaden. Falsch = der Boss trifft dich.</p><div id="qmount"></div>`, 'wide');
-      const r = await askQ(q, $('#qmount'), { timeLimit:30 });
+      const ex = q.type === 'explain';
+      openModal(`<div class="series-head"><h2>${ex ? '🎓 Erklär-Angriff!' : '⚡ Schwachstelle! Schreib die Antwort'}</h2></div><p class="sub">${ex ? 'Erkläre den Prozess in ganzen Sätzen. Vollständig = dreifacher Schaden, halb = einfacher Schaden.' : 'Richtig = doppelter Schaden. Falsch = der Boss trifft dich.'}</p><div id="qmount"></div>`, 'wide');
+      const r = await askQ(q, $('#qmount'), { timeLimit:ex ? 90 : 30 });
       closeModal(); P.frozen = false; this.typing = false; this.qCool = 2;
+      if (ex){ if (r.result === 'right') this.damage(3, true); else if (r.result === 'close') this.damage(1.5, false); else hurt(1); return; }
       if (r.result === 'right') this.damage(2, true); else if (r.result === 'close') this.damage(1, false); else { hurt(1); }
       return;
     }
@@ -607,13 +733,51 @@ function foodRunQs(){
 }
 function beakRunQs(){ return [...Array.from({ length:8 }, () => doorQ(qBeak())), ...sample(BEAK_FIX, 3).map(f => doorQ(qFix(f)))]; }
 function tfRunQs(){
-  return shuffle([...sample(TF.filter(t => t.t === 'merkmale'), 6), ...sample(TF.filter(t => t.t !== 'merkmale'), 6)]).map(t => ({
+  const ts = unlockedTopics();
+  return shuffle([...sample(TF.filter(t => t.t === 'merkmale'), 6), ...sample(TF.filter(t => t.t !== 'merkmale' && ts.includes(t.t)), 6)]).map(t => ({
     prompt:`Richtig oder falsch? „${esc(t.s)}“`, opts:[{ text:'✔ Richtig', color:'#a6ff4d', ok:t.a }, { text:'✘ Falsch', color:'#ff9aa3', ok:!t.a }],
     answer:t.a ? 'Richtig' : 'Falsch' + (t.why ? ' — ' + t.why : ''), explainEs:t.es, sayAfter:t.a ? t.s : t.why }));
 }
 function dailyQs(){
-  const ids = unlockedTopics().flatMap(t => topicIds(t));
-  return pickWords(ids, 10).map(id => doorQ(qFromWord(id, ['es2de', 'de2es', 'art', 'def', 'ex', 'audio'])));
+  const ts = unlockedTopics(), ids = ts.flatMap(t => topicIds(t));
+  // 8 word doors + 2 "process" doors (spelling traps, true/false, what happens next)
+  const extras = [];
+  const fx = ts.flatMap(t => FIXES[t] || []); if (fx.length) extras.push(doorQ(qFix(pick(fx))));
+  const tf = TF.filter(t => ts.includes(t.t)); if (tf.length) extras.push(doorQ(qTF(pick(tf))));
+  if (ts.includes('fortpflanzung')) extras.push(doorQ(Math.random() < 0.5 ? qSeq() : qFact(pick(FACTS))));
+  const words = pickWords(ids, 10 - Math.min(2, extras.length)).map(id => doorQ(qFromWord(id, ['es2de', 'de2es', 'art', 'def', 'ex', 'audio'])));
+  return shuffle([...words, ...sample(extras, 2)]);
+}
+
+/* ============ ERKLÄR-TRAINING (bei Professorin Eule) ============ */
+async function startExplainTraining(){
+  const Ps = unlockedProcesses();
+  if (!Ps.length){ toast('🔒 Schaffe zuerst die erste Zone.'); return; }
+  const due = Ps.filter(P => { const s = S.words[P.id]; return !s || s.b === 0 || s.d <= Date.now(); }).length;
+  const go = await new Promise(res => {
+    openModal(`<div class="dlg"><div class="dlg-face">${faceImg('eule')}</div><div class="dlg-body"><div class="who">Professorin Eule</div>
+      <p class="de">Im Test musst du Prozesse erklären: in ganzen Sätzen, auf Deutsch. Ich stelle dir drei Fragen. Für jede Kernidee gibt es einen Punkt.</p>
+      <p class="es">En el examen tienes que explicar procesos con frases completas en alemán. Te hago tres preguntas. Cada idea clave vale un punto. Al principio ves palabras clave como ayuda; cuando dominas un tema, desaparecen.</p>
+      <p class="muted">Themen offen: ${Ps.length} Prozesse · fällig: ${due} · bisher perfekt erklärt: ${S.explainPerfect}</p>
+      <div class="fb-actions"><button class="btn ghost" id="et-no" type="button">Später</button><button class="btn" id="et-go" type="button">🎓 Los!</button></div></div></div>`, '', { closable:true });
+    $('#et-go').onclick = () => res(true); $('#et-no').onclick = () => res(false);
+  });
+  closeModal(); if (!go) return;
+  const ids = pickWords(Ps.map(P => P.id), 3);
+  let perfect = 0, pts = 0, max = 0;
+  for (let i = 0; i < ids.length; i++){
+    const P = PMAP[ids[i]], bank = tier(P.id) < 2;
+    openModal(`<div class="series-head"><h2>🎓 Erklär-Training</h2><div class="prog">${i + 1} / ${ids.length} · ${esc(TOPICS[P.t])}</div></div>
+      <p class="sub">${bank ? 'Die Stichwörter helfen dir. Benutze sie in ganzen Sätzen.' : 'Ohne Stichwörter – du kennst das Thema schon gut!'} <span class="es-inline">Pulsa 🔊 para oír la pregunta.</span></p><div id="qmount"></div>`, 'wide');
+    const r = await askQ(qExplain(P, { bank }), $('#qmount'));
+    if (r.result === 'right') perfect++; if (r.score){ pts += r.score.p; max += r.score.max; }
+  }
+  closeModal(); save();
+  openModal(`<div class="center"><div class="big-emoji">${perfect === ids.length ? '🏆' : perfect ? '🎓' : '📘'}</div><h2 class="big-title">${perfect === ids.length ? 'Alles erklärt!' : perfect ? 'Gut erklärt!' : 'Weiter üben!'}</h2>
+    <p class="score-big">${pts} / ${max}</p><p>${perfect} von ${ids.length} vollständig. Musterantworten findest du im Wort-Inventar unter „Erklären“ und auf den Lernkarten.</p>
+    <p class="es">Las respuestas modelo están en el inventario (pestaña «Erklären») y en las fichas de estudio. Léelas en voz alta, ¡eso ayuda mucho!</p>
+    <div class="fb-actions center-actions"><button class="btn ghost" id="et-again" type="button">Nochmal</button><button class="btn" id="et-ok" type="button">Weiter</button></div></div>`);
+  $('#et-ok').onclick = closeModal; $('#et-again').onclick = () => { closeModal(); setTimeout(startExplainTraining, 50); };
 }
 function weakIds(){
   const ts = unlockedTopics();
@@ -634,6 +798,7 @@ async function terminalStation(z, def){
   }
   if (def.cloze){ const r = await clozePart(def.cloze); correct += r.c; total += r.n; }
   if (z === 4){ const r = await sentenceParts(3); correct += r.c; total += r.n; }
+  if (def.build){ const r = await sentenceBuild(sample(SENTENCES[def.build], 2), { head:'FILMLEISTE // DIE ENTWICKLUNG IM HÜHNEREI' }); correct += r.c * 2; total += r.n * 2; }
   closeModal();
   return { correct, total };
 }
@@ -670,32 +835,39 @@ function clozePart(key){
     render();
   });
 }
-async function sentenceParts(n){
-  let score = 0; const birds = sample(BEAKS, n);
-  for (const b of birds){
-    const target = [`${b.art} ${b.name}`, 'hat', 'einen', b.adj, b.noun, 'um', b.foodTile, 'zu fressen.'];
-    const base = b.adj.replace(/en$/, ''), other = pick(BEAKS.filter(x => x !== b));
-    const bank = shuffle([...target, base + 'er', base, other.foodTile, 'für']);
+// Satz-Bau: items = [{ title, target:[chunks in order], extra:[distractor chunks], es, sub, id }]
+async function sentenceBuild(items, o = {}){
+  let score = 0;
+  for (const it of items){
+    const target = it.target, bank = shuffle([...target, ...(it.extra || [])]);
     let pos = 0, mistakes = 0; const used = new Set();
     const m = await new Promise(done => {
       const render = () => {
-        openModal(`<div class="term-head"><span>SATZ-CODE // ${esc(b.art + ' ' + b.name).toUpperCase()}</span></div>
-          <p class="sub">Baue den Satz wie im Test: Welcher Schnabel, und wozu? <span class="es-inline">(${esc(WMAP[b.id].es)}: ${esc(b.es)})</span></p>
+        openModal(`<div class="term-head"><span>${esc(o.head || 'SATZ-CODE')} // ${esc(it.title).toUpperCase()}</span></div>
+          <p class="sub">${it.sub || 'Baue die Sätze aus den Bausteinen – wie auf dem Arbeitsblatt. Der Anfang hat einen Großbuchstaben, das Ende einen Punkt.'} <span class="es-inline">${esc(it.es)}</span></p>
           <div class="sent-line">${target.slice(0, pos).map(t => `<span class="tok ok">${esc(t)}</span>`).join(' ')} ${pos < target.length ? '<span class="tok cursor">▌</span>' : ' ✔'}</div>
           <div class="chips">${bank.map((t, i) => `<button class="chip" type="button" data-i="${i}" ${used.has(i) ? 'disabled' : ''}>${esc(t)}</button>`).join('')}</div>
-          ${mistakes >= 2 && pos < target.length ? `<p class="es">Pista: la palabra siguiente es «${esc(target[pos])}».</p>` : ''}`, 'wide terminal');
+          ${mistakes >= 2 && pos < target.length ? `<p class="es">Pista: el siguiente bloque es «${esc(target[pos])}».</p>` : ''}`, 'wide terminal');
         $$('.chip', sheet).forEach(btn => btn.onclick = () => {
           const i = +btn.dataset.i;
-          if (bank[i] === target[pos]){ used.add(i); pos++; SFX.click(); if (pos === target.length){ const s = target.join(' '); speak(s); SFX.ok(); render(); setTimeout(() => done(mistakes), 1600); return; } render(); }
+          if (bank[i] === target[pos]){ used.add(i); pos++; SFX.click(); if (pos === target.length){ const s = target.join(' '); speak(s); SFX.ok(); render(); setTimeout(() => done(mistakes), 1800); return; } render(); }
           else { mistakes++; SFX.bad(); btn.classList.add('shake'); setTimeout(() => btn.classList.remove('shake'), 400); if (mistakes === 2) render(); }
         });
       };
       render();
     });
-    const pts = m === 0 ? 1 : m === 1 ? 0.5 : 0; score += pts; onAnswer(pts === 1 ? 'right' : pts ? 'close' : 'wrong', { id:b.id });
+    const pts = m === 0 ? 1 : m <= 2 ? 0.5 : 0; score += pts; onAnswer(pts === 1 ? 'right' : pts ? 'close' : 'wrong', { id:it.id });
   }
-  return { c:score, n:birds.length };
+  return { c:score, n:items.length };
 }
+function beakBuildItems(n){
+  return sample(BEAKS, n).map(b => {
+    const base = b.adj.replace(/en$/, ''), other = pick(BEAKS.filter(x => x !== b));
+    return { id:b.id, title:b.art + ' ' + b.name, target:[`${b.art} ${b.name}`, 'hat', 'einen', b.adj, b.noun, 'um', b.foodTile, 'zu fressen.'], extra:[base + 'er', base, other.foodTile, 'für'],
+      sub:'Baue den Satz wie im Test: Welcher Schnabel, und wozu?', es:`(${WMAP[b.id].es}: ${b.es})` };
+  });
+}
+function sentenceParts(n){ return sentenceBuild(beakBuildItems(n)); }
 
 /* ============ STATIONS, BOSSES, DAILY, ARENA ============ */
 async function startStation(z, i){
@@ -721,6 +893,7 @@ async function startStation(z, i){
     case 'beakrun': r = await runActivity(new DoorRun('Schnabel-Türen', beakRunQs(), { sky:['#1f4a2a', '#9fd3a8'] })); break;
     case 'collector': r = await runActivity(new Collector()); break;
     case 'tfrun': r = await runActivity(new DoorRun('Wahr oder Falsch', tfRunQs(), { sky:['#2a3a6a', '#bcd6f0'] })); break;
+    case 'timeline': r = await runActivity(new TimelineRaid()); break;
   }
   if (S.hearts <= 0){ S.hearts = S.maxHearts; hud(); }
   if (!r) return;
@@ -730,7 +903,7 @@ async function startStation(z, i){
   if (stars > prev) S.stations[key] = stars;
   const bonus = stars * 10 + (stars > prev ? 15 : 0);
   if (bonus) addFeathers(bonus);
-  let all = true; for (let zz = 1; zz <= 5; zz++) for (let ii = 0; ii < 4; ii++) if ((S.stations[zz + '-' + ii] || 0) < 3) all = false;
+  let all = true; for (let zz = 1; zz <= ZN; zz++) for (let ii = 0; ii < 4; ii++) if ((S.stations[zz + '-' + ii] || 0) < 3) all = false;
   if (all) badge('stars');
   save(); refreshObjective();
   const msg = r.failed ? ['Game over!', '¡Se acabaron los corazones! Inténtalo otra vez.'] : stars === 3 ? ['PERFEKT!', '¡Perfecto!'] : stars === 2 ? ['Stark!', '¡Muy bien!'] : stars === 1 ? ['Geschafft!', '¡Lo lograste!'] : ['Noch nicht …', 'Todavía no: ¡otra vez!'];

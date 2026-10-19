@@ -229,6 +229,30 @@ select{ font:inherit; font-size:15px; padding:4px 6px; border:1px solid var(--fi
 .order-line{ font-size:19px; background:var(--field); border-radius:8px; padding:8px 12px; border:1px solid var(--line); }
 .sheet.exam .opt, .sheet.exam .chip{ color:#1d1a15; }
 
+/* ---------- explaining processes ---------- */
+textarea.answer.xl{ font-size:19px; min-height:96px; }
+textarea.right{ border-color:var(--ok) !important; background:#123524 !important; } textarea.close{ border-color:var(--warn) !important; background:#3a2e10 !important; }
+.typerow.end{ justify-content:flex-end; align-items:center; margin-top:8px; } .small{ font-size:13px; }
+.op{ font-family:var(--display); font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:#241a00; background:var(--amber); border-radius:6px; padding:2px 7px; margin-right:6px; vertical-align:2px; }
+.bank{ margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; font-size:14px; }
+.bk{ background:rgba(255,200,61,.12); border:1px dashed var(--amber); color:#ffe4a3; border-radius:999px; padding:3px 10px; font-size:15px; }
+.rubric{ display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+.rk{ border-radius:999px; padding:3px 10px; font-size:14px; font-weight:700; }
+.rk.hit{ background:rgba(127,240,176,.14); color:var(--ok); border:1px solid rgba(127,240,176,.5); } .rk.miss{ background:rgba(255,122,134,.12); color:var(--bad); border:1px solid rgba(255,122,134,.5); }
+.pts{ font-family:var(--body); font-size:15px; color:var(--muted); margin-left:8px; }
+.sheet.exam .rk.hit{ background:#e3f3e8; } .sheet.exam .rk.miss{ background:#f8e4e2; }
+.plist{ display:grid; gap:8px; grid-column:1 / -1; }
+.pcard{ position:relative; background:var(--chip); border:1px solid var(--line); border-left:5px solid var(--cyan); border-radius:12px; padding:8px 12px; }
+.pcard .tier{ position:absolute; right:8px; top:6px; } .pcard.t3{ border-left-color:var(--amber); box-shadow:0 0 0 1px var(--amber); } .pcard p{ margin:4px 0; } .pcard .de{ font-weight:700; }
+.tier-tag{ font-size:14px; }
+.wordbank{ background:var(--chip); border:1px solid var(--line); border-radius:10px; padding:6px 10px; display:flex; flex-wrap:wrap; gap:6px 14px; font-weight:700; }
+.cloze-text{ font-size:18px; line-height:2.3; }
+.gapin{ font:inherit; font-size:17px; width:150px; padding:3px 8px; border:1px solid var(--field-line); border-bottom:3px solid var(--cyan); border-radius:6px; background:var(--field); color:var(--txt); margin:0 4px; }
+.sheet.exam .gapin{ border-bottom-color:#1d1a15; }
+.nest-row{ display:grid; grid-template-columns:auto 1fr auto 150px; gap:6px 10px; align-items:center; margin:10px 0; }
+.nest-row input{ font:inherit; font-size:16px; padding:5px 10px; border:1px solid var(--field-line); border-radius:8px; background:var(--field); color:var(--txt); min-width:0; }
+.nest-row .fix{ grid-column:1 / -1; font-size:14px; }
+@media (max-width:720px){ .nest-row{ grid-template-columns:1fr; } }
 @media (max-width:720px){ #quest{ max-width:calc(100% - 32px); bottom:84px; }  .label-wrap{ grid-template-columns:1fr; } .menu-list, .menu-grid, .grid2{ grid-template-columns:1fr; } .badges{ grid-template-columns:1fr 1fr; } #banner .b-main{ font-size:18px; } }
 @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
 </style>
@@ -260,14 +284,14 @@ select{ font:inherit; font-size:15px; padding:4px 6px; border:1px solid var(--fi
 <div id="panel" hidden></div>
 <div id="modal" hidden><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
 <script src="vendor/three.min.js"></script>
-<script>window.VOICE_PACKS=["audio/voice-0.js","audio/voice-1.js","audio/voice-2.js","audio/voice-3.js","audio/voice-4.js","audio/voice-5.js","audio/voice-6.js","audio/voice-7.js","audio/voice-8.js","audio/voice-9.js"];</script>
+<script>window.VOICE_PACKS=["audio/voice-0.js","audio/voice-1.js","audio/voice-2.js","audio/voice-3.js","audio/voice-4.js","audio/voice-5.js","audio/voice-6.js","audio/voice-7.js","audio/voice-8.js","audio/voice-9.js","audio/voice-10.js","audio/voice-11.js","audio/voice-12.js","audio/voice-13.js"];</script>
 <script>
 'use strict';
 /* ============================================================
    CONTENT — everything the game teaches comes from gz-biologia.pdf
    ============================================================ */
-const TOPICS = { aussen:'Äußerer Körperbau', skelett:'Das Skelett', organe:'Die Organe', schnabel:'Die Schnäbel', merkmale:'Die Merkmale', op:'Aufgaben-Wörter' };
-const TOPICS_ES = { aussen:'Cuerpo por fuera', skelett:'El esqueleto', organe:'Los órganos', schnabel:'Los picos', merkmale:'Las características', op:'Palabras de los ejercicios' };
+const TOPICS = { aussen:'Äußerer Körperbau', skelett:'Das Skelett', organe:'Die Organe', schnabel:'Die Schnäbel', merkmale:'Die Merkmale', fortpflanzung:'Die Fortpflanzung', op:'Aufgaben-Wörter' };
+const TOPICS_ES = { aussen:'Cuerpo por fuera', skelett:'El esqueleto', organe:'Los órganos', schnabel:'Los picos', merkmale:'Las características', fortpflanzung:'La reproducción', op:'Palabras de los ejercicios' };
 
 const WORDS = [];
 function slug(s){ return s.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
@@ -431,6 +455,49 @@ V('Eier legen','poner huevos','merkmale',null,'Alle Vögel legen Eier.');
 V('speichern','almacenar','merkmale',null,'Dadurch kann ihr Körper viel mehr Luft speichern.');
 V('bedecken','cubrir','merkmale',null,'Das Federkleid bedeckt den ganzen Körper.');
 
+/* ---- Seiten 10–12: die Fortpflanzung, das Ei, die Entwicklung im Hühnerei ---- */
+N('die','Fortpflanzung',null,'la reproducción','fortpflanzung','Wie Lebewesen Junge (Nachkommen) bekommen.','Bei der Fortpflanzung der Vögel findet eine innere Befruchtung statt.','sich fortpflanzen = reproducirse');
+N('die','Paarung','Paarungen','el apareamiento','fortpflanzung','Wenn sich Männchen und Weibchen paaren, um Junge zu bekommen.','Bei der Paarung drücken das Weibchen und das Männchen ihre Kloaken aufeinander.','das Paar = la pareja');
+N('die','Samenflüssigkeit',null,'el líquido seminal','fortpflanzung','Die Flüssigkeit des Männchens mit den Samenzellen.','Die Samenflüssigkeit des Männchens fließt in die Kloake des Weibchens.','Samen (semilla/semen) + Flüssigkeit (líquido)');
+N('die','Samenzelle','Samenzellen','el espermatozoide','fortpflanzung','Die männliche Zelle für die Befruchtung. Anderes Wort: Spermazelle.','Der Hahn überträgt seine Samenzellen in den Körper der Henne.','= die Spermazelle');
+N('die','Befruchtung','Befruchtungen','la fecundación','fortpflanzung','Wenn eine Samenzelle und eine Eizelle verschmelzen.','Nach der Befruchtung legt das Weibchen Eier ab.','die Frucht = el fruto → be-frucht-ung');
+V('innere Befruchtung','fecundación interna','fortpflanzung','Die Befruchtung findet im Körper des Weibchens statt.','Es findet also eine innere Befruchtung statt.','innen = dentro. ¡Nunca «innen Befruchtung»! Después de «eine» → innerE.');
+N('die','Schale','Schalen','la cáscara','fortpflanzung',null,'Diese Eier haben eine sehr harte Schale.');
+N('die','Kalkschale','Kalkschalen','la cáscara de cal','fortpflanzung','Die harte Schale des Eis. Sie besteht aus Kalk.','Außen hat das Ei eine harte Kalkschale.','der Kalk = la cal; die Schale = la cáscara → die Kalkschale.');
+N('der','Kalk',null,'la cal (carbonato de calcio)','fortpflanzung','Ein hartes, weißes Material, wie in Kreide oder Knochen.','Die Schale des Eis besteht aus Kalk.','Se escribe Kalk, con k al final.');
+N('die','Keimscheibe','Keimscheiben','el disco germinal','fortpflanzung','Die kleine helle Scheibe oben auf dem Dotter. Aus ihr entwickelt sich der Embryo.','Aus der Keimscheibe entwickelt sich der Embryo. Sie liegt immer oben.','der Keim = el germen; die Scheibe = el disco');
+N('der','Embryo','Embryonen','el embrión','fortpflanzung','Der junge Vogel, solange er sich im Ei entwickelt.','Der Embryo ernährt sich vom Dotter.','¡Ojo! DER Embryo (masculino, como en español).');
+N('der','Dottersack','Dottersäcke','el saco vitelino','fortpflanzung','Der Sack mit dem Dotter. Er enthält die Nährstoffe für den Embryo.','Der Dottersack im Inneren des Eis enthält Nährstoffe.','der Dotter (la yema) + der Sack (el saco) → der Dottersack.');
+N('der','Dotter','Dotter','la yema','fortpflanzung','Der gelbe Teil des Eis.','Der Embryo ernährt sich mit Hilfe von vielen Blutgefäßen vom Dotter.','¡Ojo! der Dotter, pero LA yema.');
+N('das','Eiklar',null,'la clara (del huevo)','fortpflanzung','Der durchsichtige Teil des Eis um den Dotter. Auch: das Eiweiß.','Um den Dotter liegt das Eiklar.','klar = claro → das Eiklar = la clara.');
+N('die','Eihaut','Eihäute','la membrana del huevo','fortpflanzung','Die dünne Haut direkt unter der Kalkschale.','Unter der Kalkschale liegt die Eihaut.','das Ei + die Haut (la piel) → die Eihaut.');
+N('die','Luftkammer','Luftkammern','la cámara de aire','fortpflanzung','Der Raum mit Luft am dicken Ende des Eis.','Am stumpfen Ende des Eis ist die Luftkammer.','die Kammer = la cámara / el cuartito');
+N('die','Hagelschnur','Hagelschnüre','la chalaza (cordón del huevo)','fortpflanzung','Eine Schnur an jeder Seite des Dottersacks. Sie puffert Stöße ab und hält den Dottersack in der Mitte.','Hagelschnüre an beiden Seiten des Dottersacks puffern Stöße ab.','die Schnur = la cuerda. Plural: die Hagelschnüre.',['die Hagelschnüre']);
+N('der','Nährstoff','Nährstoffe','el nutriente','fortpflanzung','Ein Stoff, den der Körper zum Wachsen braucht.','Der Dottersack enthält Nährstoffe, von denen sich der Embryo ernährt.','ernähren = alimentar → der Nährstoff');
+N('der','Stoß','Stöße','el golpe / la sacudida','fortpflanzung',null,'Hagelschnüre puffern Stöße ab.','Plural con diéresis: die Stöße.');
+N('das','Nest','Nester','el nido','fortpflanzung',null,'Nestflüchter verlassen schnell das Nest.');
+N('der','Nestflüchter','Nestflüchter','el nidífugo (polluelo que deja pronto el nido)','fortpflanzung','Ein Jungvogel, der nach dem Schlüpfen schnell das Nest verlässt. Zum Beispiel Hühner und Enten.','Hühner und Enten sind Nestflüchter.','flüchten = huir → el que «huye» del nido. Ejemplos: Huhn, Ente.');
+N('der','Nesthocker','Nesthocker','el nidícola (polluelo que se queda en el nido)','fortpflanzung','Ein Jungvogel, der nach dem Schlüpfen im Nest bleibt, weil sein Federkleid noch nicht entwickelt ist. Zum Beispiel die Amsel.','Die Amsel ist ein Nesthocker.','hocken = estar agachado/sentado → el que se queda en el nido. Ejemplo: Amsel.');
+N('der','Jungvogel','Jungvögel','el ave joven / el polluelo','fortpflanzung','Ein junger Vogel.','Manche Jungvögel verlassen nach dem Schlüpfen schnell das Nest.','jung (joven) + Vogel');
+N('das','Küken','Küken','el pollito','fortpflanzung','Der junge Vogel direkt nach dem Schlüpfen.','Am 21. Tag schlüpft das Küken aus dem Ei.','¡Ojo! DAS Küken (neutro).');
+N('das','Huhn','Hühner','la gallina / el pollo','fortpflanzung',null,'Hühner und Enten sind Nestflüchter.','Plural: die Hühner.');
+N('die','Henne','Hennen','la gallina','fortpflanzung','Das weibliche Huhn.','Der Hahn begattet die Henne.');
+N('der','Hahn','Hähne','el gallo','fortpflanzung','Das männliche Huhn.','Der Hahn überträgt seine Samenzellen in den Körper der Henne.');
+N('die','Ente','Enten','el pato','fortpflanzung',null,'Hühner und Enten verlassen schnell das Nest.','¡Ojo! die Ente, pero EL pato.');
+N('das','Blutgefäß','Blutgefäße','el vaso sanguíneo','fortpflanzung','Ein Rohr im Körper, durch das das Blut fließt.','Der Embryo ernährt sich mit Hilfe von vielen Blutgefäßen vom Dotter.','das Blut (la sangre) + das Gefäß (el recipiente / el vaso)');
+N('die','Daunenfeder','Daunenfedern','la pluma de plumón','fortpflanzung','Eine weiche, flauschige Feder. Küken haben Daunenfedern.','Das Küken hat Daunenfedern.','las Daunen = el plumón');
+N('die','Elster','Elstern','la urraca','fortpflanzung',null,'Die Elster stiehlt manchmal Eier aus anderen Nestern.','¡Ojo! die Elster, LA urraca: ¡coincide!');
+V('bebrüten','incubar','fortpflanzung','Auf den Eiern sitzen und sie warm halten.','Das Weibchen legt Eier ab, welche es bebrütet.','brüten = empollar');
+V('schlüpfen','salir del huevo','fortpflanzung','Aus dem Ei kommen.','Nach einiger Zeit schlüpfen die Jungen aus den Eiern.');
+V('sich ernähren','alimentarse','fortpflanzung',null,'Der Embryo ernährt sich vom Dotter.','sich ernähren VON + Dativ: vom Dotter.');
+V('sich entwickeln','desarrollarse','fortpflanzung',null,'Aus der Keimscheibe entwickelt sich der Embryo.');
+V('abpuffern','amortiguar','fortpflanzung','Einen Stoß weicher machen.','Die Hagelschnüre puffern Stöße ab.','der Puffer = el amortiguador');
+V('begatten','aparearse con','fortpflanzung',null,'Der Hahn begattet die Henne.');
+V('übertragen','transferir','fortpflanzung',null,'Dabei überträgt er seine Samenzellen in den Körper der Henne.');
+V('verlassen','abandonar / dejar','fortpflanzung',null,'Nestflüchter verlassen schnell das Nest.');
+V('hart','duro','fortpflanzung',null,'Die Eier haben eine sehr harte Schale.');
+V('oben','arriba','fortpflanzung',null,'Die Keimscheibe liegt immer oben.','oben = arriba, unten = abajo');
+
 /* ---- Wörter aus den Aufgaben (Operatoren) ---- */
 V('nennen','nombrar / mencionar (solo decir, sin explicar)','op',null,'Nenne die zehn Merkmale der Vögel.');
 V('beschriften','rotular (escribir los nombres en un dibujo)','op',null,'Beschrifte die Abbildung.');
@@ -545,7 +612,28 @@ const DIAGRAMS = {
       { n:9, id:'kloake', x:304, y:211, mx:362, my:236 },
     ],
   },
+  ei: {
+    title: 'Abb. 4: Der Aufbau eines Eis',
+    base: () => `
+      <path d="M60 150 C60 72 140 40 230 40 C325 40 382 102 382 150 C382 198 325 260 230 260 C140 260 60 228 60 150 Z" fill="#f1dfbd" stroke="#c9a877" stroke-width="7"/>
+      <path d="M78 150 C78 92 150 60 230 60 C310 60 364 108 364 150 C364 192 310 240 230 240 C150 240 78 208 78 150 Z" fill="#fbf6e6" stroke="#d9b98a" stroke-width="2.5" stroke-dasharray="6 4"/>
+      <path d="M78 150 C78 118 92 92 112 76 C98 100 92 125 92 150 C92 175 98 200 112 224 C92 208 78 182 78 150 Z" fill="#dcecf5" stroke="#9fc3d8" stroke-width="2"/>
+      <path d="M176 150 q-10 -9 -20 0 t-20 0 t-20 0 t-20 0" stroke="#d6bf96" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M284 150 q10 -9 20 0 t20 0 t20 0 t20 0" stroke="#d6bf96" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="230" cy="150" r="54" fill="#f6b531" stroke="#d9941a" stroke-width="3"/>
+      <circle cx="230" cy="102" r="9" fill="#fff4cf" stroke="#b58a2a" stroke-width="2.5"/>`,
+    labels: [
+      { n:1, id:'kalkschale', text:'die Kalkschale', accept:['die Schale'], x:300, y:52, mx:342, my:20 },
+      { n:2, id:'eihaut', x:122, y:72, mx:92, my:26 },
+      { n:3, id:'luftkammer', x:86, y:150, mx:26, my:150 },
+      { n:4, id:'eiklar', x:300, y:208, mx:332, my:274 },
+      { n:5, id:'dottersack', text:'der Dottersack', accept:['der Dotter'], x:196, y:188, mx:190, my:280 },
+      { n:6, id:'keimscheibe', x:230, y:98, mx:230, my:18 },
+      { n:7, id:'hagelschnur', text:'die Hagelschnüre', accept:['die Hagelschnur'], x:112, y:150, mx:96, my:276 },
+    ],
+  },
 };
+const DIAG_OF_TOPIC = { aussen:'aussen', skelett:'skelett', organe:'organe', fortpflanzung:'ei' };
 
 /* ============================================================
    CLOZE TEXTS (Lückentexte) from the worksheets
@@ -574,7 +662,103 @@ const CLOZE = {
     'Die Haut an den Beinen ist mit [[Schuppen]] bedeckt und an den Zehen befinden sich [[Krallen]]. Zusätzlich zur Lunge haben Vögel [[Luftsäcke]] und hohle [[Röhrenknochen]]. Die Körpertemperatur liegt zwischen 38 °C und 42 °C und bleibt immer gleich. Daher sind Vögel, so wie auch [[Säugetiere]], [[gleichwarme|gleichwarm]] Wirbeltiere.',
     'Fast alle Vögel können fliegen. Der [[Strauß]], der [[Emu]], der [[Pinguin]] und der [[Kiwi]] sind [[flugunfähige|flugunfaehig]] Vögel. Das liegt vor allem daran, dass sie zu [[schwer]] sind.',
   ]},
+  p12: { title:'Die Fortpflanzung', src:'Seite 12', parts:[
+    'Bei der [[Paarung]] drücken das Vogelweibchen und das Vogelmännchen ihre [[Kloaken|kloake]] aufeinander. Dabei fließt die [[Samenflüssigkeit]] des Männchens in die Kloake des Weibchens. Es findet also eine [[innere Befruchtung]] statt.',
+    'Nach der Befruchtung legt das [[Weibchen]] Eier ab, welche es [[bebrütet|bebrueten]]. Diese Eier haben eine sehr harte [[Schale]], die aus [[Kalk]] besteht. Aus der [[Keimscheibe]] entwickelt sich der [[Embryo]]. Sie liegt immer oben. Der [[Dottersack]] im Inneren des Eis enthält [[Nährstoffe]], von denen sich der Embryo ernährt.',
+    '[[Hagelschnüre]] an beiden Seiten des Dottersacks puffern [[Stöße]] ab und halten den Dottersack in der Mitte. Nach einiger Zeit [[schlüpfen]] die Jungen aus den Eiern. Manche Jungvögel, wie Hühner und Enten, verlassen danach schnell das [[Nest]]. Man nennt sie [[Nestflüchter]]. Andere, wie die Amsel, bleiben erstmal im Nest, da ihr [[Federkleid]] noch nicht entwickelt ist. Man nennt sie [[Nesthocker]].',
+  ]},
 };
+
+/* ============================================================
+   ZEITLEISTE (Seite 10) — von der Paarung bis zum Küken
+   ============================================================ */
+const TIMELINE = [
+  { k:'paarung', title:'1. Die Paarung', time:'Anfang', short:'Weibchen und Männchen drücken ihre Kloaken aufeinander.', de:'Bei der Paarung drücken das Weibchen und das Männchen ihre Kloaken aufeinander. Die Samenflüssigkeit fließt in die Kloake des Weibchens: Es findet eine innere Befruchtung statt.', es:'En el apareamiento, hembra y macho juntan sus cloacas. El líquido seminal pasa a la cloaca de la hembra: fecundación interna.' },
+  { k:'eiablage', title:'2. Die Eiablage', time:'danach', short:'Das Weibchen legt Eier mit harter Kalkschale ab und bebrütet sie.', de:'Nach der Befruchtung legt das Weibchen Eier mit einer harten Kalkschale ab und bebrütet sie.', es:'Tras la fecundación, la hembra pone huevos con cáscara dura de cal y los incuba.' },
+  { k:'embryo', title:'3. Der Embryo entsteht', time:'erste Tage', short:'Aus der Keimscheibe entwickelt sich der Embryo. Er ernährt sich vom Dotter.', de:'Aus der Keimscheibe entwickelt sich der Embryo. Er ernährt sich mit Hilfe von vielen Blutgefäßen vom Dotter.', es:'Del disco germinal se desarrolla el embrión. Se alimenta de la yema a través de muchos vasos sanguíneos.' },
+  { k:'tag12', title:'4. Nach 12 Tagen', time:'12 Tage', short:'Man erkennt schon die Gliedmaßen. Der Kopf mit Augen und Schnabel ist sehr groß.', de:'Nach 12 Tagen kann man schon die Gliedmaßen erkennen. Der Kopf mit den Augen und dem Schnabel ist sehr groß.', es:'A los 12 días ya se reconocen las extremidades. La cabeza, con los ojos y el pico, es muy grande.' },
+  { k:'tag20', title:'5. Nach 20 Tagen', time:'20 Tage', short:'Der junge Vogel ist so groß wie das Ei, hat Federn und atmet mit den Lungen.', de:'Nach 20 Tagen ist der junge Vogel so groß wie das Ei. Er besitzt bereits Federn und atmet mit den Lungen.', es:'A los 20 días el ave joven es tan grande como el huevo. Ya tiene plumas y respira con los pulmones.' },
+  { k:'tag21', title:'6. Am 21. Tag', time:'21. Tag', short:'Das Küken schlüpft aus dem Ei. Es hat Daunenfedern.', de:'Am 21. Tag schlüpft das Küken aus dem Ei. Es hat Daunenfedern.', es:'El día 21 el pollito sale del huevo. Tiene plumón.' },
+  { k:'nest', title:'7. Nach dem Schlüpfen', time:'Ende', short:'Nestflüchter verlassen schnell das Nest, Nesthocker bleiben noch im Nest.', de:'Nestflüchter wie Hühner und Enten verlassen schnell das Nest. Nesthocker wie die Amsel bleiben im Nest, weil ihr Federkleid noch nicht entwickelt ist.', es:'Los nidífugos (gallina, pato) dejan pronto el nido. Los nidícolas (mirlo) se quedan, porque su plumaje aún no está desarrollado.' },
+];
+
+/* ============================================================
+   SATZ-BAU (Blatt 6: Die Entwicklung im Hühnerei) — Wortgeländer wie auf dem Arbeitsblatt
+   ============================================================ */
+const SENTENCES = {
+  huehnerei: [
+    { title:'Bild 1: Hahn und Henne', target:['Der Hahn','begattet','die Henne.','Dabei','überträgt er','seine Samenzellen','in den Körper','der Henne.'], extra:['die Eier','in die Kloake'], es:'El gallo se aparea con la gallina. Así transfiere sus espermatozoides al cuerpo de la gallina.' },
+    { title:'Bild 2: Die Keimscheibe', target:['Der Embryo','entwickelt sich','in der Keimscheibe.','Er ernährt sich','vom Dotter','mit Hilfe von','vielen Blutgefäßen.'], extra:['vom Eiklar','entwickeln sich'], es:'El embrión se desarrolla en el disco germinal. Se alimenta de la yema con ayuda de muchos vasos sanguíneos.' },
+    { title:'Bild 3: Nach 12 Tagen', target:['Nach 12 Tagen','kann man schon','die Gliedmaßen','erkennen.','Der Kopf','mit den Augen','und dem Schnabel','ist sehr groß.'], extra:['die Federn','ist sehr klein.'], es:'A los 12 días ya se pueden reconocer las extremidades. La cabeza con los ojos y el pico es muy grande.' },
+    { title:'Bild 4: Nach 20 Tagen', target:['Nach 20 Tagen','ist','der junge Vogel','so groß','wie das Ei.','Er besitzt','bereits Federn','und atmet','mit den Lungen.'], extra:['mit den Kiemen.','wie die Henne.'], es:'A los 20 días el ave joven es tan grande como el huevo. Ya tiene plumas y respira con los pulmones.' },
+    { title:'Bild 5: Das Küken', target:['Am 21. Tag','schlüpft','der junge Vogel','aus dem Ei.','Er hat','Daunenfedern.','Junge Vögel','nennt man','Küken.'], extra:['Am 12. Tag','Nesthocker.'], es:'El día 21 el ave joven sale del huevo. Tiene plumón. A las aves jóvenes se les llama pollitos.' },
+  ],
+};
+
+/* ============================================================
+   PROZESSE ERKLÄREN — freie Antworten mit Bewertungsraster und Musterlösung
+   keys: Kernideen (Regex auf gefaltetem Text: ä→ae, ß→ss, klein), p = Punkte, hint = Stichwort
+   ============================================================ */
+const PROCESSES = [
+  { id:'p-koerperbau', t:'aussen', q:'Beschreibe den gemeinsamen Körperbau der Vögel.', es:'Describe la estructura común del cuerpo de las aves: ¿en qué partes se divide, qué son las alas y las patas, qué tienen todas?',
+    keys:[{ re:/kopf/, hint:'Kopf' }, { re:/rumpf/, hint:'Rumpf' }, { re:/schwanz/, hint:'Schwanz' }, { re:/fluegel|vordergliedmass/, hint:'Vordergliedmaßen → Flügel' }, { re:/krall|hintergliedmass/, hint:'Hintergliedmaßen mit Krallen' }, { re:/schnabel/, hint:'Schnabel' }],
+    bank:['gegliedert', 'Kopf', 'Rumpf', 'Schwanz', 'Vordergliedmaßen', 'Flügel', 'Hintergliedmaßen', 'Krallen', 'Schnabel'],
+    model:'Der Körper ist in Kopf, Rumpf und Schwanz gegliedert. Die Vordergliedmaßen sind zu Flügeln umgebildet. Die Hintergliedmaßen besitzen Krallen. Alle Vögel besitzen einen Schnabel.', modelEs:'El cuerpo se divide en cabeza, tronco y cola. Las extremidades anteriores son alas; las posteriores tienen garras. Todas las aves tienen pico.' },
+  { id:'p-skelett', t:'skelett', q:'Erkläre, warum das Skelett der Vögel gut zum Fliegen passt.', es:'Explica por qué el esqueleto de las aves es bueno para volar: ¿cómo son los huesos? ¿dónde están los músculos de las alas?',
+    keys:[{ re:/leicht/, hint:'leichte Knochen' }, { re:/hohl|roehrenknochen/, hint:'hohle Röhrenknochen' }, { re:/brustbein/, hint:'großes Brustbein' }, { re:/muskel/, hint:'Muskeln bewegen die Flügel' }],
+    bank:['sehr leicht', 'hohle Röhrenknochen', 'das große Brustbein', 'die Muskeln', 'die Flügel bewegen'],
+    model:'Das Skelett besteht aus sehr leichten, hohlen Röhrenknochen. Am großen Brustbein befinden sich die Muskeln, die die Flügel bewegen.', modelEs:'El esqueleto es de huesos muy ligeros y huecos. En el gran esternón están los músculos que mueven las alas.' },
+  { id:'p-nahrung', t:'organe', q:'Beschreibe den Weg der Nahrung durch den Körper des Vogels.', es:'Describe el camino de la comida por el cuerpo del ave, en orden: ¿a dónde va primero, después, al final?',
+    keys:[{ re:/kropf/, hint:'Kropf' }, { re:/druesenmagen/, hint:'Drüsenmagen' }, { re:/kaumagen/, hint:'Kaumagen' }, { re:/darm/, hint:'Darm' }, { re:/kloake/, hint:'Kloake' }], order:[/kropf/, /druesenmagen/, /kaumagen/, /darm/, /kloake/], orderHint:'richtige Reihenfolge',
+    bank:['zuerst', 'dann', 'danach', 'schließlich', 'Kropf', 'Drüsenmagen', 'Kaumagen', 'Darm', 'Kloake'],
+    model:'Die Nahrung kommt zuerst in den Kropf, dann in den Drüsenmagen, danach in den Kaumagen und schließlich in den Darm. Der Kot verlässt den Körper durch die Kloake.', modelEs:'La comida va primero al buche, luego al proventrículo, después a la molleja y por último al intestino. Las heces salen por la cloaca.' },
+  { id:'p-atmung', t:'organe', q:'Erkläre, wie die Luft in den Vogel kommt und wozu die Luftsäcke dienen.', es:'Explica cómo entra el aire en el ave y para qué sirven los sacos aéreos.',
+    keys:[{ re:/luftroehre/, hint:'Luftröhre' }, { re:/lunge/, hint:'Lunge' }, { re:/luftsa(e)?ck/, hint:'Luftsäcke' }, { re:/sauerstoff/, hint:'mehr Sauerstoff aufnehmen' }],
+    bank:['Luftröhre', 'transportiert', 'Lunge', 'mehrere Luftsäcke', 'Sauerstoff', 'besser aufnehmen'],
+    model:'Die Luftröhre transportiert die Luft von außen zur Lunge. Die Lunge besitzt mehrere Luftsäcke. Mit den Luftsäcken kann der Vogel besser den Sauerstoff aus der Luft aufnehmen.', modelEs:'La tráquea lleva el aire de fuera al pulmón. El pulmón tiene varios sacos aéreos. Con ellos el ave toma mejor el oxígeno del aire.' },
+  { id:'p-kloake', t:'organe', q:'Was ist eine Kloake? Erkläre.', es:'Explica qué es la cloaca: ¿qué tipo de abertura es? ¿qué sale por ella?',
+    keys:[{ re:/oeffnung|ausgang|loch|ausfuehr|verlass|raus|heraus|ausgeschieden/, hint:'gemeinsame Körperöffnung' }, { re:/kot/, hint:'Kot' }, { re:/urin|harn/, hint:'Urin' }, { re:/\beier?\b|sperma|samen/, hint:'Eier (oder Spermazellen)' }],
+    bank:['gemeinsame Körperöffnung', 'Kot', 'Urin', 'Eier', 'Spermazellen', 'verlassen den Körper'],
+    model:'Die Kloake ist eine gemeinsame Körperöffnung. Durch sie verlassen Kot, Urin und Eier (beim Männchen die Spermazellen) den Körper.', modelEs:'La cloaca es una abertura común del cuerpo. Por ella salen las heces, la orina y los huevos (en el macho, los espermatozoides).' },
+  { id:'p-schnabel', t:'schnabel', q:'Erkläre, warum der Schnabel verrät, was ein Vogel frisst. Nenne ein Beispiel.', es:'Explica por qué el pico revela lo que come un ave y da un ejemplo (ave, pico, comida).',
+    keys:[{ re:/werkzeug|form/, hint:'Schnäbel sind wie Werkzeuge / die Form passt' }, { re:/pinzette|meissel|zange|haken|seih|schlank|spitz|flach/, hint:'eine Schnabelform nennen' }, { re:/amsel|specht|bussard|storch|ente|baumlaeufer/, hint:'einen Vogel nennen' }, { re:/frisst|fressen|nahrung|wuerm|larve|insekt|maeuse|maus|tier|pflanz|beere/, hint:'seine Nahrung nennen' }],
+    bank:['wie Werkzeuge', 'die Form des Schnabels', 'zum Beispiel', 'der Buntspecht', 'Meißelschnabel', 'um … zu fressen'],
+    model:'Schnäbel sind wie Werkzeuge: Die Form des Schnabels passt zur Nahrung. Zum Beispiel hat der Buntspecht einen kräftigen Meißelschnabel, um Larven im Holz zu fressen.', modelEs:'Los picos son como herramientas: la forma del pico se ajusta a la comida. Por ejemplo, el pico picapinos tiene un pico de cincel para comer larvas en la madera.' },
+  { id:'p-merkmale', t:'merkmale', q:'Nenne fünf Merkmale der Vögel.', es:'Nombra cinco características de las aves.', merkmale:5,
+    keys:[], bank:['Flügel', 'Federkleid', 'Schnabel', 'keine Zähne', 'Eier', 'Kloake', 'Schuppen', 'Krallen', 'Luftsäcke', 'gleichwarm'],
+    model:'Vögel haben Flügel, ein Federkleid und einen Schnabel, aber keine echten Zähne. Sie legen Eier, besitzen eine Kloake, haben Schuppen an den Beinen und Krallen an den Zehen, Luftsäcke und hohle Knochen, und sie sind gleichwarm.', modelEs:'Alas, plumaje, pico, sin dientes, ponen huevos, cloaca, escamas en las patas, garras, sacos aéreos y huesos huecos, temperatura constante.' },
+  { id:'p-flug', t:'merkmale', q:'Welche Vögel können nicht fliegen? Begründe.', es:'Nombra las aves que no pueden volar y explica por qué (con «weil»).',
+    keys:[{ re:/strauss/, hint:'Strauß' }, { re:/emu/, hint:'Emu' }, { re:/pinguin/, hint:'Pinguin' }, { re:/kiwi/, hint:'Kiwi' }, { re:/schwer/, p:2, hint:'weil sie zu schwer sind' }],
+    bank:['der Strauß', 'der Emu', 'der Pinguin', 'der Kiwi', 'weil', 'zu schwer'],
+    model:'Der Strauß, der Emu, der Pinguin und der Kiwi können nicht fliegen, weil sie zu schwer sind.', modelEs:'El avestruz, el emú, el pingüino y el kiwi no pueden volar porque son demasiado pesados.' },
+  { id:'p-paarung', t:'fortpflanzung', q:'Erkläre, was bei der Paarung der Vögel passiert.', es:'Explica qué pasa en el apareamiento de las aves: ¿qué juntan? ¿qué pasa de uno a otro? ¿cómo se llama ese tipo de fecundación?',
+    keys:[{ re:/kloake/, hint:'Kloaken' }, { re:/aufeinander|druecken|aneinander/, hint:'aufeinander drücken' }, { re:/samen|sperma/, hint:'Samenflüssigkeit fließt in die Kloake des Weibchens' }, { re:/innere.{0,3}befruchtung|befruchtung.{0,12}inne/, hint:'innere Befruchtung' }],
+    bank:['bei der Paarung', 'Weibchen und Männchen', 'die Kloaken', 'aufeinander drücken', 'die Samenflüssigkeit', 'fließt in', 'innere Befruchtung'],
+    model:'Bei der Paarung drücken das Weibchen und das Männchen ihre Kloaken aufeinander. Dabei fließt die Samenflüssigkeit des Männchens in die Kloake des Weibchens. Es findet also eine innere Befruchtung statt.', modelEs:'En el apareamiento, la hembra y el macho juntan sus cloacas. El líquido seminal del macho pasa a la cloaca de la hembra. Es una fecundación interna.' },
+  { id:'p-ei', t:'fortpflanzung', q:'Erkläre, wie sich der Embryo im Ei entwickelt und wovon er sich ernährt.', es:'Explica cómo se desarrolla el embrión dentro del huevo y de qué se alimenta.',
+    keys:[{ re:/keimscheibe/, hint:'aus der Keimscheibe' }, { re:/dotter/, hint:'Dottersack / Dotter' }, { re:/naehrstoff/, hint:'Nährstoffe' }, { re:/blutgef/, hint:'mit Hilfe von Blutgefäßen' }],
+    bank:['aus der Keimscheibe', 'entwickelt sich', 'der Dottersack', 'enthält Nährstoffe', 'ernährt sich', 'Blutgefäße'],
+    model:'Aus der Keimscheibe entwickelt sich der Embryo. Der Dottersack enthält Nährstoffe. Der Embryo ernährt sich mit Hilfe von vielen Blutgefäßen vom Dotter.', modelEs:'Del disco germinal se desarrolla el embrión. El saco vitelino contiene nutrientes. El embrión se alimenta de la yema a través de muchos vasos sanguíneos.' },
+  { id:'p-hagel', t:'fortpflanzung', q:'Wozu dienen die Hagelschnüre?', es:'¿Para qué sirven las chalazas (Hagelschnüre)? Dos funciones.',
+    keys:[{ re:/stoss|stoess|puffer/, hint:'Stöße abpuffern' }, { re:/mitte|halten/, hint:'den Dottersack in der Mitte halten' }],
+    bank:['puffern … ab', 'Stöße', 'halten', 'den Dottersack', 'in der Mitte'],
+    model:'Die Hagelschnüre puffern Stöße ab und halten den Dottersack in der Mitte.', modelEs:'Las chalazas amortiguan los golpes y mantienen el saco vitelino en el centro.' },
+  { id:'p-schale', t:'fortpflanzung', q:'Beschreibe die Schale des Vogeleis.', es:'Describe la cáscara del huevo: ¿cómo es? ¿de qué está hecha?',
+    keys:[{ re:/hart/, hint:'sehr hart' }, { re:/kalk/, hint:'aus Kalk' }],
+    bank:['sehr hart', 'besteht aus', 'Kalk'],
+    model:'Die Eier haben eine sehr harte Schale, die aus Kalk besteht.', modelEs:'Los huevos tienen una cáscara muy dura, hecha de cal.' },
+  { id:'p-nest', t:'fortpflanzung', q:'Erkläre die Begriffe Nestflüchter und Nesthocker und nenne je ein Beispiel.', es:'Explica qué son los nidífugos (Nestflüchter) y los nidícolas (Nesthocker) y da un ejemplo de cada uno.',
+    keys:[{ re:/nestfluechter[^.]{0,60}(verlass|schnell)|(verlass|schnell)[^.]{0,60}nestfluechter/, hint:'Nestflüchter verlassen schnell das Nest' }, { re:/huhn|huehn|ente|hahn|henne|kueken/, hint:'Beispiel: Huhn, Ente' }, { re:/nesthocker[^.]{0,60}bleib|bleib[^.]{0,60}nesthocker/, hint:'Nesthocker bleiben im Nest' }, { re:/federkleid|federn|nicht entwickelt/, hint:'weil ihr Federkleid noch nicht entwickelt ist' }, { re:/amsel/, hint:'Beispiel: Amsel' }],
+    bank:['Nestflüchter', 'verlassen schnell das Nest', 'zum Beispiel Hühner und Enten', 'Nesthocker', 'bleiben im Nest', 'weil', 'Federkleid noch nicht entwickelt', 'zum Beispiel die Amsel'],
+    model:'Nestflüchter verlassen nach dem Schlüpfen schnell das Nest, zum Beispiel Hühner und Enten. Nesthocker bleiben erstmal im Nest, weil ihr Federkleid noch nicht entwickelt ist, zum Beispiel die Amsel.', modelEs:'Los nidífugos dejan pronto el nido tras salir del huevo, por ejemplo gallinas y patos. Los nidícolas se quedan en el nido porque su plumaje aún no está desarrollado, por ejemplo el mirlo.' },
+  { id:'p-entwicklung', t:'fortpflanzung', q:'Beschreibe die Entwicklung im Hühnerei: Was passiert nach 12 Tagen, nach 20 Tagen und am 21. Tag?', es:'Describe el desarrollo en el huevo de gallina: ¿qué pasa a los 12 días, a los 20 días y el día 21?',
+    keys:[{ re:/12[^.]{0,80}(gliedmass|kopf|augen|schnabel)/, hint:'12 Tage: Gliedmaßen erkennbar, großer Kopf' }, { re:/20[^.]{0,80}(gross|feder|lunge|atme)/, hint:'20 Tage: so groß wie das Ei, Federn, atmet mit den Lungen' }, { re:/21[^.]{0,60}(schluepf|kueken)|(schluepf|kueken)[^.]{0,60}21/, hint:'21. Tag: das Küken schlüpft' }, { re:/daunen/, hint:'Daunenfedern' }],
+    bank:['Nach 12 Tagen', 'die Gliedmaßen erkennen', 'der Kopf ist sehr groß', 'Nach 20 Tagen', 'so groß wie das Ei', 'Federn', 'atmet mit den Lungen', 'Am 21. Tag', 'schlüpft', 'Daunenfedern'],
+    model:'Nach 12 Tagen kann man schon die Gliedmaßen erkennen, und der Kopf ist sehr groß. Nach 20 Tagen ist der junge Vogel so groß wie das Ei, er besitzt Federn und atmet mit den Lungen. Am 21. Tag schlüpft das Küken mit seinen Daunenfedern aus dem Ei.', modelEs:'A los 12 días ya se reconocen las extremidades y la cabeza es muy grande. A los 20 días el ave joven es tan grande como el huevo, tiene plumas y respira con los pulmones. El día 21 el pollito sale del huevo con su plumón.' },
+];
+PROCESSES.forEach(P => { P.keys.forEach(k => { if (!k.p) k.p = 1; }); P.max = P.merkmale || (P.keys.reduce((a, k) => a + k.p, 0) + (P.order ? 1 : 0)); });
+const PMAP = {};
+PROCESSES.forEach(P => { PMAP[P.id] = P; });
 
 /* ============================================================
    RICHTIG / FALSCH
@@ -626,7 +810,67 @@ const TF = [
   { t:'merkmale', s:'Viele flugunfähige Vögel sind zu leicht zum Fliegen.', a:false, why:'Sie sind zu schwer.', es:'Falso: son demasiado PESADOS (zu schwer).' },
   { t:'merkmale', s:'Das Federkleid bedeckt nur die Flügel.', a:false, why:'Es bedeckt den ganzen Körper.', es:'Falso: el plumaje cubre TODO el cuerpo.' },
   { t:'merkmale', s:'Vögel und Säugetiere sind gleichwarm.', a:true, es:'Aves y mamíferos tienen temperatura constante. ✔' },
+  // fortpflanzung
+  { t:'fortpflanzung', s:'Bei den Vögeln findet eine innere Befruchtung statt.', a:true, es:'En las aves la fecundación es interna. ✔' },
+  { t:'fortpflanzung', s:'Bei der Paarung drücken Weibchen und Männchen ihre Schnäbel aufeinander.', a:false, why:'Sie drücken ihre Kloaken aufeinander.', es:'Falso: juntan las CLOACAS, no los picos.' },
+  { t:'fortpflanzung', s:'Die Samenflüssigkeit des Männchens fließt in die Kloake des Weibchens.', a:true, es:'El líquido seminal del macho pasa a la cloaca de la hembra. ✔' },
+  { t:'fortpflanzung', s:'Die Schale des Eis besteht aus Horn.', a:false, why:'Sie besteht aus Kalk.', es:'Falso: la cáscara es de CAL (Kalk), no de queratina.' },
+  { t:'fortpflanzung', s:'Die Keimscheibe liegt immer unten im Ei.', a:false, why:'Die Keimscheibe liegt immer oben.', es:'Falso: el disco germinal siempre queda ARRIBA.' },
+  { t:'fortpflanzung', s:'Der Embryo ernährt sich von den Nährstoffen im Dottersack.', a:true, es:'El embrión se alimenta de los nutrientes del saco vitelino. ✔' },
+  { t:'fortpflanzung', s:'Die Hagelschnüre halten den Dottersack in der Mitte.', a:true, es:'Las chalazas mantienen el saco vitelino en el centro. ✔' },
+  { t:'fortpflanzung', s:'Hühner und Enten sind Nesthocker.', a:false, why:'Hühner und Enten sind Nestflüchter.', es:'Falso: gallinas y patos son nidífugos (Nestflüchter): dejan pronto el nido.' },
+  { t:'fortpflanzung', s:'Die Amsel ist ein Nesthocker, weil ihr Federkleid noch nicht entwickelt ist.', a:true, es:'El mirlo es nidícola: se queda en el nido porque su plumaje no está desarrollado. ✔' },
+  { t:'fortpflanzung', s:'Das Männchen legt die Eier und bebrütet sie.', a:false, why:'Das Weibchen legt die Eier und bebrütet sie.', es:'Falso: la HEMBRA pone los huevos y los incuba.' },
+  { t:'fortpflanzung', s:'Das Küken schlüpft am 21. Tag aus dem Ei.', a:true, es:'El pollito sale del huevo el día 21. ✔' },
+  { t:'fortpflanzung', s:'Nach 12 Tagen atmet der Embryo schon mit den Lungen.', a:false, why:'Erst nach 20 Tagen atmet er mit den Lungen.', es:'Falso: respira con los pulmones a los 20 días, no a los 12.' },
+  { t:'fortpflanzung', s:'Die Luftkammer liegt am stumpfen Ende des Eis.', a:true, es:'La cámara de aire está en el extremo romo del huevo. ✔' },
 ];
+
+/* ============================================================
+   FAKTEN-FRAGEN (Multiple Choice zu Prozessen, Seiten 10–12)
+   ============================================================ */
+const FACTS = [
+  { t:'fortpflanzung', q:'Hühner und Enten verlassen nach dem Schlüpfen schnell das Nest. Sie sind …', a:'Nestflüchter', o:['Nesthocker', 'Embryonen'], es:'Gallinas y patos dejan pronto el nido → nidífugos.', say:'Hühner und Enten sind Nestflüchter.' },
+  { t:'fortpflanzung', q:'Welcher Vogel ist ein Nesthocker?', a:'die Amsel', o:['das Huhn', 'die Ente'], es:'El mirlo se queda en el nido → nidícola.', say:'Die Amsel ist ein Nesthocker.' },
+  { t:'fortpflanzung', q:'Warum bleiben Nesthocker nach dem Schlüpfen im Nest?', a:'Ihr Federkleid ist noch nicht entwickelt.', o:['Sie sind zu schwer.', 'Sie haben keine Kloake.', 'Sie haben noch keinen Schnabel.'], es:'Se quedan porque su plumaje aún no está desarrollado.', say:'Nesthocker bleiben im Nest, weil ihr Federkleid noch nicht entwickelt ist.' },
+  { t:'fortpflanzung', q:'Wie nennt man Jungvögel, die lange im Nest bleiben?', a:'Nesthocker', o:['Nestflüchter', 'Küken', 'Jungvögel'], es:'Se quedan «sentados» (hocken) en el nido: Nesthocker.', say:'Jungvögel, die lange im Nest bleiben, nennt man Nesthocker.' },
+  { t:'fortpflanzung', q:'Woraus besteht die Schale des Eis?', a:'aus Kalk', o:['aus Horn', 'aus Knochen', 'aus Federn'], es:'La cáscara es de cal.', say:'Die Schale des Eis besteht aus Kalk.' },
+  { t:'fortpflanzung', q:'Wo liegt die Keimscheibe?', a:'immer oben, auf dem Dotter', o:['immer unten im Ei', 'in der Luftkammer', 'in der Kalkschale'], es:'El disco germinal siempre queda arriba, sobre la yema.', say:'Die Keimscheibe liegt immer oben.' },
+  { t:'fortpflanzung', q:'Welche Befruchtung findet bei den Vögeln statt?', a:'eine innere Befruchtung', o:['eine äußere Befruchtung', 'keine Befruchtung'], es:'Fecundación interna: dentro del cuerpo de la hembra.', say:'Bei den Vögeln findet eine innere Befruchtung statt.' },
+  { t:'fortpflanzung', q:'Wovon ernährt sich der Embryo?', a:'von den Nährstoffen im Dottersack', o:['von der Kalkschale', 'von der Luft in der Luftkammer', 'von der Eihaut'], es:'Se alimenta de los nutrientes del saco vitelino.', say:'Der Embryo ernährt sich von den Nährstoffen im Dottersack.' },
+  { t:'fortpflanzung', q:'Wozu dienen die Hagelschnüre?', a:'Sie puffern Stöße ab und halten den Dottersack in der Mitte.', o:['Sie liefern dem Embryo Sauerstoff.', 'Sie bilden die harte Schale.', 'Sie halten das Ei warm.'], es:'Amortiguan golpes y centran el saco vitelino.', say:'Die Hagelschnüre puffern Stöße ab und halten den Dottersack in der Mitte.' },
+  { t:'fortpflanzung', q:'Was fließt bei der Paarung in die Kloake des Weibchens?', a:'die Samenflüssigkeit des Männchens', o:['der Dotter', 'das Eiklar', 'der Urin'], es:'El líquido seminal del macho.', say:'Die Samenflüssigkeit des Männchens fließt in die Kloake des Weibchens.' },
+  { t:'fortpflanzung', q:'Was macht das Weibchen nach der Befruchtung?', a:'Es legt Eier ab und bebrütet sie.', o:['Es bekommt lebende Junge.', 'Es verlässt das Nest.', 'Es überträgt Samenzellen.'], es:'Pone huevos y los incuba.', say:'Nach der Befruchtung legt das Weibchen Eier ab und bebrütet sie.' },
+  { t:'fortpflanzung', q:'Was passiert am 21. Tag im Hühnerei?', a:'Das Küken schlüpft aus dem Ei.', o:['Man erkennt die Gliedmaßen.', 'Der Embryo bekommt Federn.', 'Die Henne legt das Ei.'], es:'El día 21 el pollito sale del huevo.', say:'Am 21. Tag schlüpft das Küken aus dem Ei.' },
+  { t:'fortpflanzung', q:'Was hat das Küken direkt nach dem Schlüpfen?', a:'Daunenfedern', o:['Schuppen am ganzen Körper', 'Zähne', 'keine Federn'], es:'Tiene plumón.', say:'Das Küken hat Daunenfedern.' },
+];
+
+/* ============================================================
+   SCHREIB-FALLEN — typische Fehler aus den Arbeitsblättern (Rechtschreibung, Artikel, Endungen)
+   ============================================================ */
+const FIXES = {
+  aussen: [
+    { s:'Die Vordergliedmaßen sind zu ___ umgebildet.', o:['Flügeln', 'Flügen', 'Flügel', 'Flüglen'], a:'Flügeln', es:'Flügel con L. Aquí es dativo plural: zu FlügelN.' },
+    { s:'___ Gartenbaumläufer hat einen feinen Schnabel.', o:['Der', 'Die', 'Das', 'Den'], a:'Der', es:'der Läufer → DER Gartenbaumläufer (masculino).' },
+  ],
+  skelett: [
+    { s:'Am ___ befinden sich die Muskeln, die die Flügel bewegen.', o:['Brustbein', 'Bruntbein', 'Brustbain', 'Brustbeim'], a:'Brustbein', es:'Brust + Bein = Brustbein. ¡No «Bruntbein»!' },
+    { s:'Die hinteren Gliedmaßen sind durch ___ Becken mit der Wirbelsäule verbunden.', o:['das', 'der', 'die', 'dem'], a:'das', es:'das Becken (neutro) → durch DAS Becken (acusativo).' },
+  ],
+  organe: [
+    { s:'Der Urin aus der ___ verlässt durch die Kloake den Körper.', o:['Niere', 'Nire', 'Niehre', 'Nähre'], a:'Niere', es:'Se escribe Niere (ie = i larga).' },
+    { s:'Die Vögel besitzen wie die Reptilien eine ___.', o:['Kloake', 'Kloacke', 'Kloke', 'Cloake'], a:'Kloake', es:'Kloake, sin «ck»: Klo-a-ke.' },
+  ],
+  fortpflanzung: [
+    { s:'Dabei werden die ___ der beiden Partner aufeinander gedrückt.', o:['Kloaken', 'Kloacken', 'Kloake', 'Kloaker'], a:'Kloaken', es:'Plural de die Kloake: die Kloaken, sin «ck».' },
+    { s:'Bei den Vögeln findet eine ___ Befruchtung statt.', o:['innere', 'innen', 'inneren', 'äußere'], a:'innere', es:'Después de «eine» (femenino): eine innerE Befruchtung.' },
+    { s:'Die vom Weibchen gelegten Eier bestehen aus ___.', o:['Kalk', 'Kalg', 'Kalt', 'Kalck'], a:'Kalk', es:'Kalk, con k al final.' },
+    { s:'Der Embryo ernährt sich von Nährstoffen, welche sich im ___ befinden.', o:['Dottersack', 'Dotersack', 'Dottersak', 'Dottersäcke'], a:'Dottersack', es:'Dotter + Sack = Dottersack (singular, con dos t y ck).' },
+    { s:'Ein Nestflüchter ist ein Vogel, ___ schnell das Nest verlässt.', o:['der', 'das', 'wer', 'die'], a:'der', es:'ein Vogel (masculino) → «…, DER schnell das Nest verlässt».' },
+    { s:'Die Amsel bleibt im Nest, ___ ihr Federkleid noch nicht entwickelt ist.', o:['weil', 'dass', 'wenn', 'denn'], a:'weil', es:'«weil» = porque, y el verbo va al final: …, weil … ist.' },
+    { s:'Die ___ liegt immer oben.', o:['Keimscheibe', 'Keimschiebe', 'Kaimscheibe', 'Keimscheiben'], a:'Keimscheibe', es:'Keim + Scheibe. Singular: die Keimscheibe.' },
+  ],
+};
 
 /* ============================================================
    SCHNÄBEL (Seite 7)
@@ -657,7 +901,7 @@ const BEAKS = [
     es:'pico plano filtrador con láminas córneas → animalitos acuáticos y plantas', shape:'flat', col:{body:'#7a6048',belly:'#b99c7c',head:'#1f6b45',beak:'#d8b73a'},
     kwBeak:/flach|seih|lamelle/, kwFood:/wasser|pflanze/ },
 ];
-const BEAK_FIX = [
+const BEAK_FIX = FIXES.schnabel = [
   { s:'Die Stockente hat einen ___ Schnabel.', o:['flachen','flacher','flach','flache'], a:'flachen', es:'Después de «einen» (masculino, acusativo) el adjetivo termina en -en: einen flachEN Schnabel.' },
   { s:'Die Amsel hat einen ___ Schnabel.', o:['schlanken','Schlank','schlanker','schlank'], a:'schlanken', es:'einen schlankEN Schnabel. Los adjetivos van en minúscula.' },
   { s:'Der Gartenbaumläufer hat einen leicht ___ Schnabel.', o:['gebogenen','gebogener','gebogen','biegen'], a:'gebogenen', es:'einen leicht gebogenEN Schnabel = un pico ligeramente curvado.' },
@@ -705,13 +949,16 @@ const ZONES = [
   { z:3, name:'Magen-Moor', es:'Pantano del Estómago', topic:'organe', page:'Seite 4' },
   { z:4, name:'Schnabel-Wald', es:'Bosque de los Picos', topic:'schnabel', page:'Seiten 6, 7, 9' },
   { z:5, name:'Merkmal-Gipfel', es:'Cumbre de las Características', topic:'merkmale', page:'Seite 8' },
+  { z:6, name:'Nest-Bucht', es:'Bahía de los Nidos', topic:'fortpflanzung', page:'Seiten 10–12' },
 ];
+const ZN = 6; // number of zones
 const STATIONS = {
   1: [ { kind:'obby', arg:'aussen', name:'Artikel-Obby', icon:'🟦' }, { kind:'drones', arg:'aussen', name:'Drohnen-Jagd', icon:'🎯' }, { kind:'raid', arg:'aussen', name:'Beschriften-Raid', icon:'🏷️' }, { kind:'terminal', arg:'aussen', cloze:'p2', name:'Code-Terminal', icon:'💻' } ],
   2: [ { kind:'obby', arg:'skelett', name:'Artikel-Obby', icon:'🟦' }, { kind:'drones', arg:'skelett', name:'Drohnen-Jagd', icon:'🎯' }, { kind:'raid', arg:'skelett', name:'Beschriften-Raid', icon:'🦴' }, { kind:'terminal', arg:'skelett', cloze:'p3', name:'Code-Terminal', icon:'💻' } ],
   3: [ { kind:'foodrun', arg:'organe', name:'Verdauungs-Run', icon:'🚪' }, { kind:'drones', arg:'organe', name:'Drohnen-Jagd', icon:'🎯' }, { kind:'raid', arg:'organe', name:'Beschriften-Raid', icon:'🫁' }, { kind:'terminal', arg:'organe', cloze:'p4', name:'Code-Terminal', icon:'💻' } ],
   4: [ { kind:'beakblaster', arg:'schnabel', name:'Schnabel-Blaster', icon:'🔫' }, { kind:'beakrun', arg:'schnabel', name:'Schnabel-Türen', icon:'🚪' }, { kind:'obby', arg:'schnabel', name:'Artikel-Obby', icon:'🟦' }, { kind:'terminal', arg:'schnabel', cloze:'p6', name:'Code-Terminal', icon:'💻' } ],
   5: [ { kind:'collector', arg:'merkmale', name:'Merkmal-Jagd', icon:'🧭' }, { kind:'tfrun', arg:'all', name:'Wahr-oder-Falsch-Türen', icon:'🚪' }, { kind:'drones', arg:'op', name:'Aufgaben-Drohnen', icon:'🎯' }, { kind:'terminal', arg:'merkmale', cloze:'p8', name:'Code-Terminal', icon:'💻' } ],
+  6: [ { kind:'obby', arg:'fortpflanzung', name:'Artikel-Obby', icon:'🟦' }, { kind:'raid', arg:'ei', name:'Ei-Raid', icon:'🥚' }, { kind:'timeline', arg:'fortpflanzung', name:'Brut-Zeitleiste', icon:'📜' }, { kind:'terminal', arg:'fortpflanzung', cloze:'p12', build:'huehnerei', name:'Code-Terminal', icon:'💻' } ],
 };
 const STATION_INFO = {
   obby:{ de:'Spring auf die Plattform mit dem richtigen Artikel. Die falsche fällt in die Lava!', es:'Salta a la plataforma con el artículo correcto. ¡La incorrecta cae a la lava!', how:'WASD laufen · Leertaste springen · Maus: Kamera. Blau = der, Rot = die, Grün = das.' },
@@ -723,15 +970,17 @@ const STATION_INFO = {
   beakrun:{ de:'Welcher Vogel, welcher Schnabel, welches Futter? Wähle die richtige Tür.', es:'¿Qué ave, qué pico, qué comida? Elige la puerta correcta.', how:'Lies die Frage oben und wähle die Tür.' },
   collector:{ de:'Sammle die zehn echten Merkmale der Vögel. Die Lügen-Geister jagen dich!', es:'Recoge las diez características verdaderas. ¡Los fantasmas mentirosos te persiguen!', how:'Lauf in die goldenen Rollen. Schieß die Geister, um sie zu stoppen.' },
   tfrun:{ de:'Richtig oder falsch? Lauf durch die richtige Tür.', es:'¿Verdadero o falso? Pasa por la puerta correcta.', how:'Links und rechts: Richtig oder Falsch.' },
+  timeline:{ de:'Bring die sieben Ereignisse in die richtige Reihenfolge: von der Paarung bis zum Küken. Danach erklärst du zwei Schritte mit eigenen Worten.', es:'Ordena los siete sucesos: del apareamiento al pollito. Después explicas dos pasos con tus propias palabras.', how:'Lauf in eine Karte, um sie zu tragen. Lauf dann auf die richtige Nummer: 1 = Anfang, 7 = Ende.' },
 };
 const NPCS = {
   0: { name:'Professorin Eule', kind:'eule', lines:[
     ['Willkommen auf der Vogel-Insel! Ich bin Professorin Eule.','¡Bienvenido a la Isla de los Pájaros! Soy la profesora Búho.'],
     ['Der Vergess-Geier hat die Wörter der Insel gestohlen. Die Vögel wissen nicht mehr, wie ihre Körperteile heißen!','El Buitre del Olvido ha robado las palabras de la isla. ¡Los pájaros ya no saben cómo se llaman las partes de su cuerpo!'],
-    ['Geh durch die fünf Zonen. Sprich mit den Vögeln, spiele an den Schreinen und besiege die Bosse.','Recorre las cinco zonas. Habla con los pájaros, juega en los santuarios y vence a los jefes.'],
+    ['Geh durch die sechs Zonen. Sprich mit den Vögeln, spiele an den Schreinen und besiege die Bosse.','Recorre las seis zonas. Habla con los pájaros, juega en los santuarios y vence a los jefes.'],
     ['Steuerung: WASD oder Pfeiltasten zum Laufen. E zum Sprechen und Spielen. Esc öffnet das Menü, B das Lexikon.','Controles: WASD o flechas para caminar. E para hablar y jugar. Esc abre el menú, B el diccionario (Lexikon).'],
     ['Lerne jedes Wort MIT Artikel: der ist blau, die ist rot, das ist grün.','Aprende cada palabra CON su artículo: der es azul, die es rojo, das es verde.'],
-    ['Jeden Tag gibt es am Morgen-Altar ein kurzes Training. Das hilft dir, nichts zu vergessen!','Cada día hay un entrenamiento corto en el Altar de la Mañana. ¡Así no olvidas nada!'],
+    ['Jeden Tag gibt es im Dorf einen Tages-Run. Das hilft dir, nichts zu vergessen!','Cada día hay un Tages-Run en el pueblo. ¡Así no olvidas nada!'],
+    ['Im Test musst du auch erklären können, zum Beispiel den Weg der Nahrung oder die Fortpflanzung. Komm zu mir zum Erklär-Training, sobald du eine Zone geschafft hast!','En el examen también tienes que EXPLICAR, por ejemplo el camino de la comida o la reproducción. ¡Ven a mi Erklär-Training cuando termines una zona!'],
     ['Die erste Zone ist die Federwiese. Folge dem goldenen Pfeil!','La primera zona es el Prado de las Plumas. ¡Sigue la flecha dorada!'],
   ]},
   1: { name:'Die Amsel', kind:'amsel', lines:[
@@ -783,6 +1032,17 @@ const NPCS = {
     ['Flugunfähig sind der Strauß, der Emu, der Pinguin und der Kiwi – vor allem, weil wir zu schwer sind.','No pueden volar el avestruz, el emú, el pingüino y el kiwi, sobre todo porque somos demasiado pesados.'],
     ['Der Falsch-Vogel erzählt Lügen über Vögel. Sammle die zehn echten Merkmale!','El Pájaro Mentiroso cuenta mentiras sobre las aves. ¡Recoge las diez características verdaderas!'],
   ]},
+  6: { name:'Die Henne', kind:'henne', lines:[
+    ['Gack-gack! Willkommen in der Nest-Bucht. Ich bin die Henne. Hier lernst du die Fortpflanzung der Vögel.','¡Co-co! Bienvenido a la Bahía de los Nidos. Soy la gallina. Aquí aprendes la reproducción de las aves.'],
+    ['Bei der Paarung drücken das Weibchen und das Männchen ihre Kloaken aufeinander. Dabei fließt die Samenflüssigkeit des Männchens in die Kloake des Weibchens.','En el apareamiento, la hembra y el macho juntan sus cloacas. Así el líquido seminal del macho pasa a la cloaca de la hembra.'],
+    ['Es findet also eine innere Befruchtung statt – im Körper des Weibchens.','Es decir: la fecundación es interna, dentro del cuerpo de la hembra.'],
+    ['Nach der Befruchtung lege ich Eier ab und bebrüte sie. Die Schale ist sehr hart. Sie besteht aus Kalk.','Tras la fecundación pongo huevos y los incubo. La cáscara es muy dura. Es de cal.'],
+    ['Im Ei: Aus der Keimscheibe entwickelt sich der Embryo. Sie liegt immer oben. Der Dottersack enthält Nährstoffe, von denen sich der Embryo ernährt.','Dentro del huevo: del disco germinal se desarrolla el embrión. Siempre queda arriba. El saco vitelino contiene los nutrientes de los que se alimenta el embrión.'],
+    ['Die Hagelschnüre an beiden Seiten puffern Stöße ab und halten den Dottersack in der Mitte.','Las chalazas, a ambos lados, amortiguan los golpes y mantienen el saco vitelino en el centro.'],
+    ['Nach 12 Tagen erkennt man die Gliedmaßen. Nach 20 Tagen hat der junge Vogel Federn und atmet mit den Lungen. Am 21. Tag schlüpft das Küken aus dem Ei.','A los 12 días se reconocen las extremidades. A los 20 días el ave joven tiene plumas y respira con los pulmones. El día 21 el pollito sale del huevo.'],
+    ['Meine Küken sind Nestflüchter: Sie verlassen schnell das Nest. Junge Amseln sind Nesthocker: Sie bleiben im Nest, weil ihr Federkleid noch nicht entwickelt ist.','Mis pollitos son nidífugos: dejan pronto el nido. Los mirlos jóvenes son nidícolas: se quedan en el nido porque su plumaje aún no está desarrollado.'],
+    ['Die Elster hat meine Eier gestohlen! Lerne alles über das Ei und hol sie dir zurück.','¡La urraca ha robado mis huevos! Aprende todo sobre el huevo y recupéralos.'],
+  ]},
 };
 const BOSSES = {
   1: { name:'Der Krähen-König', es:'El Rey Cuervo', hp:10, kind:'crow', intro:['Krah! Ohne Wörter bleibt ihr alle stumm!','¡Crah! ¡Sin palabras os quedáis todos mudos!'], win:['Nein! Kopf, Rumpf, Schwanz … du kennst sie alle!','¡No! Cabeza, tronco, cola… ¡te las sabes todas!'] },
@@ -790,13 +1050,14 @@ const BOSSES = {
   3: { name:'Der Kropf-Krake', es:'El Kraken del Buche', hp:11, kind:'kraken', intro:['Blubb! Kaumagen oder Drüsenmagen? Du bringst alles durcheinander!','¡Blub! ¿Molleja o proventrículo? ¡Lo mezclas todo!'], win:['Blubb … die Nahrung geht den richtigen Weg …','Blub… la comida va por el camino correcto…'] },
   4: { name:'Der Werkzeug-Golem', es:'El Gólem de Herramientas', hp:12, kind:'golem', intro:['Pinzette, Meißel, Zange – ich bin alle Werkzeuge!','Pinza, cincel, tenaza: ¡soy todas las herramientas!'], win:['Mein Meißel … ist stumpf …','Mi cincel… está desafilado…'] },
   5: { name:'Der Falsch-Vogel', es:'El Pájaro Mentiroso', hp:12, kind:'liar', intro:['Vögel haben Zähne und ein Fell! Hihihi!','¡Las aves tienen dientes y pelaje! ¡Jijiji!'], win:['Die Wahrheit … sie tut weh!','La verdad… ¡duele!'] },
+  6: { name:'Die Ei-Diebin Elster', es:'La Urraca Ladrona de Huevos', hp:13, kind:'elster', intro:['Schack-schack! Die Eier gehören jetzt mir! Weißt du überhaupt, was da drin ist?','¡Chac-chac! ¡Los huevos ahora son míos! ¿Acaso sabes lo que hay dentro?'], win:['Schack … Keimscheibe, Dottersack, Hagelschnüre … du weißt alles! Nimm die Eier!','Chac… disco germinal, saco vitelino, chalazas… ¡lo sabes todo! ¡Toma los huevos!'] },
 };
 const GEIER = { name:'Der Vergess-Geier', es:'El Buitre del Olvido', intro:[
   ['HAHAHA! Ich bin der Vergess-Geier! Im Prüfungsturm ist alles auf Deutsch – wie im echten Test!','¡JAJAJA! ¡Soy el Buitre del Olvido! En la Torre del Examen todo está en alemán, ¡como en el examen de verdad!'],
   ['Jede richtige Antwort trifft mich. Ab 60 % bin ich besiegt. Spanische Hilfe kostet einen Joker!','Cada respuesta correcta me golpea. Con un 60 % me vences. ¡La ayuda en español cuesta un comodín (Joker)!'],
 ]};
 
-const LEVELS = [[0,'Küken','polluelo'],[120,'Nestling','pichón'],[300,'Jungvogel','pájaro joven'],[600,'Ranger','guardabosques'],[1000,'Ober-Ranger','guardabosques jefe'],[1600,'Vogel-Experte','experto en aves'],[2400,'Meister-Ornithologe','maestro ornitólogo']];
+const LEVELS = [[0,'Küken','polluelo'],[120,'Nestling','pichón'],[300,'Jungvogel','pájaro joven'],[600,'Ranger','guardabosques'],[1000,'Ober-Ranger','guardabosques jefe'],[1600,'Vogel-Experte','experto en aves'],[2400,'Meister-Ornithologe','maestro ornitólogo'],[3400,'Vogel-Professor','profesor de aves']];
 const BADGES = {
   first:  { n:'Erster Sieg', d:'Besiege ein Nebel-Monster.', i:'⚔️' },
   boss1:  { n:'Wiesen-Retter', d:'Besiege den Krähen-König.', i:'👑' },
@@ -804,12 +1065,14 @@ const BADGES = {
   boss3:  { n:'Magen-Meister', d:'Besiege den Kropf-Kraken.', i:'🐙' },
   boss4:  { n:'Schnabel-Profi', d:'Besiege den Werkzeug-Golem.', i:'🔧' },
   boss5:  { n:'Wahrheits-Held', d:'Besiege den Falsch-Vogel.', i:'🎭' },
+  boss6:  { n:'Nest-Beschützer', d:'Besiege die Ei-Diebin Elster.', i:'🥚' },
+  erklaer10:{ n:'Erklär-Profi', d:'10 Prozesse mit voller Punktzahl erklärt.', i:'🎓' },
   combo10:{ n:'Feuer-Feder', d:'10 richtige Antworten in Folge.', i:'🔥' },
   art30:  { n:'Artikel-Profi', d:'30 richtige Artikel (der/die/das).', i:'🎨' },
   gold20: { n:'Gold-Sammler', d:'20 Gold-Karten im Lexikon.', i:'🏅' },
   daily3: { n:'Frühaufsteher', d:'Morgen-Training an 3 Tagen.', i:'🌅' },
   exam80: { n:'Prüfungs-Held', d:'Mindestens 80 % im Prüfungsturm.', i:'🏆' },
-  stars:  { n:'Sternen-Jäger', d:'Alle 20 Schreine mit 3 Sternen.', i:'⭐' },
+  stars:  { n:'Sternen-Jäger', d:'Alle 24 Schreine mit 3 Sternen.', i:'⭐' },
 };
 const SHOP = [
   { id:'hat-cap', type:'hat', name:'Kappe', price:60, emoji:'🧢' },
@@ -851,7 +1114,7 @@ function defaultState(){
   return { v:1, name:'Ranger', feathers:0, xp:0, hearts:5, maxHearts:5, jokers:2, zone:1, met:{}, bosses:{}, stations:{}, words:{}, badges:{},
     skin:{ shirt:'#2f6fed', pants:'#1f2a44', hat:'cap', trail:null }, owned:{ 'shirt-#2f6fed':1, 'pants-#1f2a44':1, 'hat-cap':1, 'hat-none':1 },
     settings:{ sound:true, tts:true, es:false, sens:1 }, stats:{ ms:0, days:{}, topic:{} }, exams:[], lastDaily:'', dailyDays:0,
-    arenaBest:0, artRight:0, bestCombo:0, pos:null, started:false, unlockAll:false };
+    arenaBest:0, artRight:0, bestCombo:0, explainPerfect:0, explainDone:0, pos:null, started:false, unlockAll:false };
 }
 function mergeState(o){
   const d = defaultState();
@@ -873,7 +1136,7 @@ function ws(id){ return S.words[id] || (S.words[id] = { b:0, d:0, r:0, w:0 }); }
 function tier(id){ const w = S.words[id]; if (!w || w.b === 0) return 0; if (w.b <= 2) return 1; if (w.b <= 4) return 2; return 3; }
 const TIER_NAME = ['neu', 'Bronze', 'Silber', 'Gold'];
 function grade(id, result){
-  const w = WMAP[id]; if (!w) return;
+  const w = WMAP[id] || PMAP[id]; if (!w) return;
   const s = ws(id), now = Date.now();
   const ts = S.stats.topic[w.t] || (S.stats.topic[w.t] = { r:0, w:0 });
   if (result === 'right'){ s.r++; ts.r++; if (s.b === 0) s.b = 1; if (now >= s.d || s.b <= 1) s.b = Math.min(5, s.b + 1); s.d = now + BOX_MS[s.b]; }
@@ -893,7 +1156,8 @@ function pickWords(ids, n){
   }).sort((a, b) => b[0] - a[0]).slice(0, n).map(x => x[1]);
 }
 function topicIds(t, filter){ return WORDS.filter(w => (t === 'all' || w.t === t) && (!filter || filter(w))).map(w => w.id); }
-function unlockedTopics(){ const t = []; for (let z = 1; z <= 5; z++) if (z <= S.zone) t.push(ZONES[z].topic); if (S.zone >= 5) t.push('op'); return t; }
+function unlockedTopics(){ const t = []; for (let z = 1; z <= ZN; z++) if (z <= S.zone || S.unlockAll) t.push(ZONES[z].topic); if (S.zone >= 5 || S.unlockAll) t.push('op'); return t; }
+function unlockedProcesses(){ const ts = unlockedTopics(); return PROCESSES.filter(P => ts.includes(P.t)); }
 function dueCount(){ const now = Date.now(); const ts = unlockedTopics(); return WORDS.filter(w => ts.includes(w.t) && S.words[w.id] && S.words[w.id].b > 0 && S.words[w.id].d <= now).length; }
 
 /* ---------- sound effects (Web Audio synth) ---------- */
@@ -1003,11 +1267,13 @@ function addFeathers(n){
 function badge(k){ if (S.badges[k]) return; S.badges[k] = Date.now(); const b = BADGES[k]; SFX.win(); toast(`${b.i} Abzeichen: <b>${b.n}</b>`, 'gold'); save(); }
 function onAnswer(result, q){
   if (q && q.id) grade(q.id, result);
+  if (q && q.type === 'explain'){ S.explainDone++; if (result === 'right'){ S.explainPerfect++; if (S.explainPerfect >= 10) badge('erklaer10'); } }
   if (result === 'right'){
     combo++; if (combo > S.bestCombo) S.bestCombo = combo; if (combo >= 10) badge('combo10');
     if (q && q.type === 'art'){ S.artRight++; if (S.artRight >= 30) badge('art30'); }
-    addFeathers(Math.round(5 * mult()));
-  } else if (result === 'wrong'){ combo = 0; }
+    addFeathers(Math.round((q && q.pts || 5) * mult()));
+  } else if (result === 'close' && q && q.pts){ addFeathers(Math.round(q.pts / 2)); }
+  else if (result === 'wrong'){ combo = 0; }
   hud();
 }
 function hurt(n = 1){
@@ -1181,6 +1447,45 @@ function qMerkmal(){
     explain:'Flugunfähig: der Strauß, der Emu, der Pinguin und der Kiwi – sie sind zu schwer.', explainEs:'No pueden volar: avestruz, emú, pingüino y kiwi (son demasiado pesados).', es:'¿Qué ave NO puede volar?', sayAfter:nounLabel(fl) };
 }
 
+/* ---------- processes: free-text explanations with a rubric ---------- */
+function scoreExplain(text, P){
+  const t = fold(normT(text || ''));
+  const hits = [], misses = []; let p = 0;
+  if (P.merkmale){
+    const used = new Set(); MERKMALE.forEach((m, j) => { if (m.re.test(t)) used.add(j); });
+    let n = used.size; if (MERKMAL_EXTRA.re.test(t)) n++;
+    p = Math.min(P.max, n);
+    MERKMALE.forEach((m, j) => (used.has(j) ? hits : misses).push(m.short));
+    return { p, max:P.max, hits, misses: p >= P.max ? [] : misses.slice(0, P.max - p + 1) };
+  }
+  for (const k of P.keys){ if (k.re.test(t)){ p += k.p; hits.push(k.hint); } else misses.push(k.hint); }
+  if (P.order){
+    let last = -1, ok = true;
+    for (const re of P.order){ const m = re.exec(t); if (!m || m.index < last){ ok = false; break; } last = m.index; }
+    if (ok){ p += 1; hits.push(P.orderHint); } else misses.push(P.orderHint);
+  }
+  return { p:Math.min(P.max, p), max:P.max, hits, misses };
+}
+function qExplain(P, o = {}){
+  return { type:'explain', id:P.id, P, prompt:`<span class="op">Erkläre</span> ${esc(P.q)} ${speakBtn(P.q)}`, es:P.es, bank:o.bank ? shuffle(P.bank.slice()) : null, pts:6 * P.max,
+    placeholder:'Schreib ganze Sätze auf Deutsch …', sayAfter:P.model, explainEs:esc(P.modelEs), answerHTML:esc(P.model) };
+}
+function qFact(item){
+  return { type:'mc', prompt:esc(item.q), options:shuffle([{ html:esc(item.a), val:'ok' }, ...item.o.map((o, i) => ({ html:esc(o), val:'f' + i }))]), correct:'ok',
+    answerHTML:esc(item.a), explain:esc(item.say) + ' ' + speakBtn(item.say), explainEs:esc(item.es), es:'Elige la respuesta correcta.', sayAfter:item.say };
+}
+function qSeq(){
+  if (Math.random() < 0.5){
+    const i = Math.floor(Math.random() * (TIMELINE.length - 1)), nx = TIMELINE[i + 1];
+    const others = sample(TIMELINE.filter((e, k) => k !== i && k !== i + 1), 2);
+    return { type:'mc', prompt:`Was passiert als <b>Nächstes</b>?<div class="def">${esc(TIMELINE[i].short)}</div>`, options:shuffle([{ html:esc(nx.short), val:'ok' }, ...others.map((e, k) => ({ html:esc(e.short), val:'f' + k }))]), correct:'ok',
+      answerHTML:esc(nx.short), explain:esc(nx.title + ': ' + nx.de) + ' ' + speakBtn(nx.de), explainEs:esc(nx.es), es:'¿Qué pasa después de esto?', sayAfter:nx.de };
+  }
+  const [a, b] = sample(TIMELINE, 2), first = TIMELINE.indexOf(a) < TIMELINE.indexOf(b) ? a : b;
+  return { type:'mc', prompt:'Was passiert <b>zuerst</b>?', options:shuffle([a, b].map(e => ({ html:esc(e.short), val:e.k }))), correct:first.k,
+    answerHTML:esc(first.short), explain:esc(first.title + ': ' + first.de) + ' ' + speakBtn(first.de), explainEs:esc(first.es), es:'¿Cuál de los dos sucesos pasa primero?', sayAfter:first.de };
+}
+
 /* ---------- umlaut helper ---------- */
 function umlautBar(){ return `<div class="umlauts" aria-label="Sonderzeichen">${['ä','ö','ü','ß','Ä','Ö','Ü'].map(c => `<button type="button" class="uml" data-ch="${c}" tabindex="-1">${c}</button>`).join('')}</div>`; }
 let lastField = null;
@@ -1208,6 +1513,7 @@ function askQ(q, mount, o = {}){
     if (helpOn) h += `<div class="q-help" ${S.settings.es ? '' : 'hidden'}>${q.es}</div>`;
     h += `<div class="q-body">${q.media ? `<div class="q-media">${q.media}</div>` : ''}<div class="q-main">`;
     if (q.type === 'type') h += `<div class="typerow"><input class="answer" id="ans-${uid}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${esc(q.placeholder || '')}" aria-label="Antwort"><button class="btn go" type="button">Prüfen ⏎</button></div>${umlautBar()}`;
+    else if (q.type === 'explain') h += `<textarea class="answer xl" id="ans-${uid}" rows="4" spellcheck="false" placeholder="${esc(q.placeholder || '')}" aria-label="Antwort"></textarea>${q.bank ? `<div class="bank"><span class="muted">Stichwörter:</span> ${q.bank.map(b => `<span class="bk">${esc(b)}</span>`).join('')}</div>` : ''}${umlautBar()}<div class="typerow end"><span class="muted small">Strg / ⌘ + Enter = Prüfen</span><button class="btn go" type="button">Prüfen</button></div>`;
     else h += `<div class="opts ${q.type}">` + q.options.map((op, i) => `<button class="opt ${op.cls || ''}" type="button" data-i="${i}"><kbd>${op.key || i + 1}</kbd><span>${op.html}</span></button>`).join('') + `</div>`;
     h += `</div></div>`;
     if (o.timeLimit) h += `<div class="timer"><i></i></div>`;
@@ -1217,7 +1523,7 @@ function askQ(q, mount, o = {}){
     if (q.say) setTimeout(() => speak(q.say), 250);
     const helpBtn = root.querySelector('.help');
     if (helpBtn) helpBtn.onclick = () => { usedHelp = true; root.querySelector('.q-help').hidden = false; helpBtn.disabled = true; };
-    const input = root.querySelector('input.answer');
+    const input = root.querySelector('.answer');
     if (input) setTimeout(() => input.focus(), 30);
     if (o.timeLimit){
       const bar = root.querySelector('.timer i');
@@ -1232,6 +1538,7 @@ function askQ(q, mount, o = {}){
         return false;
       }
       if (q.type === 'type'){ if (e.code === 'Enter' || e.code === 'NumpadEnter'){ answer(input.value); return true; } return false; }
+      if (q.type === 'explain'){ if ((e.code === 'Enter' || e.code === 'NumpadEnter') && (e.metaKey || e.ctrlKey)){ answer(input.value); return true; } return false; }
       if (typing) return false;
       let i = -1;
       if (/^Digit[1-9]$/.test(e.code)) i = +e.code.slice(5) - 1;
@@ -1247,6 +1554,10 @@ function askQ(q, mount, o = {}){
       if (q.type === 'type'){
         const r = checkTyped(val || '', q.accept); res = r.res; msg = r.msg; input.disabled = true;
         input.classList.add(res === 'right' ? 'right' : res === 'close' ? 'close' : 'wrong');
+      } else if (q.type === 'explain'){
+        const r = scoreExplain(val || '', q.P); q.score = r; input.disabled = true;
+        res = r.p >= r.max ? 'right' : r.p >= r.max / 2 ? 'close' : 'wrong';
+        input.classList.add(res);
       } else {
         const op = val == null ? null : q.options[val];
         res = op && op.val === q.correct ? 'right' : 'wrong';
@@ -1257,7 +1568,13 @@ function askQ(q, mount, o = {}){
       res === 'right' ? SFX.ok() : SFX.bad();
       if (q.sayAfter && (res !== 'right' || o.sayRight !== false)) setTimeout(() => speak(q.sayAfter), 150);
       const fb = root.querySelector('.fb');
-      let f = res === 'right' ? `<div class="fb-title ok">✔ Richtig!${combo >= 3 && !o.noReward ? ` <span class="combo">🔥 ${combo}</span>` : ''}</div>`
+      let f;
+      if (q.type === 'explain'){
+        const r = q.score;
+        f = `<div class="fb-title ${res === 'right' ? 'ok' : res === 'close' ? 'warn' : 'bad'}">${res === 'right' ? '✔ Vollständig erklärt!' : res === 'close' ? '≈ Gut, aber noch nicht vollständig.' : timeout ? '✘ Zeit ist um!' : '✘ Da fehlt noch einiges.'} <span class="pts">${r.p} / ${r.max} Punkte</span></div>
+          <div class="rubric">${r.hits.map(x => `<span class="rk hit">✔ ${esc(x)}</span>`).join('')}${r.misses.map(x => `<span class="rk miss">✘ fehlt: ${esc(x)}</span>`).join('')}</div>
+          <div class="fb-ex"><b>Musterantwort:</b> ${esc(q.P.model)} ${speakBtn(q.P.model)}</div>`;
+      } else f = res === 'right' ? `<div class="fb-title ok">✔ Richtig!${combo >= 3 && !o.noReward ? ` <span class="combo">🔥 ${combo}</span>` : ''}</div>`
         : res === 'close' ? `<div class="fb-title warn">≈ Fast richtig!</div><div>Richtig geschrieben: ${q.answerHTML}</div>`
         : `<div class="fb-title bad">✘ ${timeout ? 'Zeit ist um!' : 'Leider falsch.'}</div><div>Richtig ist: ${q.answerHTML}</div>`;
       if (msg && !timeout) f += `<div class="fb-msg">${msg}</div>`;
@@ -1266,8 +1583,8 @@ function askQ(q, mount, o = {}){
       f += `<div class="fb-actions"><button class="btn go-next" type="button">Weiter ⏎</button></div>`;
       fb.innerHTML = f; fb.hidden = false; fb.className = 'fb ' + res;
       fb.querySelector('.go-next').onclick = next;
-      if (res === 'right' && o.autoNext !== false) autoT = setTimeout(next, o.autoNext || 1300);
-      result = { result:res, ms, help:usedHelp, timeout:!!timeout };
+      if (res === 'right' && o.autoNext !== false && q.type !== 'explain') autoT = setTimeout(next, o.autoNext || 1300);
+      result = { result:res, ms, help:usedHelp, timeout:!!timeout, score:q.score || null };
       if (o.onResult) o.onResult(result);
     }
     let result = null, finished = false;
@@ -1732,6 +2049,8 @@ const BIRD_LOOK = {
   stockente:{ body:'#7a6048', belly:'#b99c7c', head:'#1f6b45', beak:'#d8b73a', beakKind:'flat' },
   crow:{ body:'#15151b', belly:'#222229', head:'#15151b', beak:'#50505a', beakKind:'short' },
   liar:{ body:'#6b3fa3', belly:'#b48be0', head:'#6b3fa3', beak:'#ff8fb1', beakKind:'short' },
+  henne:{ body:'#b5652d', belly:'#dea06a', head:'#b5652d', beak:'#f2b632', beakKind:'short', comb:'#d92b2b' },
+  elster:{ body:'#15151b', belly:'#f4f2ee', head:'#15151b', beak:'#2a2a2a', beakKind:'short', wingTip:'#2c5fd6', longTail:true },
 };
 function beakMesh(kind, color, g){
   const m = M(color);
@@ -1754,10 +2073,11 @@ function birdModel(kind, s = 1){
   const belly = mesh(G('ico', 0.6, 1), M(L.belly), 0, 1.1, 0.28, g); belly.scale.set(0.9, 0.8, 0.9);
   if (L.under){ mesh(G('ico', 0.3, 0), M(L.under), 0, 0.85, -0.6, g); }
   [-1, 1].forEach(sx => { const w = mesh(G('ico', 0.5, 0), M(shadeHex(L.body, -25)), sx * 0.68, 1.3, -0.1, g); w.scale.set(0.3, 0.7, 1.2); if (L.wingTip) mesh(G('ico', 0.3, 0), M(L.wingTip), sx * 0.7, 1.1, -0.6, g).scale.set(0.3, 0.5, 0.8); });
-  const tail = mesh(G('box', 0.5, 0.1, 0.8), M(shadeHex(L.body, -20)), 0, 1.2, -1.05, g); tail.rotation.x = -0.35;
+  const tail = mesh(G('box', 0.5, 0.1, L.longTail ? 1.6 : 0.8), M(L.longTail ? '#1d3f8a' : shadeHex(L.body, -20)), 0, 1.2, L.longTail ? -1.45 : -1.05, g); tail.rotation.x = -0.35;
   const head = new THREE.Group(); head.position.set(0, 2.05, 0.55); g.add(head);
   mesh(G('ico', 0.46, 1), M(L.head), 0, 0, 0, head);
   if (L.cap) mesh(G('ico', 0.2, 0), M(L.cap), 0, 0.35, -0.1, head);
+  if (L.comb){ [-0.18, 0, 0.18].forEach((z, i) => mesh(G('box', 0.1, 0.22 + (i === 1 ? 0.1 : 0), 0.16), M(L.comb), 0, 0.5, z, head)); mesh(G('box', 0.12, 0.22, 0.1), M(L.comb), 0, -0.3, 0.3, head); }
   [-1, 1].forEach(sx => { mesh(G('sph', 0.1, 8, 6), M('#ffffff'), sx * 0.28, 0.1, 0.3, head, false); mesh(G('sph', 0.06, 6, 5), M('#111111'), sx * 0.31, 0.1, 0.36, head, false); });
   const bk = new THREE.Group(); bk.position.set(0, -0.02, 0.38); head.add(bk); beakMesh(L.beakKind, L.beak, bk);
   root.userData.head = head;
@@ -1802,15 +2122,20 @@ function shadeHex(hex, amt){
 /* ---------- bosses ---------- */
 function bossModel(kind){
   const root = new THREE.Group(); let upd = () => {};
-  if (kind === 'crow' || kind === 'liar'){
+  if (kind === 'crow' || kind === 'liar' || kind === 'elster'){
     const b = birdModel(kind, 3.4); root.add(b);
     const head = b.userData.head;
+    if (kind === 'elster'){
+      [-1, 1].forEach(sx => mesh(G('sph', 0.07, 6, 5), M('#7fe3ff', { em:'#7fe3ff', emi:1 }), sx * 0.31, 0.1, 0.38, head, false));
+      for (let i = 0; i < 4; i++){ const e = mesh(G('sph', 0.55, 10, 8), M('#f6efd8', { rough:0.5 }), 0, 0, 0, root); e.scale.set(1, 1.3, 1); e.userData.egg = i * 1.6; }
+      upd = t => root.children.forEach(c => { if (c.userData.egg != null){ c.position.set(Math.cos(t * 0.9 + c.userData.egg) * 4.2, 6.5 + Math.sin(t * 2 + c.userData.egg) * 0.8, Math.sin(t * 0.9 + c.userData.egg) * 4.2); c.rotation.z = Math.sin(t + c.userData.egg) * 0.4; } });
+    }
     if (kind === 'crow'){
       const cr = new THREE.Group(); cr.position.set(0, 0.45, -0.05); head.add(cr);
       mesh(G('cyl', 0.36, 0.36, 0.2, 8), M('#f2b632', { metal:0.6, rough:0.3 }), 0, 0, 0, cr);
       for (let i = 0; i < 6; i++){ const a = i / 6 * Math.PI * 2; mesh(G('cone', 0.08, 0.28, 4), M('#f2b632', { metal:0.6, rough:0.3 }), Math.cos(a) * 0.3, 0.22, Math.sin(a) * 0.3, cr); }
       [-1, 1].forEach(sx => mesh(G('sph', 0.07, 6, 5), M('#ff2a2a', { em:'#ff2a2a', emi:1 }), sx * 0.31, 0.1, 0.38, head, false));
-    } else {
+    } else if (kind === 'liar'){
       mesh(G('box', 0.95, 0.2, 0.3), M('#111'), 0, 0.1, 0.3, head);
       for (let i = 0; i < 3; i++){ const q = textSprite('?', { color:'#ffc83d', size:1.6 }); q.userData.a = i * 2.1; root.add(q); }
       upd = t => root.children.forEach(c => { if (c.isSprite){ c.position.set(Math.cos(t + c.userData.a) * 4, 7 + Math.sin(t * 2 + c.userData.a), Math.sin(t + c.userData.a) * 4); } });
@@ -1915,6 +2240,12 @@ function rock(parent, cols, x, y, z, s = 1, color = '#7d8793', solidRock = true)
   const r = mesh(G('dod', 1, 0), M(color), x, y + 0.5 * s, z, parent); r.scale.set(1.3 * s, 0.9 * s, 1.1 * s); r.rotation.y = x * 7 + z;
   if (solidRock) cols.push(makeCol(x, y + 0.45 * s, z, 2.2 * s, 0.9 * s, 1.9 * s));
 }
+function nestProp(parent, x, y, z, s = 1, rng = Math.random){
+  const n = mesh(G('torus', 0.9 * s, 0.32 * s, 7, 14), M('#8a6a3a', { rough:1 }), x, y + 0.3 * s, z, parent); n.rotation.x = Math.PI / 2;
+  mesh(G('cyl', 0.75 * s, 0.75 * s, 0.1, 12), M('#6b4f2a'), x, y + 0.12 * s, z, parent, false);
+  const k = 2 + Math.floor(rng() * 2);
+  for (let i = 0; i < k; i++){ const a = i / k * Math.PI * 2 + rng(); const e = mesh(G('sph', 0.26 * s, 8, 6), M(['#f6efd8', '#e8f0e6', '#f3dcc0'][i % 3], { rough:0.5 }), x + Math.cos(a) * 0.32 * s, y + 0.42 * s, z + Math.sin(a) * 0.32 * s, parent, false); e.scale.set(1, 1.25, 1); }
+}
 function crystal(parent, x, y, z, s = 1, color = '#a78bfa'){
   const c = mesh(G('oct', 0.6, 0), M(color, { em:color, emi:0.5, rough:0.3 }), x, y + 0.8 * s, z, parent); c.scale.set(0.6 * s, 1.6 * s, 0.6 * s); return c;
 }
@@ -1931,6 +2262,7 @@ const ISL = {
   3:{ c:new V3(-125, 0, 0), dir:[-1, 0], top:'#6f8a4a', side:'#4a3a28', theme:'swamp', sky:['#7d9a86', '#d8e4c8'] },
   4:{ c:new V3(0, 0, -125), dir:[0, -1], top:'#3f8a3a', side:'#5a3d25', theme:'forest', sky:['#6fb58a', '#e2f3d0'] },
   5:{ c:new V3(150, 40, -150), dir:[1, 0], top:'#eef3f7', side:'#8a93a0', theme:'snow', sky:['#9cc8ee', '#f4f9ff'] },
+  6:{ c:new V3(-150, 36, 150), dir:[-1, 0], top:'#d8c48f', side:'#8a7352', theme:'coast', sky:['#ff9f6e', '#ffe7c4'] },
 };
 const HUB_SPAWN = new V3(0, 0, 17);
 function islPt(z, a, b, y = 0){ const I = ISL[z], d = I.dir; return new V3(I.c.x + d[0] * a - d[1] * b, I.c.y + y, I.c.z + d[1] * a + d[0] * b); }
@@ -1952,7 +2284,7 @@ function buildWorld(){
   mesh(G('box', 2.8, 4.2, 0.6), M('#3a2e22'), 0, 2.1, 3.9, g);
   world.towerField = mesh(G('plane', 2.6, 4.0), M('#b26bff', { basic:true, opacity:0.5, double:true }), 0, 2.1, 4.3, g, false);
   const tl = textSprite('Prüfungsturm', { size:1.0, color:'#ffc83d' }); tl.position.set(0, 6.2, 4.6); g.add(tl);
-  world.inter.push({ pos:new V3(0, 0, 5.4), r:3.2, text:() => (S.bosses[5] || S.unlockAll) ? 'Prüfungsturm betreten' : '🔒 Prüfungsturm (nach allen 5 Bossen)', act:() => enterTower() });
+  world.inter.push({ pos:new V3(0, 0, 5.4), r:3.2, text:() => (S.bosses[ZN] || S.unlockAll) ? 'Prüfungsturm betreten' : `🔒 Prüfungsturm (nach allen ${ZN} Bossen)`, act:() => enterTower() });
   // Eule
   const eule = npcModel('eule', 1.35); eule.position.set(-7, 0, 13); eule.rotation.y = 0.4; g.add(eule); world.npcs.push({ m:eule, z:0 });
   addNameTag(eule, 'Professorin Eule', 3.9);
@@ -1962,14 +2294,15 @@ function buildWorld(){
   kiosk(g, C, -18, 13, '#8a4b2f', 'Wort-Inventar 📖', () => openLexikon());
   world.portals.daily = hubPortal(g, 18, -16, '#ffc83d', 'Tages-Run', () => startDaily());
   world.portals.arena = hubPortal(g, -18, -16, '#ff5d6c', 'Arena', () => arenaConfirm());
-  world.portals.gipfel = hubPortal(g, 9, -22, '#bfe6ff', 'Merkmal-Gipfel', () => { if (S.zone < 5 && !S.unlockAll){ toast('🔒 Der Gipfel öffnet sich nach dem Werkzeug-Golem (Zone 4).'); return; } travelZ5(); });
+  world.portals.gipfel = hubPortal(g, 9, -22, '#bfe6ff', 'Merkmal-Gipfel', () => { if (S.zone < 5 && !S.unlockAll){ toast('🔒 Der Gipfel öffnet sich nach dem Werkzeug-Golem (Zone 4).'); return; } travelTo(5); });
+  world.portals.bucht = hubPortal(g, -9, -22, '#ffd27a', 'Nest-Bucht', () => { if (S.zone < 6 && !S.unlockAll){ toast('🔒 Die Nest-Bucht öffnet sich nach dem Falsch-Vogel (Zone 5).'); return; } travelTo(6); });
   // lamps & trees on the hub
   [[-26, -26], [26, -26], [-26, 26], [26, 26]].forEach(([x, z]) => treeRound(g, C, x, 0, z, 1.1, '#4f9a44'));
   [[-10, 24], [10, 24], [24, 0], [-24, 0], [0, -26]].forEach(([x, z]) => { mesh(G('cyl', 0.12, 0.15, 3.4, 6), M('#2b3140'), x, 1.7, z, g); mesh(G('sph', 0.35, 8, 6), M('#fff3c4', { em:'#ffd66b', emi:1 }), x, 3.5, z, g, false); });
   // ---- bridges ----
   [1, 2, 3, 4].forEach(z => buildBridge(z));
   // ---- islands ----
-  [1, 2, 3, 4, 5].forEach(z => buildIsland(z));
+  for (let z = 1; z <= ZN; z++) buildIsland(z);
   // arrow
   world.arrow = new THREE.Group();
   const cone = mesh(G('cone', 0.28, 0.8, 4), M('#ffc83d', { em:'#ffb31a', emi:0.7 }), 0, 0, 0, world.arrow, false); cone.rotation.x = Math.PI / 2;
@@ -2041,10 +2374,10 @@ function buildIsland(z){
   world.inter.push({ pos:bp, r:7.5, text:() => S.bosses[z] ? `${BOSSES[z].name} (Revanche)` : stationsDone(z) >= 3 ? `⚔️ Bosskampf: ${BOSSES[z].name}` : `🔒 Boss: noch ${3 - stationsDone(z)} Portal(e)`, act:() => {
     if (!S.bosses[z] && stationsDone(z) < 3){ toast(`🔒 Schaffe zuerst 3 Portale (${stationsDone(z)}/3).`); return; } bossConfirm(z); } });
   keep.push(bp);
-  if (z === 5){
-    const rp = islPt(5, -26, 0);
+  if (z >= 5){
+    const rp = islPt(z, -26, 0), hx = z === 5 ? 9 : -9;
     const back = portalModel('#ffc83d', '↩ Zurück zum Dorf'); back.position.copy(rp); back.rotation.y = Math.PI / 2; g.add(back);
-    world.inter.push({ pos:rp, r:3.4, text:() => 'Zurück zum Nest-Dorf', act:() => { SFX.portal(); teleport(HUB_SPAWN.clone().add(new V3(9, 0, -18)), Math.PI); } });
+    world.inter.push({ pos:rp, r:3.4, text:() => 'Zurück zum Nest-Dorf', act:() => { SFX.portal(); teleport(HUB_SPAWN.clone().add(new V3(hx, 0, -18)), Math.PI); } });
     keep.push(rp);
   }
   // decoration
@@ -2061,6 +2394,7 @@ function buildIsland(z){
       case 'swamp': rng() < 0.4 ? deadTree(g, C, p.x, c.y, p.z, s) : rng() < 0.7 ? pond(g, p.x, c.y, p.z, s) : reeds(g, p.x, c.y, p.z); break;
       case 'forest': rng() < 0.75 ? treePine(g, C, p.x, c.y, p.z, s * 1.2) : mushroom(g, p.x, c.y, p.z, s); break;
       case 'snow': rng() < 0.55 ? treePine(g, C, p.x, c.y, p.z, s, '#2f5f45', true) : rock(g, C, p.x, c.y, p.z, s * 1.2, '#9aa4b1'); break;
+      case 'coast': { const r = rng(); r < 0.3 ? nestProp(g, p.x, c.y, p.z, s, rng) : r < 0.55 ? reeds(g, p.x, c.y, p.z) : r < 0.75 ? pond(g, p.x, c.y, p.z, s) : treeRound(g, C, p.x, c.y, p.z, s, '#5fa84f'); break; }
     }
     n++;
   }
@@ -2113,34 +2447,38 @@ function refreshWorldLocks(){
     const open = z === 1 || z <= S.zone || S.unlockAll;
     f.field.visible = !open; f.col.active = !open; f.lab.visible = !open;
   }
-  world.towerField.visible = !(S.bosses[5] || S.unlockAll);
+  world.towerField.visible = !(S.bosses[ZN] || S.unlockAll);
   for (const z in world.bossStatues){
     const b = world.bossStatues[z];
     b.dome.visible = !S.bosses[z] && stationsDone(+z) < 3;
     b.B.root.visible = true;
   }
-  for (let z = 1; z <= 5; z++) (world.portals['z' + z] || []).forEach((pm, i) => setPortalSub(pm, starStr(S.stations[z + '-' + i] || 0)));
-  if (world.portals.gipfel) world.portals.gipfel.userData.ring.material = M(S.zone >= 5 || S.unlockAll ? '#bfe6ff' : '#555b66', { em:S.zone >= 5 || S.unlockAll ? '#bfe6ff' : '#222', emi:0.6, rough:0.4 });
+  for (let z = 1; z <= ZN; z++) (world.portals['z' + z] || []).forEach((pm, i) => setPortalSub(pm, starStr(S.stations[z + '-' + i] || 0)));
+  const ringCol = (p, open, col) => { if (p) p.userData.ring.material = M(open ? col : '#555b66', { em:open ? col : '#222', emi:0.6, rough:0.4 }); };
+  ringCol(world.portals.gipfel, S.zone >= 5 || S.unlockAll, '#bfe6ff');
+  ringCol(world.portals.bucht, S.zone >= 6 || S.unlockAll, '#ffd27a');
 }
 function stationsDone(z){ let n = 0; for (let i = 0; i < 4; i++) if ((S.stations[z + '-' + i] || 0) >= 1) n++; return n; }
 function objective(){
   if (!S.met[0]) return { text:'Sprich mit Professorin Eule.', es:'Habla con la profesora Búho.', target:new V3(-7, 0, 13) };
-  for (let z = 1; z <= 5; z++){
+  for (let z = 1; z <= ZN; z++){
     if (S.bosses[z]) continue;
     const Z = ZONES[z];
     if (z === 5 && world.zone !== 5 && !S.met[5]) return { text:'Nimm das Portal zum Merkmal-Gipfel im Dorf.', es:'Toma el portal a la Cumbre en el pueblo.', target:new V3(9, 0, -22) };
+    if (z === 6 && world.zone !== 6 && !S.met[6]) return { text:'Nimm das Portal zur Nest-Bucht im Dorf.', es:'Toma el portal a la Bahía de los Nidos en el pueblo.', target:new V3(-9, 0, -22) };
     if (!S.met[z]) return { text:`${Z.name}: Sprich mit ${NPCS[z].name.replace(/^Die /, 'der ').replace(/^Der /, 'dem ')}.`, es:`${Z.es}: habla con el guía.`, target:islPt(z, -18, 7) };
     const done = stationsDone(z);
     if (done < 3){ const spots = [[-4, -16], [-4, 16], [12, -16], [12, 16]]; const i = [0, 1, 2, 3].find(k => !(S.stations[z + '-' + k] >= 1)); return { text:`${Z.name}: Schaffe 3 von 4 Portalen (${done}/3).`, es:`Supera 3 de 4 portales (${done}/3).`, target:islPt(z, spots[i][0], spots[i][1]) }; }
     return { text:`Besiege ${BOSSES[z].name.replace(/^Der /, 'den ').replace(/^Das /, 'das ')}!`, es:`¡Vence a ${BOSSES[z].es}!`, target:world.bossStatues[z].pos };
   }
+  if (S.explainDone < 3) return { text:'Erklär-Training bei Professorin Eule: Übe, Prozesse zu erklären!', es:'Erklär-Training con la profesora Búho: practica explicar procesos.', target:new V3(-7, 0, 13) };
   if (!S.exams.some(e => e.pct >= 60)) return { text:'Stelle dich dem Vergess-Geier im Prüfungsturm!', es:'¡Enfréntate al Buitre del Olvido en la Torre!', target:new V3(0, 0, 5.4) };
-  return { text:'Alles geschafft! Farm Gold-Wörter im Tages-Run und in der Arena.', es:'¡Todo superado! Repasa en el Tages-Run y la Arena.', target:null };
+  return { text:'Alles geschafft! Farm Gold-Wörter im Tages-Run, in der Arena und im Erklär-Training.', es:'¡Todo superado! Repasa en el Tages-Run, la Arena y el Erklär-Training.', target:null };
 }
 let objCache = null, objT = 0;
 function refreshObjective(){ objCache = objective(); $('#quest').innerHTML = `<b>MISSION</b> ${esc(objCache.text)} <span class="es-inline">${esc(objCache.es)}</span>`; refreshWorldLocks(); }
 function zoneAt(p){
-  for (let z = 1; z <= 5; z++){ const c = ISL[z].c; if (Math.abs(p.x - c.x) < 34 && Math.abs(p.z - c.z) < 34 && Math.abs(p.y - c.y) < 30) return z; }
+  for (let z = 1; z <= ZN; z++){ const c = ISL[z].c; if (Math.abs(p.x - c.x) < 34 && Math.abs(p.z - c.z) < 34 && Math.abs(p.y - c.y) < 30) return z; }
   if (Math.abs(p.x) < 31 && Math.abs(p.z) < 31) return 0;
   return -1;
 }
@@ -2150,7 +2488,7 @@ function worldUpdate(dt){
   for (const k in world.portals){ const v = world.portals[k]; (Array.isArray(v) ? v : [v]).forEach(p => { p.userData.disc.rotation.z -= dt * 1.5; p.userData.ring.rotation.z += dt * 0.3; }); }
   world.flag.rotation.y = Math.sin(t * 2) * 0.3;
   for (const z in world.bossStatues) world.bossStatues[z].B.update(t);
-  world.npcs.forEach(n => { const h = n.m.userData.head; if (h) h.rotation.y = Math.sin(t * 0.8 + n.z) * 0.4; n.m.position.y = (n.z === 5 ? ISL[5].c.y : n.z === 0 ? 0 : 0) + Math.abs(Math.sin(t * 2 + n.z)) * 0.05; });
+  world.npcs.forEach(n => { const h = n.m.userData.head; if (h) h.rotation.y = Math.sin(t * 0.8 + n.z) * 0.4; n.m.position.y = (n.z >= 1 ? ISL[n.z].c.y : 0) + Math.abs(Math.sin(t * 2 + n.z)) * 0.05; });
   for (const z in world.fields){ const f = world.fields[z]; if (f.field.visible) f.field.material.opacity = 0.35 + Math.sin(t * 4) * 0.1; }
   // drones
   for (const d of world.drones){
@@ -2187,9 +2525,9 @@ function worldUpdate(dt){
   if (best){ pr.hidden = false; pr.innerHTML = `<kbd>E</kbd> ${esc(best.text())}`; } else pr.hidden = true;
 }
 function interactNear(){ if (world.near){ $('#prompt').hidden = true; world.near.act(); } }
-function travelZ5(){ SFX.portal(); teleport(islPt(5, -22, 0, 0.2), Math.PI / 2 * -1 + Math.PI); cam.yaw = -Math.PI / 2; }
+function travelTo(z){ const d = ISL[z].dir, face = Math.atan2(d[0], d[1]); SFX.portal(); teleport(islPt(z, -22, 0, 0.2), face); cam.yaw = face + Math.PI; }
 function enterTower(){
-  if (!(S.bosses[5] || S.unlockAll)){ toast('🔒 Der Prüfungsturm öffnet sich, wenn alle 5 Bosse besiegt sind.'); return; }
+  if (!(S.bosses[ZN] || S.unlockAll)){ toast(`🔒 Der Prüfungsturm öffnet sich, wenn alle ${ZN} Bosse besiegt sind.`); return; }
   startExam();
 }
 /* ============================================================
@@ -2537,6 +2875,118 @@ class LabelRaid extends Activity {
   }
 }
 
+/* ============ BRUT-ZEITLEISTE (Seite 10) ============ */
+// draws the timeline billboard: a line with 7 nodes; placed events show their title
+function drawTimeline(g, W2, placed){
+  const H2 = W2 * 0.42, n = TIMELINE.length, x0 = W2 * 0.08, x1 = W2 * 0.92, y = H2 * 0.5, s = W2 / 1260;
+  g.fillStyle = '#fbf4e2'; g.fillRect(0, 0, W2, H2);
+  g.fillStyle = '#e9d9b8'; g.fillRect(0, 0, W2, 54 * s);
+  g.fillStyle = '#3a2e22'; g.font = `700 ${30 * s}px "Atkinson Hyperlegible", sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillText('Zeitleiste: von der Paarung bis zum Küken', W2 / 2, 27 * s);
+  g.strokeStyle = '#b4531a'; g.lineWidth = 8 * s; g.beginPath(); g.moveTo(x0, y); g.lineTo(x1, y); g.stroke();
+  g.fillStyle = '#b4531a'; g.beginPath(); g.moveTo(x1 + 4 * s, y); g.lineTo(x1 - 26 * s, y - 20 * s); g.lineTo(x1 - 26 * s, y + 20 * s); g.fill();
+  g.font = `700 ${22 * s}px "Atkinson Hyperlegible", sans-serif`; g.fillStyle = '#6b5a45'; g.textAlign = 'left'; g.fillText('Anfang', x0, y + 56 * s); g.textAlign = 'right'; g.fillText('Ende', x1, y + 56 * s);
+  for (let i = 0; i < n; i++){
+    const x = x0 + (x1 - x0) * (i + 0.5) / n, up = i % 2 === 0, ok = !!placed[i];
+    g.strokeStyle = '#3a2e22'; g.lineWidth = 3 * s; g.beginPath(); g.moveTo(x, y); g.lineTo(x, up ? y - 70 * s : y + 70 * s); g.stroke();
+    g.fillStyle = ok ? '#9be3ae' : '#fffaf0'; g.beginPath(); g.arc(x, y, 22 * s, 0, 7); g.fill(); g.lineWidth = 3.5 * s; g.stroke();
+    g.fillStyle = '#1d1712'; g.font = `700 ${22 * s}px "Atkinson Hyperlegible", sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(String(i + 1), x, y + 1 * s);
+    const bw = (x1 - x0) / n * 1.12, bh = 118 * s, by = up ? y - 70 * s - bh : y + 70 * s;
+    g.fillStyle = ok ? '#dff5e4' : '#f3ead6'; g.strokeStyle = ok ? '#2f9e55' : '#c9b58e'; g.lineWidth = 3 * s;
+    g.beginPath(); g.roundRect ? g.roundRect(x - bw / 2, by, bw, bh, 12 * s) : g.rect(x - bw / 2, by, bw, bh); g.fill(); g.stroke();
+    g.fillStyle = ok ? '#1d1712' : '#9a8a70';
+    if (ok){
+      g.font = `700 ${20 * s}px "Atkinson Hyperlegible", sans-serif`;
+      const lines = wrapLines(g, TIMELINE[i].title.replace(/^\d+\. /, '') + '\n' + TIMELINE[i].short, bw - 20 * s).slice(0, 4);
+      lines.forEach((l, k) => { if (k === 1) g.font = `400 ${18 * s}px "Atkinson Hyperlegible", sans-serif`; g.fillText(l, x, by + 22 * s + k * 24 * s); });
+    } else { g.font = `700 ${30 * s}px "Atkinson Hyperlegible", sans-serif`; g.fillText('?', x, by + bh / 2); }
+  }
+}
+class TimelineRaid extends Activity {
+  constructor(){ super(); this.n = TIMELINE.length; this.total = this.n + 2; this.placed = {}; this.missed = {}; this.pads = []; this.cards = []; this.carry = null; this.phase = 1; this.fallPenalty = false; }
+  setup(){
+    setSky('#ff9f6e', '#ffe7c4', '#f2c9a0', 60, 220);
+    this.B(0, -0.5, 0, 48, 1, 36, '#c9b27c');
+    [[-24, 0, 1, 36], [24, 0, 1, 36], [0, 18, 48, 1]].forEach(([x, z, sx, sz]) => this.B(x, 1, z, sx, 2, sz, '#8a7352'));
+    for (let i = 0; i < 6; i++) reeds(this.group, AO.x - 20 + i * 8, AO.y, AO.z + 15);
+    this.cvs = document.createElement('canvas'); this.cvs.width = 1260; this.cvs.height = 530; this.ctx2 = this.cvs.getContext('2d');
+    this.tex = new THREE.CanvasTexture(this.cvs); this.tex.encoding = THREE.sRGBEncoding; this.tex.anisotropy = 8;
+    const bb = new THREE.Mesh(G('plane', 26, 10.9), new THREE.MeshBasicMaterial({ map:this.tex })); bb.userData.ownMat = true;
+    this.put(bb, 0, 7, -16.5);
+    this.B(0, 7, -17, 27, 11.9, 0.4, '#5a3d25');
+    [-12, 12].forEach(x => this.B(x, 0.6, -16.8, 0.6, 1.2, 0.6, '#5a3d25'));
+    this.redraw();
+    for (let i = 0; i < this.n; i++){
+      const x = (i - (this.n - 1) / 2) * 5.4, z = -6;
+      const pad = mesh(G('cyl', 1.5, 1.6, 0.3, 12), M('#3a4150'), AO.x + x, AO.y + 0.15, AO.z + z, this.group);
+      const num = textSprite(String(i + 1), { size:1, color:'#fff' }); num.position.set(AO.x + x, AO.y + 1.4, AO.z + z); this.group.add(num);
+      this.pads.push({ i, x, z, mesh:pad, state:'' });
+    }
+    const lab = (t, x) => { const s = textSprite(t, { size:0.5, color:'#ffc83d' }); s.position.set(AO.x + x, AO.y + 2.4, AO.z - 6); this.group.add(s); };
+    lab('Anfang →', -(this.n - 1) / 2 * 5.4 - 1.5); lab('→ Ende', (this.n - 1) / 2 * 5.4 + 1.5);
+    shuffle(TIMELINE.map((e, i) => i)).forEach((i, k) => {
+      const x = -18 + (k % 4) * 12 + (Math.random() - 0.5) * 3, z = 5 + Math.floor(k / 4) * 6 + (Math.random() - 0.5) * 2;
+      const g = new THREE.Group();
+      mesh(G('box', 1.3, 1.7, 0.12), M('#fff6dc', { em:'#ffd27a', emi:0.25, rough:0.5 }), 0, 0, 0, g);
+      mesh(G('box', 1.3, 0.3, 0.14), M('#b4531a'), 0, 0.7, 0, g);
+      const sp = textSprite(TIMELINE[i].short, { size:0.42, color:'#fff', bg:'rgba(60,30,10,.85)', maxW:520 }); sp.position.set(0, 1.9, 0); g.add(sp);
+      this.put(g, x, 1.3, z);
+      this.cards.push({ i, g, hx:x, hz:z, placed:false });
+    });
+    this.spawn = this.W(0, 0.05, 13);
+    banner('Teil 1: Ordne die Ereignisse der Fortpflanzung', 'Lauf in eine Karte, dann auf die richtige Nummer: 1 = Anfang, 7 = Ende');
+  }
+  redraw(){ drawTimeline(this.ctx2, 1260, this.placed); this.tex.needsUpdate = true; }
+  update(dt){
+    this.baseUpdate(dt);
+    this.cards.forEach((c, k) => {
+      if (c.placed) return;
+      if (c === this.carry){ c.g.position.set(P.pos.x, P.pos.y + 4, P.pos.z); c.g.rotation.y = P.face; return; }
+      c.g.position.set(AO.x + c.hx, AO.y + 1.3 + Math.sin(this.t * 2 + k) * 0.2, AO.z + c.hz); c.g.rotation.y += dt * 0.8;
+    });
+    if (this.phase === 1){
+      if (!this.carry){
+        const c = this.cards.find(c => !c.placed && Math.hypot(P.pos.x - c.g.position.x, P.pos.z - c.g.position.z) < 1.6 && P.pos.y < AO.y + 3);
+        if (c){ this.carry = c; SFX.pick(); speak(TIMELINE[c.i].short); banner(`📜 ${esc(TIMELINE[c.i].short)}`, `Wohin gehört das? <span class="es-inline">${esc(TIMELINE[c.i].es)}</span>`); }
+      } else if (P.grounded){
+        const pad = this.pads.find(p => Math.hypot(P.pos.x - (AO.x + p.x), P.pos.z - (AO.z + p.z)) < 1.6);
+        if (pad && pad.state !== 'ok') this.drop(pad);
+      }
+      astat(`⏱ ${hudTime(this.t)} · Platziert ${Object.keys(this.placed).length}/${this.n}`);
+    }
+  }
+  drop(pad){
+    const c = this.carry, E = TIMELINE[c.i];
+    if (c.i === pad.i){
+      c.placed = true; this.carry = null; c.g.position.set(AO.x + pad.x, AO.y + 1.2, AO.z + pad.z); c.g.rotation.y = 0;
+      pad.state = 'ok'; pad.mesh.material = M('#22c76b', { em:'#22c76b', emi:0.4 }); this.placed[c.i] = true; this.redraw();
+      if (!this.missed[c.i]) this.correct++;
+      SFX.ok(); addFeathers(this.missed[c.i] ? 2 : 6); speak(E.de); popText(c.g.position.clone().add(new V3(0, 1.5, 0)), `✔ ${esc(E.title)}`);
+      banner(`✔ ${esc(E.title)}: ${esc(E.de)}`, esc(E.es));
+      if (this.cards.every(x => x.placed)) this.part2();
+    } else {
+      if (!this.missed[c.i]){ this.missed[c.i] = true; combo = 0; }
+      SFX.bad(); this.carry = null;
+      const dir = c.i < pad.i ? 'FRÜHER' : 'SPÄTER';
+      banner(`✘ Das passiert ${dir} – nicht an Stelle ${pad.i + 1}.`, `Tipp: ${esc(TIMELINE[pad.i].time === 'Anfang' || TIMELINE[pad.i].time === 'Ende' ? 'Stelle ' + (pad.i + 1) + ' ist ' + (pad.i === 0 ? 'der Anfang' : 'das Ende') : 'Stelle ' + (pad.i + 1) + ' = ' + TIMELINE[pad.i].time)} · <span class="es-inline">${c.i < pad.i ? 'Esto pasa antes.' : 'Esto pasa después.'}</span>`);
+      pad.mesh.material = M('#ff4d5e'); setTimeout(() => { if (pad.state !== 'ok') pad.mesh.material = M('#3a4150'); }, 900);
+    }
+  }
+  async part2(){
+    this.phase = 2; P.frozen = true; SFX.win();
+    banner('Teil 2: Erklär-Phase ✍️', 'Erkläre zwei Schritte mit eigenen Worten');
+    const Ps = pickWords(PROCESSES.filter(P => P.t === 'fortpflanzung').map(P => P.id), 2).map(id => PMAP[id]);
+    let k = 0;
+    for (const P of Ps){
+      openModal(`<div class="series-head"><h2>✍️ Erklär-Phase ${++k} / 2</h2></div><p class="sub">Schreib ganze Sätze. Die Stichwörter helfen dir. <span class="es-inline">Escribe frases completas. Las palabras clave te ayudan.</span></p><div id="qmount"></div>`, 'wide');
+      const r = await askQ(qExplain(P, { bank:tier(P.id) < 2 }), $('#qmount'));
+      if (r.result === 'right') this.correct++; else if (r.result === 'close') this.correct += 0.5;
+    }
+    closeModal(); P.frozen = false;
+    this.finish();
+  }
+}
+
 /* ============ SCHNABEL-BLASTER ============ */
 class BeakBlaster extends Activity {
   constructor(){ super(); this.total = 18; this.shooting = true; this.sel = 0; this.queue = Array.from({ length:this.total }, () => { const b = pick(BEAKS); return { b, f:pick(b.foods) }; }); this.active = []; this.spawnT = 1; this.done2 = 0; this.said = {}; this.fallPenalty = false; }
@@ -2664,12 +3114,17 @@ function qFix(item){
   return { type:'mc', prompt:`Welches Wort ist richtig?<div class="def">„${esc(item.s)}“</div>`, options:shuffle(item.o.map(o => ({ html:esc(o), val:o }))), correct:item.a,
     answerHTML:`<b>${esc(item.a)}</b>`, explain:esc(item.s.replace('___', item.a)), explainEs:esc(item.es), es:'¿Qué palabra es correcta?', sayAfter:item.s.replace('___', item.a) };
 }
+// one explain question of this topic, the least-known first (Leitner)
+function qExplainTopic(topic, o){ const Ps = PROCESSES.filter(P => P.t === topic); return qExplain(PMAP[pickWords(Ps.map(P => P.id), 1)[0]], o); }
 function bossQ(z, phase){
-  const r = Math.random();
+  const r = Math.random(), topic = ZONES[z].topic;
+  // phase 3 of every boss: one in three questions is "explain the process" (typed, rubric)
+  if (phase === 2 && Math.random() < 0.34 && !bossQ.lastExplain){ bossQ.lastExplain = true; return qExplainTopic(topic); }
+  bossQ.lastExplain = false;
   if (z <= 3){
-    const key = ZONES[z].topic, ids = topicIds(key), tf = TF.filter(x => x.t === key);
+    const key = topic, ids = topicIds(key), tf = TF.filter(x => x.t === key), fx = FIXES[key] || [];
     if (phase === 0) return r < 0.35 ? qLabel(key) : wq(ids, ['es2de', 'de2es', 'art', 'def']);
-    if (phase === 1) return r < 0.4 ? qLabel(key) : r < 0.7 ? qTF(pick(tf)) : wq(ids, ['art', 'ex', 'audio']);
+    if (phase === 1) return r < 0.35 ? qLabel(key) : r < 0.6 ? qTF(pick(tf)) : r < 0.75 && fx.length ? qFix(pick(fx)) : wq(ids, ['art', 'ex', 'audio']);
     return r < 0.5 ? qLabelType(key) : wq(ids, ['type']);
   }
   if (z === 4){
@@ -2678,10 +3133,17 @@ function bossQ(z, phase){
     if (phase === 1) return r < 0.5 ? qBeak() : qTF(pick(TF.filter(x => x.t === 'schnabel')));
     return r < 0.45 ? wq(ids.filter(id => WMAP[id].art), ['type']) : r < 0.75 ? qFix(pick(BEAK_FIX)) : qBeak();
   }
-  const ids = topicIds('merkmale');
-  if (phase === 0) return qMerkmal();
-  if (phase === 1) return r < 0.55 ? qTF(pick(TF.filter(x => x.t === 'merkmale'))) : qMerkmal();
-  return r < 0.5 ? wq(ids, ['type']) : qMerkmal();
+  if (z === 5){
+    const ids = topicIds('merkmale');
+    if (phase === 0) return qMerkmal();
+    if (phase === 1) return r < 0.55 ? qTF(pick(TF.filter(x => x.t === 'merkmale'))) : qMerkmal();
+    return r < 0.5 ? wq(ids, ['type']) : qMerkmal();
+  }
+  // zone 6: Fortpflanzung — egg diagram, facts, timeline order, spelling traps, typing
+  const ids = topicIds('fortpflanzung'), tf = TF.filter(x => x.t === 'fortpflanzung');
+  if (phase === 0) return r < 0.3 ? qLabel('ei') : r < 0.6 ? qFact(pick(FACTS)) : wq(ids, ['es2de', 'de2es', 'art', 'def']);
+  if (phase === 1) return r < 0.25 ? qSeq() : r < 0.5 ? qTF(pick(tf)) : r < 0.7 ? qFix(pick(FIXES.fortpflanzung)) : r < 0.85 ? qFact(pick(FACTS)) : qLabel('ei');
+  return r < 0.4 ? qLabelType('ei') : r < 0.7 ? wq(ids.filter(id => WMAP[id].art), ['type']) : qSeq();
 }
 class BossFight extends Activity {
   constructor(z){ super(); this.z = z; this.Bdef = BOSSES[z]; this.hp = this.Bdef.hp; this.max = this.Bdef.hp; this.shooting = true; this.qCool = 3; this.volT = 3; this.waveT = 9; this.answers = []; this.q = null; this.waves = []; }
@@ -2732,11 +3194,13 @@ class BossFight extends Activity {
   }
   async ask(){
     const q = bossQ(this.z, this.phase());
-    if (q.type === 'type'){
+    if (q.type === 'type' || q.type === 'explain'){
       this.typing = true; P.frozen = true; clearOrbs();
-      openModal(`<div class="series-head"><h2>⚡ Schwachstelle! Schreib die Antwort</h2></div><p class="sub">Richtig = doppelter Schaden. Falsch = der Boss trifft dich.</p><div id="qmount"></div>`, 'wide');
-      const r = await askQ(q, $('#qmount'), { timeLimit:30 });
+      const ex = q.type === 'explain';
+      openModal(`<div class="series-head"><h2>${ex ? '🎓 Erklär-Angriff!' : '⚡ Schwachstelle! Schreib die Antwort'}</h2></div><p class="sub">${ex ? 'Erkläre den Prozess in ganzen Sätzen. Vollständig = dreifacher Schaden, halb = einfacher Schaden.' : 'Richtig = doppelter Schaden. Falsch = der Boss trifft dich.'}</p><div id="qmount"></div>`, 'wide');
+      const r = await askQ(q, $('#qmount'), { timeLimit:ex ? 90 : 30 });
       closeModal(); P.frozen = false; this.typing = false; this.qCool = 2;
+      if (ex){ if (r.result === 'right') this.damage(3, true); else if (r.result === 'close') this.damage(1.5, false); else hurt(1); return; }
       if (r.result === 'right') this.damage(2, true); else if (r.result === 'close') this.damage(1, false); else { hurt(1); }
       return;
     }
@@ -2801,13 +3265,51 @@ function foodRunQs(){
 }
 function beakRunQs(){ return [...Array.from({ length:8 }, () => doorQ(qBeak())), ...sample(BEAK_FIX, 3).map(f => doorQ(qFix(f)))]; }
 function tfRunQs(){
-  return shuffle([...sample(TF.filter(t => t.t === 'merkmale'), 6), ...sample(TF.filter(t => t.t !== 'merkmale'), 6)]).map(t => ({
+  const ts = unlockedTopics();
+  return shuffle([...sample(TF.filter(t => t.t === 'merkmale'), 6), ...sample(TF.filter(t => t.t !== 'merkmale' && ts.includes(t.t)), 6)]).map(t => ({
     prompt:`Richtig oder falsch? „${esc(t.s)}“`, opts:[{ text:'✔ Richtig', color:'#a6ff4d', ok:t.a }, { text:'✘ Falsch', color:'#ff9aa3', ok:!t.a }],
     answer:t.a ? 'Richtig' : 'Falsch' + (t.why ? ' — ' + t.why : ''), explainEs:t.es, sayAfter:t.a ? t.s : t.why }));
 }
 function dailyQs(){
-  const ids = unlockedTopics().flatMap(t => topicIds(t));
-  return pickWords(ids, 10).map(id => doorQ(qFromWord(id, ['es2de', 'de2es', 'art', 'def', 'ex', 'audio'])));
+  const ts = unlockedTopics(), ids = ts.flatMap(t => topicIds(t));
+  // 8 word doors + 2 "process" doors (spelling traps, true/false, what happens next)
+  const extras = [];
+  const fx = ts.flatMap(t => FIXES[t] || []); if (fx.length) extras.push(doorQ(qFix(pick(fx))));
+  const tf = TF.filter(t => ts.includes(t.t)); if (tf.length) extras.push(doorQ(qTF(pick(tf))));
+  if (ts.includes('fortpflanzung')) extras.push(doorQ(Math.random() < 0.5 ? qSeq() : qFact(pick(FACTS))));
+  const words = pickWords(ids, 10 - Math.min(2, extras.length)).map(id => doorQ(qFromWord(id, ['es2de', 'de2es', 'art', 'def', 'ex', 'audio'])));
+  return shuffle([...words, ...sample(extras, 2)]);
+}
+
+/* ============ ERKLÄR-TRAINING (bei Professorin Eule) ============ */
+async function startExplainTraining(){
+  const Ps = unlockedProcesses();
+  if (!Ps.length){ toast('🔒 Schaffe zuerst die erste Zone.'); return; }
+  const due = Ps.filter(P => { const s = S.words[P.id]; return !s || s.b === 0 || s.d <= Date.now(); }).length;
+  const go = await new Promise(res => {
+    openModal(`<div class="dlg"><div class="dlg-face">${faceImg('eule')}</div><div class="dlg-body"><div class="who">Professorin Eule</div>
+      <p class="de">Im Test musst du Prozesse erklären: in ganzen Sätzen, auf Deutsch. Ich stelle dir drei Fragen. Für jede Kernidee gibt es einen Punkt.</p>
+      <p class="es">En el examen tienes que explicar procesos con frases completas en alemán. Te hago tres preguntas. Cada idea clave vale un punto. Al principio ves palabras clave como ayuda; cuando dominas un tema, desaparecen.</p>
+      <p class="muted">Themen offen: ${Ps.length} Prozesse · fällig: ${due} · bisher perfekt erklärt: ${S.explainPerfect}</p>
+      <div class="fb-actions"><button class="btn ghost" id="et-no" type="button">Später</button><button class="btn" id="et-go" type="button">🎓 Los!</button></div></div></div>`, '', { closable:true });
+    $('#et-go').onclick = () => res(true); $('#et-no').onclick = () => res(false);
+  });
+  closeModal(); if (!go) return;
+  const ids = pickWords(Ps.map(P => P.id), 3);
+  let perfect = 0, pts = 0, max = 0;
+  for (let i = 0; i < ids.length; i++){
+    const P = PMAP[ids[i]], bank = tier(P.id) < 2;
+    openModal(`<div class="series-head"><h2>🎓 Erklär-Training</h2><div class="prog">${i + 1} / ${ids.length} · ${esc(TOPICS[P.t])}</div></div>
+      <p class="sub">${bank ? 'Die Stichwörter helfen dir. Benutze sie in ganzen Sätzen.' : 'Ohne Stichwörter – du kennst das Thema schon gut!'} <span class="es-inline">Pulsa 🔊 para oír la pregunta.</span></p><div id="qmount"></div>`, 'wide');
+    const r = await askQ(qExplain(P, { bank }), $('#qmount'));
+    if (r.result === 'right') perfect++; if (r.score){ pts += r.score.p; max += r.score.max; }
+  }
+  closeModal(); save();
+  openModal(`<div class="center"><div class="big-emoji">${perfect === ids.length ? '🏆' : perfect ? '🎓' : '📘'}</div><h2 class="big-title">${perfect === ids.length ? 'Alles erklärt!' : perfect ? 'Gut erklärt!' : 'Weiter üben!'}</h2>
+    <p class="score-big">${pts} / ${max}</p><p>${perfect} von ${ids.length} vollständig. Musterantworten findest du im Wort-Inventar unter „Erklären“ und auf den Lernkarten.</p>
+    <p class="es">Las respuestas modelo están en el inventario (pestaña «Erklären») y en las fichas de estudio. Léelas en voz alta, ¡eso ayuda mucho!</p>
+    <div class="fb-actions center-actions"><button class="btn ghost" id="et-again" type="button">Nochmal</button><button class="btn" id="et-ok" type="button">Weiter</button></div></div>`);
+  $('#et-ok').onclick = closeModal; $('#et-again').onclick = () => { closeModal(); setTimeout(startExplainTraining, 50); };
 }
 function weakIds(){
   const ts = unlockedTopics();
@@ -2828,6 +3330,7 @@ async function terminalStation(z, def){
   }
   if (def.cloze){ const r = await clozePart(def.cloze); correct += r.c; total += r.n; }
   if (z === 4){ const r = await sentenceParts(3); correct += r.c; total += r.n; }
+  if (def.build){ const r = await sentenceBuild(sample(SENTENCES[def.build], 2), { head:'FILMLEISTE // DIE ENTWICKLUNG IM HÜHNEREI' }); correct += r.c * 2; total += r.n * 2; }
   closeModal();
   return { correct, total };
 }
@@ -2864,32 +3367,39 @@ function clozePart(key){
     render();
   });
 }
-async function sentenceParts(n){
-  let score = 0; const birds = sample(BEAKS, n);
-  for (const b of birds){
-    const target = [`${b.art} ${b.name}`, 'hat', 'einen', b.adj, b.noun, 'um', b.foodTile, 'zu fressen.'];
-    const base = b.adj.replace(/en$/, ''), other = pick(BEAKS.filter(x => x !== b));
-    const bank = shuffle([...target, base + 'er', base, other.foodTile, 'für']);
+// Satz-Bau: items = [{ title, target:[chunks in order], extra:[distractor chunks], es, sub, id }]
+async function sentenceBuild(items, o = {}){
+  let score = 0;
+  for (const it of items){
+    const target = it.target, bank = shuffle([...target, ...(it.extra || [])]);
     let pos = 0, mistakes = 0; const used = new Set();
     const m = await new Promise(done => {
       const render = () => {
-        openModal(`<div class="term-head"><span>SATZ-CODE // ${esc(b.art + ' ' + b.name).toUpperCase()}</span></div>
-          <p class="sub">Baue den Satz wie im Test: Welcher Schnabel, und wozu? <span class="es-inline">(${esc(WMAP[b.id].es)}: ${esc(b.es)})</span></p>
+        openModal(`<div class="term-head"><span>${esc(o.head || 'SATZ-CODE')} // ${esc(it.title).toUpperCase()}</span></div>
+          <p class="sub">${it.sub || 'Baue die Sätze aus den Bausteinen – wie auf dem Arbeitsblatt. Der Anfang hat einen Großbuchstaben, das Ende einen Punkt.'} <span class="es-inline">${esc(it.es)}</span></p>
           <div class="sent-line">${target.slice(0, pos).map(t => `<span class="tok ok">${esc(t)}</span>`).join(' ')} ${pos < target.length ? '<span class="tok cursor">▌</span>' : ' ✔'}</div>
           <div class="chips">${bank.map((t, i) => `<button class="chip" type="button" data-i="${i}" ${used.has(i) ? 'disabled' : ''}>${esc(t)}</button>`).join('')}</div>
-          ${mistakes >= 2 && pos < target.length ? `<p class="es">Pista: la palabra siguiente es «${esc(target[pos])}».</p>` : ''}`, 'wide terminal');
+          ${mistakes >= 2 && pos < target.length ? `<p class="es">Pista: el siguiente bloque es «${esc(target[pos])}».</p>` : ''}`, 'wide terminal');
         $$('.chip', sheet).forEach(btn => btn.onclick = () => {
           const i = +btn.dataset.i;
-          if (bank[i] === target[pos]){ used.add(i); pos++; SFX.click(); if (pos === target.length){ const s = target.join(' '); speak(s); SFX.ok(); render(); setTimeout(() => done(mistakes), 1600); return; } render(); }
+          if (bank[i] === target[pos]){ used.add(i); pos++; SFX.click(); if (pos === target.length){ const s = target.join(' '); speak(s); SFX.ok(); render(); setTimeout(() => done(mistakes), 1800); return; } render(); }
           else { mistakes++; SFX.bad(); btn.classList.add('shake'); setTimeout(() => btn.classList.remove('shake'), 400); if (mistakes === 2) render(); }
         });
       };
       render();
     });
-    const pts = m === 0 ? 1 : m === 1 ? 0.5 : 0; score += pts; onAnswer(pts === 1 ? 'right' : pts ? 'close' : 'wrong', { id:b.id });
+    const pts = m === 0 ? 1 : m <= 2 ? 0.5 : 0; score += pts; onAnswer(pts === 1 ? 'right' : pts ? 'close' : 'wrong', { id:it.id });
   }
-  return { c:score, n:birds.length };
+  return { c:score, n:items.length };
 }
+function beakBuildItems(n){
+  return sample(BEAKS, n).map(b => {
+    const base = b.adj.replace(/en$/, ''), other = pick(BEAKS.filter(x => x !== b));
+    return { id:b.id, title:b.art + ' ' + b.name, target:[`${b.art} ${b.name}`, 'hat', 'einen', b.adj, b.noun, 'um', b.foodTile, 'zu fressen.'], extra:[base + 'er', base, other.foodTile, 'für'],
+      sub:'Baue den Satz wie im Test: Welcher Schnabel, und wozu?', es:`(${WMAP[b.id].es}: ${b.es})` };
+  });
+}
+function sentenceParts(n){ return sentenceBuild(beakBuildItems(n)); }
 
 /* ============ STATIONS, BOSSES, DAILY, ARENA ============ */
 async function startStation(z, i){
@@ -2915,6 +3425,7 @@ async function startStation(z, i){
     case 'beakrun': r = await runActivity(new DoorRun('Schnabel-Türen', beakRunQs(), { sky:['#1f4a2a', '#9fd3a8'] })); break;
     case 'collector': r = await runActivity(new Collector()); break;
     case 'tfrun': r = await runActivity(new DoorRun('Wahr oder Falsch', tfRunQs(), { sky:['#2a3a6a', '#bcd6f0'] })); break;
+    case 'timeline': r = await runActivity(new TimelineRaid()); break;
   }
   if (S.hearts <= 0){ S.hearts = S.maxHearts; hud(); }
   if (!r) return;
@@ -2924,7 +3435,7 @@ async function startStation(z, i){
   if (stars > prev) S.stations[key] = stars;
   const bonus = stars * 10 + (stars > prev ? 15 : 0);
   if (bonus) addFeathers(bonus);
-  let all = true; for (let zz = 1; zz <= 5; zz++) for (let ii = 0; ii < 4; ii++) if ((S.stations[zz + '-' + ii] || 0) < 3) all = false;
+  let all = true; for (let zz = 1; zz <= ZN; zz++) for (let ii = 0; ii < 4; ii++) if ((S.stations[zz + '-' + ii] || 0) < 3) all = false;
   if (all) badge('stars');
   save(); refreshObjective();
   const msg = r.failed ? ['Game over!', '¡Se acabaron los corazones! Inténtalo otra vez.'] : stars === 3 ? ['PERFEKT!', '¡Perfecto!'] : stars === 2 ? ['Stark!', '¡Muy bien!'] : stars === 1 ? ['Geschafft!', '¡Lo lograste!'] : ['Noch nicht …', 'Todavía no: ¡otra vez!'];
@@ -2990,33 +3501,38 @@ function noteOf(pct){ return NOTEN.find(n => pct >= n[0]); }
 
 async function startExam(){
   await dialogLines('Der Vergess-Geier', GEIER.intro, 'geier');
-  const E = { got:0, max:55, idx:0, rows:[] };
+  const E = { got:0, max:0, idx:0, n:0, rows:[] };
+  // every section declares its maximum so the vulture's health bar is exact
   const sections = [
-    () => secLabel(E, 'skelett', 'Beschrifte die Abbildung 2. Nenne den Fachbegriff mit Artikel.', 'Rotula la figura 2 (el esqueleto). Escribe el término técnico con su artículo.'),
-    () => secLabel(E, 'organe', 'Beschrifte die Abbildung 3. Nenne den Fachbegriff mit Artikel.', 'Rotula la figura 3 (los órganos). Escribe el término técnico con su artículo.'),
-    () => secMerkmale(E),
-    () => secText(E, 'Was ist eine Kloake? Erkläre in einem Satz.', 'Explica en una frase qué es la cloaca.', 3,
-      t => { let p = 0; const n = [/kot/, /urin|harn/, /\beier?\b/, /sperma|samen/].filter(r => r.test(t)).length; if (/oeffnung|ausgang|loch|ausfuehr|verlass|raus|heraus|ausgeschieden/.test(t)) p++; if (n >= 2) p++; if (n >= 3) p++; return p; },
-      'Die Kloake ist eine gemeinsame Körperöffnung. Durch sie verlassen Kot, Urin und Eier (beim Männchen die Spermazellen) den Körper.'),
-    () => secText(E, 'Welche Vögel können nicht fliegen? Begründe.', 'Nombra las aves que no pueden volar y explica por qué (con «weil»).', 3,
-      t => { let p = 0; ['strauss', 'emu', 'pinguin', 'kiwi'].forEach(k => { if (t.includes(k)) p += 0.5; }); if (/schwer/.test(t)) p += 1; return p; },
-      'Der Strauß, der Emu, der Pinguin und der Kiwi können nicht fliegen, weil sie zu schwer sind.'),
-    () => secBeaks(E),
-    () => secSentences(E),
-    () => secOrder(E),
-    () => secArticles(E),
+    { m:DIAGRAMS.skelett.labels.length, run:() => secLabel(E, 'skelett', 'Beschrifte die Abbildung 2. Nenne den Fachbegriff mit Artikel.', 'Rotula la figura 2 (el esqueleto). Escribe el término técnico con su artículo.') },
+    { m:DIAGRAMS.organe.labels.length, run:() => secLabel(E, 'organe', 'Beschrifte die Abbildung 3. Nenne den Fachbegriff mit Artikel.', 'Rotula la figura 3 (los órganos). Escribe el término técnico con su artículo.') },
+    { m:10, run:() => secMerkmale(E) },
+    { m:PMAP['p-kloake'].max, run:() => secText(E, PMAP['p-kloake']) },
+    { m:PMAP['p-flug'].max, run:() => secText(E, PMAP['p-flug']) },
+    { m:6, run:() => secBeaks(E) },
+    { m:4, run:() => secSentences(E) },
+    { m:PMAP['p-nahrung'].max, run:() => secText(E, PMAP['p-nahrung']) },
+    { m:5, run:() => secArticles(E) },
+    { m:4, run:() => secCloze12(E) },
+    { m:4, run:() => secNest(E) },
+    { m:DIAGRAMS.ei.labels.length, run:() => secLabel(E, 'ei', 'Beschrifte den Aufbau eines Eis mit den angegebenen Begriffen. Nenne den Fachbegriff mit Artikel.', 'Rotula las partes del huevo con los términos dados, con su artículo.', DIAGRAMS.ei.labels.map(L => labelText(L).replace(/^(der|die|das) /, ''))) },
+    { m:4, run:() => secBuild(E) },
+    { m:PMAP['p-paarung'].max, run:() => secText(E, PMAP['p-paarung']) },
   ];
-  for (let k = 0; k < sections.length; k++){ E.idx = k + 1; await sections[k](); }
+  E.max = sections.reduce((a, s) => a + s.m, 0); E.n = sections.length;
+  for (let k = 0; k < sections.length; k++){ E.idx = k + 1; await sections[k].run(); }
   const pct = Math.round(E.got / E.max * 100), N = noteOf(pct), won = pct >= 60;
   S.exams.push({ date:todayStr(), pct, note:N[1] }); if (pct >= 80) badge('exam80');
-  if (won) addFeathers(200); else addFeathers(40);
+  if (won) addFeathers(250); else addFeathers(50);
   save();
   if (won) SFX.win(); else SFX.bad();
+  const weakest = E.rows.slice().sort((a, b) => a.p / a.m - b.p / b.m).slice(0, 3);
   await new Promise(res => {
     openModal(`<div class="center"><div class="big-emoji">${won ? '🏆' : '🌫️'}</div><h2>${won ? 'Der Vergess-Geier ist besiegt!' : 'Der Vergess-Geier ist noch da …'}</h2>
       <p class="score-big">${pct} %</p><p>${Math.round(E.got * 10) / 10} von ${E.max} Punkten · Notenschätzung: <b>${N[1]} (${N[2]})</b></p>
       <p class="es">${won ? '¡Venciste al Buitre del Olvido! Las palabras vuelven a la isla.' : 'Todavía no. Repasa las tareas con menos puntos y vuelve a intentarlo.'}</p>
-      <table class="res-table">${E.rows.map(r => `<tr><td>${esc(r.t)}</td><td>${Math.round(r.p * 10) / 10} / ${r.m}</td></tr>`).join('')}</table>
+      <table class="res-table">${E.rows.map(r => `<tr><td>${esc(r.t)}</td><td class="num">${Math.round(r.p * 10) / 10} / ${r.m}</td></tr>`).join('')}</table>
+      <p class="gold-note">Üben: ${weakest.map(r => esc(r.t)).join(' · ')}</p>
       <p class="muted">Die Note ist nur eine Schätzung. Deine Lehrerin oder dein Lehrer bewertet vielleicht anders.</p>
       <div class="fb-actions"><button class="btn" id="ex-end" type="button">Zurück zur Insel</button></div></div>`);
     $('#ex-end').onclick = () => { closeModal(); refreshObjective(); res(); };
@@ -3024,7 +3540,7 @@ async function startExam(){
 }
 function examFrame(E, title, task, taskEs, body){
   const hp = Math.max(0, 100 - E.got / E.max * 100 / 0.6);
-  return `<div class="exam-head"><div class="geier"><span>Vergess-Geier</span><div class="bar"><i style="width:${hp}%"></i></div></div><div class="exam-meta">Aufgabe ${E.idx} / 9 · 🃏 ${S.jokers}</div></div>
+  return `<div class="exam-head"><div class="geier"><span>Vergess-Geier</span><div class="bar"><i style="width:${hp}%"></i></div></div><div class="exam-meta">Aufgabe ${E.idx} / ${E.n} · 🃏 ${S.jokers}</div></div>
     <h2>${title}</h2><p class="task">${task}</p><div class="task-es" hidden>${taskEs}</div>
     <button class="btn tiny joker" type="button" ${S.jokers ? '' : 'disabled'}>🃏 Joker: auf Spanisch</button>
     <div class="exam-body">${body}</div><div class="fb-actions" id="ex-actions"><button class="btn" id="ex-submit" type="button">Abgeben</button></div>`;
@@ -3044,9 +3560,9 @@ function wireFrame(onSubmit){
 }
 async function runSection(E, title, r0){ const r = await r0; E.got += r.p; E.rows.push({ t:title, p:r.p, m:r.m }); }
 
-function secLabel(E, key, task, taskEs){
+function secLabel(E, key, task, taskEs, bank){
   const D = DIAGRAMS[key];
-  const body = `<div class="label-wrap"><div class="diag-box">${diagramSVG(key)}</div><ol class="slots exam">${D.labels.map(L => `<li><span class="num">${L.n}</span><input type="text" id="lb-${key}-${L.n}" autocomplete="off" spellcheck="false" aria-label="Nummer ${L.n}"><span class="fix"></span></li>`).join('')}</ol></div>${umlautBar()}`;
+  const body = `${bank ? `<p class="wordbank">${bank.map(b => `<span>${esc(b)}</span>`).join('')}</p>` : ''}<div class="label-wrap"><div class="diag-box">${diagramSVG(key)}</div><ol class="slots exam">${D.labels.map(L => `<li><span class="num">${L.n}</span><input type="text" id="lb-${key}-${L.n}" autocomplete="off" spellcheck="false" aria-label="Nummer ${L.n}"><span class="fix"></span></li>`).join('')}</ol></div>${umlautBar()}`;
   openModal(examFrame(E, D.title, task, taskEs, body), 'wide exam');
   return runSection(E, D.title, wireFrame(() => {
     let p = 0;
@@ -3076,14 +3592,16 @@ function secMerkmale(E){
     return { p:Math.min(10, p), m:10 };
   }));
 }
-function secText(E, task, taskEs, max, rubric, model){
+// free-text explanation, scored with the rubric of a PROCESSES entry
+function secText(E, P){
   const body = `<textarea id="tx-a" rows="4" spellcheck="false" aria-label="Antwort"></textarea>${umlautBar()}<div id="tx-sol"></div>`;
-  openModal(examFrame(E, 'Schreibaufgabe', task, taskEs, body), 'exam');
+  openModal(examFrame(E, 'Erklären', P.q, P.es, body), 'exam');
   setTimeout(() => $('#tx-a') && $('#tx-a').focus(), 50);
-  return runSection(E, task, wireFrame(() => {
-    const p = Math.min(max, rubric(fold($('#tx-a').value)));
-    $('#tx-sol').innerHTML = `<p class="sol"><b>Musterlösung:</b> ${esc(model)} ${speakBtn(model)}</p>`;
-    return { p, m:max };
+  return runSection(E, P.q, wireFrame(() => {
+    const r = scoreExplain($('#tx-a').value, P);
+    grade(P.id, r.p >= r.max ? 'right' : r.p >= r.max / 2 ? 'close' : 'wrong');
+    $('#tx-sol').innerHTML = `<div class="rubric">${r.hits.map(x => `<span class="rk hit">✔ ${esc(x)}</span>`).join('')}${r.misses.map(x => `<span class="rk miss">✘ fehlt: ${esc(x)}</span>`).join('')}</div><p class="sol"><b>Musterlösung:</b> ${esc(P.model)} ${speakBtn(P.model)}</p>`;
+    return { p:r.p, m:r.max };
   }));
 }
 function secBeaks(E){
@@ -3118,28 +3636,20 @@ function secSentences(E){
     return { p, m:4 };
   }));
 }
-function secOrder(E){
-  const right = ['kropf', 'druesenmagen', 'kaumagen', 'darm', 'kloake'];
-  const items = shuffle(right.slice()); const order = [];
-  openModal(examFrame(E, 'Der Weg der Nahrung', 'Bringe die Organe in die richtige Reihenfolge. Die Nahrung kommt vom Schnabel …', 'Ordena los órganos: ¿por dónde pasa la comida después del pico?',
-    `<div class="order-line" id="ord-line"></div><div class="chips" id="ord-chips"></div><button class="btn tiny ghost" id="ord-reset" type="button">Neu ordnen</button><div id="ord-sol"></div>`), 'exam');
+// generic "put the chips in order" widget (used by secBuild)
+function orderWidget(lineId, chipsId, resetId, items, labelOf, prefix){
+  const order = [];
   const render = () => {
-    $('#ord-line').innerHTML = 'Schnabel → ' + (order.length ? order.map(id => `<b>${esc(WMAP[id].de)}</b>`).join(' → ') : '…');
-    $('#ord-chips').innerHTML = items.filter(id => !order.includes(id)).map(id => `<button class="chip" type="button" data-id="${id}">${wordHTML(WMAP[id])}</button>`).join('');
-    $$('#ord-chips .chip').forEach(b => b.onclick = () => { order.push(b.dataset.id); SFX.click(); render(); });
+    $('#' + lineId).innerHTML = (prefix || '') + (order.length ? order.map(i => `<b>${labelOf(i)}</b>`).join(' ') : '…');
+    $('#' + chipsId).innerHTML = items.filter(i => !order.includes(i)).map(i => `<button class="chip" type="button" data-i="${i}">${labelOf(i)}</button>`).join('');
+    $$('#' + chipsId + ' .chip').forEach(b => b.onclick = () => { order.push(+b.dataset.i); SFX.click(); render(); });
   };
   render();
-  $('#ord-reset').onclick = () => { order.length = 0; render(); };
-  return runSection(E, 'Weg der Nahrung', wireFrame(() => {
-    const ok = right.filter((id, k) => order[k] === id).length;
-    const p = ok === 5 ? 2 : ok >= 3 ? 1 : 0;
-    $('#ord-chips').innerHTML = ''; $('#ord-reset').hidden = true;
-    $('#ord-sol').innerHTML = `<p class="sol"><b>Richtig:</b> Schnabel → Kropf → Drüsenmagen → Kaumagen → Darm → Kloake</p>`;
-    return { p, m:2 };
-  }));
+  $('#' + resetId).onclick = () => { order.length = 0; render(); };
+  return { order, lock(){ $('#' + chipsId).innerHTML = ''; $('#' + resetId).hidden = true; } };
 }
 function secArticles(E){
-  const ts = ['aussen', 'skelett', 'organe', 'schnabel', 'merkmale'];
+  const ts = ['aussen', 'skelett', 'organe', 'schnabel', 'merkmale', 'fortpflanzung'];
   const ids = pickWords(WORDS.filter(w => w.art && !w.po && ts.includes(w.t)).map(w => w.id), 10);
   const body = `<div class="grid2">${ids.map((id, k) => `<label class="art-row"><select id="ar-${k}" aria-label="Artikel für ${esc(WMAP[id].de)}"><option value="">–</option><option>der</option><option>die</option><option>das</option></select> <b>${esc(WMAP[id].de)}</b><span class="fix"></span></label>`).join('')}</div>`;
   openModal(examFrame(E, 'Die Artikel', 'Ergänze den richtigen Artikel.', 'Completa con el artículo correcto (der, die, das).', body), 'wide exam');
@@ -3151,6 +3661,58 @@ function secArticles(E){
       if (!ok) s.parentElement.querySelector('.fix').innerHTML = ' → ' + wordHTML(WMAP[id]);
     });
     return { p, m:5 };
+  }));
+}
+/* ---- Seite 12, Aufgabe 1: Lückentext Fortpflanzung (getippt) ---- */
+function secCloze12(E){
+  const gaps = [['innere'], ['Kloaken'], ['Kalk'], ['Dottersack']];
+  const text = ['Bei den Vögeln findet eine ', ' Befruchtung statt. Dabei werden die ', ' der beiden Partner aufeinander gedrückt. Die von dem Weibchen gelegten Eier bestehen aus ', '. Der Embryo ernährt sich von Nährstoffen, welche sich im ', ' befinden.'];
+  const body = `<p class="cloze-text">${text.map((t, i) => esc(t) + (i < gaps.length ? `<input type="text" class="gapin" id="cz-${i}" autocomplete="off" spellcheck="false" aria-label="Lücke ${i + 1}"><span class="fix"></span>` : '')).join('')}</p>${umlautBar()}`;
+  openModal(examFrame(E, 'Die Fortpflanzung', 'Ergänze die Lücken mit den passenden Begriffen.', 'Completa los huecos con los términos correctos (sin artículo).', body), 'wide exam');
+  setTimeout(() => $('#cz-0') && $('#cz-0').focus(), 50);
+  return runSection(E, 'Lückentext Fortpflanzung', wireFrame(() => {
+    let p = 0; const ids = ['innere-befruchtung', 'kloake', 'kalk', 'dottersack'];
+    gaps.forEach((acc, i) => {
+      const inp = $('#cz-' + i), r = checkTyped(inp.value, acc), pts = typedPoints(r); p += pts; grade(ids[i], r.res);
+      inp.classList.add(pts === 1 ? 'right' : pts > 0 ? 'close' : 'wrong');
+      if (pts < 1) inp.nextElementSibling.textContent = acc[0];
+    });
+    return { p, m:4 };
+  }));
+}
+/* ---- Seite 12, Aufgabe 2: Nestflüchter / Nesthocker ---- */
+function secNest(E){
+  const row = (k, name) => `<div class="nest-row"><b>${name}:</b><input type="text" id="ne-${k}" placeholder="Erklärung" autocomplete="off" spellcheck="false" aria-label="${name} Erklärung"><span>Beispiel:</span><input type="text" id="nb-${k}" placeholder="Vogel" autocomplete="off" spellcheck="false" aria-label="${name} Beispiel"><div class="fix" id="nf-${k}"></div></div>`;
+  openModal(examFrame(E, 'Die Fortpflanzung', 'Erkläre die Begriffe Nestflüchter und Nesthocker und nenne je ein Beispiel.', 'Explica los dos términos (¿qué hacen esos polluelos después de salir del huevo?) y da un ejemplo de ave para cada uno.', row(0, 'Nestflüchter') + row(1, 'Nesthocker') + umlautBar()), 'wide exam');
+  return runSection(E, 'Nestflüchter / Nesthocker', wireFrame(() => {
+    let p = 0;
+    const checks = [
+      { ex:/verlass|verlaess|schnell|weg|sofort|gleich/, bsp:/huhn|huehn|ente|hahn|henne|kueken|gans|strauss|kiwi/, fix:'Ein Vogel, der nach dem Schlüpfen schnell das Nest verlässt. Beispiel: Huhn, Ente.' },
+      { ex:/bleib|lang|nest|federkleid|nicht entwickelt|federn/, bsp:/amsel|sing|taube|spatz|sperling|meise|adler|storch|specht|falke|elster/, fix:'Ein Vogel, der nach dem Schlüpfen im Nest bleibt, weil sein Federkleid noch nicht entwickelt ist. Beispiel: Amsel.' },
+    ];
+    checks.forEach((c, k) => {
+      const e = $('#ne-' + k), b = $('#nb-' + k), okE = c.ex.test(fold(e.value)), okB = c.bsp.test(fold(b.value));
+      p += (okE ? 1 : 0) + (okB ? 1 : 0); e.classList.add(okE ? 'right' : 'wrong'); b.classList.add(okB ? 'right' : 'wrong');
+      if (!okE || !okB) $('#nf-' + k).textContent = c.fix;
+    });
+    grade('nestfluechter', p >= 3 ? 'right' : 'wrong'); grade('nesthocker', p >= 3 ? 'right' : 'wrong');
+    return { p, m:4 };
+  }));
+}
+/* ---- Blatt 6: Die Entwicklung im Hühnerei — Sätze aus den Wortgeländern bauen ---- */
+function secBuild(E){
+  const items = sample(SENTENCES.huehnerei, 2);
+  const body = items.map((it, k) => `<p class="task2">${esc(it.title)}</p><div class="order-line" id="bl-${k}"></div><div class="chips" id="bc-${k}"></div><button class="btn tiny ghost" id="br-${k}" type="button">Neu ordnen</button><div id="bs-${k}"></div>`).join('');
+  openModal(examFrame(E, 'Die Entwicklung im Hühnerei', 'Beschreibe die Bilder der Filmleiste mit Hilfe der angegebenen Wortgeländer. Der Anfang und das Ende eines Satzes sind jeweils gekennzeichnet.', 'Construye las frases con los bloques dados. El inicio lleva mayúscula y el final lleva punto.', body), 'wide exam');
+  const ws = items.map((it, k) => orderWidget('bl-' + k, 'bc-' + k, 'br-' + k, shuffle(it.target.map((_, i) => i)), i => esc(it.target[i])));
+  return runSection(E, 'Entwicklung im Hühnerei', wireFrame(() => {
+    let p = 0;
+    items.forEach((it, k) => {
+      const ok = it.target.filter((_, i) => ws[k].order[i] === i).length, full = ok === it.target.length;
+      const q = full ? 2 : ok >= Math.ceil(it.target.length / 2) ? 1 : 0; p += q; ws[k].lock();
+      $('#bs-' + k).innerHTML = `<p class="sol">${q} / 2 · <b>Muster:</b> ${esc(it.target.join(' '))} ${speakBtn(it.target.join(' '))}</p>`;
+    });
+    return { p, m:4 };
   }));
 }
 /* ============================================================
@@ -3202,8 +3764,9 @@ async function talkNPC(z){
   const N = NPCS[z];
   if (!S.met[z]){ await dialogLines(N.name, N.lines, N.kind); S.met[z] = true; save(); refreshObjective(); if (z > 0) toast('📘 Die Lernkarte dieser Zone findest du beim Vogel oder im Menü (M).'); return; }
   openModal(`<div class="dlg"><div class="dlg-face">${faceImg(N.kind)}</div><div class="dlg-body"><div class="who">${esc(N.name)}</div><p class="de">Was brauchst du?</p><p class="es">¿Qué necesitas?</p>
-    <div class="menu-list">${z > 0 ? '<button class="btn" id="n-card" type="button">📘 Lernkarte</button>' : ''}<button class="btn alt" id="n-again" type="button">🔁 Nochmal erklären</button><button class="btn ghost" id="n-bye" type="button">Tschüss</button></div></div></div>`, '', { closable:true });
-  if (z > 0) $('#n-card').onclick = () => openLernkarte(z);
+    <div class="menu-list">${z > 0 ? '<button class="btn" id="n-card" type="button">📘 Lernkarte</button>' : '<button class="btn" id="n-train" type="button">🎓 Erklär-Training</button>'}<button class="btn alt" id="n-again" type="button">🔁 Nochmal erklären</button><button class="btn ghost" id="n-bye" type="button">Tschüss</button></div>
+    ${z === 0 ? '<p class="es">Erklär-Training: explicar procesos en frases completas, como en el examen.</p>' : ''}</div></div>`, '', { closable:true });
+  if (z > 0) $('#n-card').onclick = () => openLernkarte(z); else $('#n-train').onclick = () => { closeModal(); startExplainTraining(); };
   $('#n-again').onclick = async () => { closeModal(); await dialogLines(N.name, N.lines, N.kind); };
   $('#n-bye').onclick = closeModal;
 }
@@ -3214,12 +3777,18 @@ function openLernkarte(z){
   const lines = N.lines.slice(0, -1).map(([de, es]) => `<li><span class="de">${esc(de)}</span> ${speakBtn(de)}<br><span class="es">${esc(es)}</span></li>`).join('');
   const terms = WORDS.filter(w => w.t === Z.topic).map(w => `<button class="term ${artClass(w.art)}" type="button" data-say="${esc(nounLabel(w))}">${esc(nounLabel(w))}<small>${esc(w.es)}</small></button>`).join('');
   let extra = '';
-  if (z <= 3){ const D = DIAGRAMS[Z.topic]; extra = `<h3>${esc(D.title)}</h3><div class="label-wrap"><div>${diagramSVG(Z.topic)}</div><ol class="slots">${D.labels.map(L => `<li><span class="num">${L.n}</span> ${labelHTML(L)} ${speakBtn(labelText(L))}</li>`).join('')}</ol></div>`; }
+  const dk = DIAG_OF_TOPIC[Z.topic];
+  if (dk){ const D = DIAGRAMS[dk]; extra = `<h3>${esc(D.title)}</h3><div class="label-wrap"><div>${diagramSVG(dk)}</div><ol class="slots">${D.labels.map(L => `<li><span class="num">${L.n}</span> ${labelHTML(L)} ${speakBtn(labelText(L))}</li>`).join('')}</ol></div>`; }
+  if (z === 6) extra += `<h3>Zeitleiste: von der Paarung bis zum Küken</h3><ol class="card-lines">${TIMELINE.map(e => `<li><span class="de">${esc(e.title.replace(/^\d+\. /, ''))}</span> – ${esc(e.de)} ${speakBtn(e.de)}<br><span class="es">${esc(e.es)}</span></li>`).join('')}</ol>
+    <h3>Nestflüchter oder Nesthocker?</h3><table class="beak-table"><tr><th></th><th>Nestflüchter</th><th>Nesthocker</th></tr><tr><td>nach dem Schlüpfen</td><td>verlassen schnell das Nest</td><td>bleiben im Nest, weil ihr Federkleid noch nicht entwickelt ist</td></tr><tr><td>Beispiele</td><td>Huhn, Ente</td><td>Amsel</td></tr><tr><td class="es">español</td><td class="es">nidífugos: dejan pronto el nido</td><td class="es">nidícolas: se quedan en el nido</td></tr></table>
+    <h3>Die Entwicklung im Hühnerei (Blatt 6)</h3><ol class="card-lines">${SENTENCES.huehnerei.map(s => `<li><span class="de">${esc(s.target.join(' '))}</span> ${speakBtn(s.target.join(' '))}<br><span class="es">${esc(s.es)}</span></li>`).join('')}</ol>`;
   if (z === 3) extra += `<h3>Der Weg der Nahrung</h3><p class="path">Schnabel → <b class="art-der">der Kropf</b> → <b class="art-der">der Drüsenmagen</b> → <b class="art-der">der Kaumagen</b> → <b class="art-der">der Darm</b> → <b class="art-die">die Kloake</b></p><p class="es">pico → buche → proventrículo → molleja → intestino → cloaca</p>`;
   if (z === 4) extra = `<h3>Schnabel und Nahrung</h3><table class="beak-table"><tr><th>Vogel</th><th>Schnabelform</th><th>Nahrung</th></tr>${BEAKS.map(b => `<tr><td>${birdHTML(b)}<br><small class="muted">${esc(WMAP[b.id].es)}</small></td><td>${esc(b.beakName)}</td><td>${esc(b.food)}</td></tr>`).join('')}</table>
     <h3>So schreibst du den Satz</h3><p class="path">Der Buntspecht hat einen kräftig<b>en</b> Meißelschnabel, <b>um</b> Larven <b>zu</b> fressen. ${speakBtn('Der Buntspecht hat einen kräftigen Meißelschnabel, um Larven zu fressen.')}</p><p class="es">«einen» + adjetivo con <b>-en</b> + Schnabel. «um … zu» + infinitivo = «para …».</p>`;
   if (z === 5) extra = `<h3>Die 10 Merkmale der Vögel</h3><ol>${MERKMALE.map(m => `<li>${esc(m.de)} ${speakBtn(m.de)} <span class="es-inline">${esc(m.es)}</span></li>`).join('')}</ol><p><b>Flugunfähig:</b> der Strauß, der Emu, der Pinguin, der Kiwi – weil sie zu schwer sind.</p>
     <h3>Aufgaben-Wörter</h3><div class="terms">${WORDS.filter(w => w.t === 'op').map(w => `<button class="term" type="button" data-say="${esc(nounLabel(w))}">${esc(nounLabel(w))}<small>${esc(w.es)}</small></button>`).join('')}</div>`;
+  const procs = PROCESSES.filter(P => P.t === Z.topic);
+  if (procs.length) extra += `<h3>🎓 So erklärst du es <span class="muted">(lies laut mit)</span></h3><ul class="card-lines">${procs.map(P => `<li><b>${esc(P.q)}</b> <span class="tier-tag" title="Dein Stand">${['·', '🥉', '🥈', '🥇'][tier(P.id)]}</span><br><span class="de">${esc(P.model)}</span> ${speakBtn(P.model)}<br><span class="es">${esc(P.modelEs)}</span></li>`).join('')}</ul>`;
   openModal(`<div class="series-head"><h2>📘 ${esc(TOPICS[Z.topic])}</h2><div class="prog">${esc(Z.page)}</div></div><ul class="card-lines">${lines}</ul>${extra}
     <h3>Fachbegriffe <span class="muted">(klicken = anhören)</span></h3><div class="terms">${terms}</div><div class="fb-actions"><button class="btn" id="lk-ok" type="button">Schließen</button></div>`, 'wide', { closable:true });
   $('#lk-ok').onclick = closeModal;
@@ -3232,10 +3801,12 @@ function openLexikon(){
   const render = () => {
     const q = fold(lexQ.trim());
     const list = WORDS.filter(w => q ? (fold(w.de).includes(q) || fold(w.es).includes(q)) : w.t === lexTab);
-    const cards = list.map(w => { const tr = tier(w.id); return `<button class="lcard t${tr} ${artClass(w.art)}" type="button" data-say="${esc(nounLabel(w))}"><span class="tier">${['·', '🥉', '🥈', '🥇'][tr]}</span><b class="${artClass(w.art)}">${esc(nounLabel(w))}</b>${w.pl ? `<small>Pl.: die ${esc(w.pl)}</small>` : w.po ? '<small>nur Plural</small>' : ''}<span class="es">${esc(w.es)}</span></button>`; }).join('');
-    openModal(`<div class="series-head"><h2>📖 Wort-Inventar</h2><div class="prog">🥇 ${counts[3]} · 🥈 ${counts[2]} · 🥉 ${counts[1]} / ${WORDS.length}</div></div>
+    let cards = list.map(w => { const tr = tier(w.id); return `<button class="lcard t${tr} ${artClass(w.art)}" type="button" data-say="${esc(nounLabel(w))}"><span class="tier">${['·', '🥉', '🥈', '🥇'][tr]}</span><b class="${artClass(w.art)}">${esc(nounLabel(w))}</b>${w.pl ? `<small>Pl.: die ${esc(w.pl)}</small>` : w.po ? '<small>nur Plural</small>' : ''}<span class="es">${esc(w.es)}</span></button>`; }).join('');
+    if (lexTab === 'erklaeren' && !q) cards = `<div class="plist">${PROCESSES.map(P => { const tr = tier(P.id), open = unlockedTopics().includes(P.t); return `<div class="pcard t${tr}"><span class="tier">${['·', '🥉', '🥈', '🥇'][tr]}</span><b>${esc(P.q)}</b><small class="muted">${esc(TOPICS[P.t])}</small>${open ? `<p class="de">${esc(P.model)} ${speakBtn(P.model)}</p><p class="es">${esc(P.modelEs)}</p>` : '<p class="muted">🔒 Zone noch nicht offen.</p>'}</div>`; }).join('')}</div>`;
+    const pc = PROCESSES.filter(P => tier(P.id) === 3).length;
+    openModal(`<div class="series-head"><h2>📖 Wort-Inventar</h2><div class="prog">🥇 ${counts[3]} · 🥈 ${counts[2]} · 🥉 ${counts[1]} / ${WORDS.length} · 🎓 ${pc}/${PROCESSES.length}</div></div>
       <p class="sub">Jedes Wort levelt auf: Bronze → Silber → Gold, wenn du es mehrmals mit Pausen richtig weißt. Klick = anhören. <span class="es-inline">Cada palabra sube de nivel cuando la aciertas varias veces.</span></p>
-      <div class="tabs">${Object.keys(TOPICS).map(t => `<button class="tab ${t === lexTab && !lexQ ? 'on' : ''}" type="button" data-t="${t}">${esc(TOPICS[t])}</button>`).join('')}<input type="search" id="lex-q" placeholder="Suchen (Deutsch oder Spanisch)" value="${esc(lexQ)}" aria-label="Suchen"></div>
+      <div class="tabs">${[...Object.keys(TOPICS), 'erklaeren'].map(t => `<button class="tab ${t === lexTab && !lexQ ? 'on' : ''}" type="button" data-t="${t}">${t === 'erklaeren' ? '🎓 Erklären' : esc(TOPICS[t])}</button>`).join('')}<input type="search" id="lex-q" placeholder="Suchen (Deutsch oder Spanisch)" value="${esc(lexQ)}" aria-label="Suchen"></div>
       <div class="lgrid">${cards || '<p>Nichts gefunden.</p>'}</div>
       <div class="fb-actions"><span class="score-note"><span class="art-der">der</span> · <span class="art-die">die</span> · <span class="art-das">das</span></span><button class="btn" id="lx-ok" type="button">Schließen</button></div>`, 'wide', { closable:true });
     $$('.tab', sheet).forEach(b => b.onclick = () => { lexTab = b.dataset.t; lexQ = ''; render(); });
@@ -3295,7 +3866,7 @@ function arenaConfirm(){
 
 /* ---------- menu ---------- */
 function openMenu(){
-  const zs = [1, 2, 3, 4, 5].filter(z => z <= S.zone || S.met[z]);
+  const zs = [1, 2, 3, 4, 5, 6].filter(z => z <= S.zone || S.met[z] || S.unlockAll);
   openModal(`<h2>Menü</h2><div class="menu-grid">
       <button class="btn" id="m-resume" type="button">▶ Weiter</button>
       ${activity ? '<button class="btn ghost" id="m-quit" type="button">🏳 Aufgeben</button>' : '<button class="btn alt" id="m-lex" type="button">📖 Wort-Inventar</button>'}
@@ -3346,8 +3917,8 @@ function controlsHTML(){
 }
 function openHelp(){
   openModal(`<h2>🎮 Steuerung</h2>${controlsHTML()}
-    <h3>Plan bis zum Test</h3><ol><li><b>Tag 1:</b> Federwiese + Knochenhöhle (Körper außen, Skelett).</li><li><b>Tag 2:</b> Tages-Run, dann Magen-Moor + Schnabel-Wald.</li><li><b>Tag 3:</b> Tages-Run, Merkmal-Gipfel, dann der Prüfungsturm. Danach: Arena, bis das Inventar golden ist.</li></ol>
-    <p class="es">Día 1: cuerpo y esqueleto · día 2: órganos y picos · día 3: características y examen de prueba. Cada día empieza con el Tages-Run.</p>
+    <h3>Plan bis zum Test</h3><ol><li><b>Tag 1:</b> Federwiese + Knochenhöhle (Körper außen, Skelett). Danach: Erklär-Training bei Professorin Eule.</li><li><b>Tag 2:</b> Tages-Run, dann Magen-Moor + Schnabel-Wald. Erklär-Training.</li><li><b>Tag 3:</b> Tages-Run, Merkmal-Gipfel + Nest-Bucht (Fortpflanzung). Erklär-Training.</li><li><b>Tag 4:</b> Tages-Run, Erklär-Training, dann der Prüfungsturm. Danach: Arena, bis das Inventar golden ist.</li></ol>
+    <p class="es">Día 1: cuerpo y esqueleto · día 2: órganos y picos · día 3: características y reproducción · día 4: examen de prueba. Cada día: Tages-Run + Erklär-Training (explicar procesos en alemán).</p>
     <p><b>Drohnen überall:</b> Wähle mit 1/2/3 die Munition <span class="art-der">der</span> / <span class="art-die">die</span> / <span class="art-das">das</span> und schieß die Drohnen mit dem richtigen Artikel ab.</p>
     <div class="fb-actions"><button class="btn" id="hp-ok" type="button">Zurück</button></div>`, 'wide', { closable:true });
   $('#hp-ok').onclick = openMenu;
@@ -3358,17 +3929,19 @@ function openParents(){
   const topicRows = Object.keys(TOPICS).map(t => { const s = S.stats.topic[t] || { r:0, w:0 }, n = s.r + s.w, p = n ? Math.round(s.r / n * 100) : 0;
     return `<tr><td>${esc(TOPICS[t])}</td><td><div class="pbar"><i style="width:${p}%"></i></div></td><td class="num">${n ? p + ' %' : '–'}</td><td class="num muted">${n}</td></tr>`; }).join('');
   const weak = WORDS.filter(w => S.words[w.id] && S.words[w.id].w > 0).sort((a, b) => (S.words[b.id].w - S.words[b.id].r * 0.3) - (S.words[a.id].w - S.words[a.id].r * 0.3)).slice(0, 15);
-  const st = [1, 2, 3, 4, 5].map(z => `<tr><td>${esc(ZONES[z].name)}</td>${[0, 1, 2, 3].map(i => `<td>${'★'.repeat(S.stations[z + '-' + i] || 0) || '·'}</td>`).join('')}<td>${S.bosses[z] ? '✔' : '–'}</td></tr>`).join('');
+  const st = [1, 2, 3, 4, 5, 6].map(z => `<tr><td>${esc(ZONES[z].name)}</td>${[0, 1, 2, 3].map(i => `<td>${'★'.repeat(S.stations[z + '-' + i] || 0) || '·'}</td>`).join('')}<td>${S.bosses[z] ? '✔' : '–'}</td></tr>`).join('');
+  const procRows = PROCESSES.map(P => { const s = S.words[P.id] || { r:0, w:0 }; return `<tr><td>${esc(P.q)}</td><td class="num">✔ ${s.r} / ✘ ${s.w}</td><td>${TIER_NAME[tier(P.id)]}</td></tr>`; }).join('');
   openModal(`<div class="series-head"><h2>👪 Eltern-Bereich</h2><div class="prog">${esc(S.name)}</div></div>
     <p class="muted">Spielzeit: ${h} h ${m} min · Trainingstage: ${Object.keys(S.stats.days).length} (${Object.keys(S.stats.days).slice(-5).join(', ') || '–'}) · Inventar: 🥇 ${counts[3]} 🥈 ${counts[2]} 🥉 ${counts[1]} von ${WORDS.length}</p>
     <h3>Treffer pro Thema</h3><table class="res-table">${topicRows}</table>
     <h3>Schwierige Wörter</h3>${weak.length ? `<table class="res-table">${weak.map(w => `<tr><td>${wordHTML(w)}</td><td>${esc(w.es)}</td><td class="num">✘ ${S.words[w.id].w} / ✔ ${S.words[w.id].r}</td><td>${TIER_NAME[tier(w.id)]}</td></tr>`).join('')}</table>` : '<p class="muted">Noch keine Fehler gespeichert.</p>'}
+    <h3>Prozesse erklären</h3><p class="muted">Erklär-Antworten: ${S.explainDone} · davon vollständig: ${S.explainPerfect}</p><table class="res-table">${procRows}</table>
     <h3>Portale und Bosse</h3><table class="res-table"><tr><th>Zone</th><th>1</th><th>2</th><th>3</th><th>4</th><th>Boss</th></tr>${st}</table>
     <h3>Prüfungsturm</h3><p>${S.exams.length ? S.exams.slice(-6).map(e => `${e.date}: <b>${e.pct} %</b> (Note ~${e.note})`).join(' · ') : '<span class="muted">Noch nicht gemacht.</span>'}</p>
     <h3>Werkzeuge</h3><div class="menu-grid"><button class="btn alt" id="pa-unlock" type="button">🔓 Alles freischalten</button><button class="btn alt" id="pa-export" type="button">💾 Spielstand sichern</button><button class="btn alt" id="pa-import" type="button">📥 Spielstand laden</button><button class="btn ghost" id="pa-reset" type="button">🗑 Alles zurücksetzen</button></div>
     <div id="pa-io"></div><div class="fb-actions"><button class="btn" id="pa-ok" type="button">Schließen</button></div>`, 'wide', { closable:true });
   $('#pa-ok').onclick = closeModal;
-  $('#pa-unlock').onclick = () => { S.zone = 5; S.unlockAll = true; save(); refreshObjective(); toast('🔓 Alle Zonen und der Prüfungsturm sind offen.', 'ok'); };
+  $('#pa-unlock').onclick = () => { S.zone = ZN; S.unlockAll = true; save(); refreshObjective(); toast('🔓 Alle Zonen und der Prüfungsturm sind offen.', 'ok'); };
   $('#pa-export').onclick = () => {
     const code = exportCode();
     $('#pa-io').innerHTML = `<p>Kopiere diesen Code und bewahre ihn auf. Damit lädst du den Spielstand auf einem anderen Gerät oder in der anderen Version (Datei / Link).</p><textarea id="pa-code" rows="4" readonly>${code}</textarea><button class="btn tiny" id="pa-copy" type="button">Kopieren</button>`;
@@ -3389,8 +3962,8 @@ function openParents(){
 function showTitle(){
   $('#hud').hidden = true; $('#quest').hidden = true; $('#crosshair').hidden = true; $('#ammo').hidden = true;
   openModal(`<div class="center"><p class="eyebrow">Biologie · Die Vögel</p><h1>Die Vogel-Insel</h1>
-    <p>Fünf Inseln. Fünf Bosse. Ein Prüfungsturm. Alles auf Deutsch – wie im Test.</p>
-    <p class="es">Cinco islas, cinco jefes y una torre de examen. Todo en alemán, como en la prueba.</p>
+    <p>Sechs Inseln. Sechs Bosse. Ein Prüfungsturm. Alles auf Deutsch – wie im Test.</p>
+    <p class="es">Seis islas, seis jefes y una torre de examen. Todo en alemán, como en la prueba.</p>
     <label class="name-row">Spielername <input type="text" id="t-name" value="${esc(S.name)}" maxlength="20"></label>
     ${controlsHTML()}
     <div class="fb-actions center-actions"><button class="btn big" id="t-go" type="button">${S.started ? 'Weiterspielen ▶' : 'Spielen ▶'}</button></div>

@@ -12,6 +12,8 @@ const BIRD_LOOK = {
   stockente:{ body:'#7a6048', belly:'#b99c7c', head:'#1f6b45', beak:'#d8b73a', beakKind:'flat' },
   crow:{ body:'#15151b', belly:'#222229', head:'#15151b', beak:'#50505a', beakKind:'short' },
   liar:{ body:'#6b3fa3', belly:'#b48be0', head:'#6b3fa3', beak:'#ff8fb1', beakKind:'short' },
+  henne:{ body:'#b5652d', belly:'#dea06a', head:'#b5652d', beak:'#f2b632', beakKind:'short', comb:'#d92b2b' },
+  elster:{ body:'#15151b', belly:'#f4f2ee', head:'#15151b', beak:'#2a2a2a', beakKind:'short', wingTip:'#2c5fd6', longTail:true },
 };
 function beakMesh(kind, color, g){
   const m = M(color);
@@ -34,10 +36,11 @@ function birdModel(kind, s = 1){
   const belly = mesh(G('ico', 0.6, 1), M(L.belly), 0, 1.1, 0.28, g); belly.scale.set(0.9, 0.8, 0.9);
   if (L.under){ mesh(G('ico', 0.3, 0), M(L.under), 0, 0.85, -0.6, g); }
   [-1, 1].forEach(sx => { const w = mesh(G('ico', 0.5, 0), M(shadeHex(L.body, -25)), sx * 0.68, 1.3, -0.1, g); w.scale.set(0.3, 0.7, 1.2); if (L.wingTip) mesh(G('ico', 0.3, 0), M(L.wingTip), sx * 0.7, 1.1, -0.6, g).scale.set(0.3, 0.5, 0.8); });
-  const tail = mesh(G('box', 0.5, 0.1, 0.8), M(shadeHex(L.body, -20)), 0, 1.2, -1.05, g); tail.rotation.x = -0.35;
+  const tail = mesh(G('box', 0.5, 0.1, L.longTail ? 1.6 : 0.8), M(L.longTail ? '#1d3f8a' : shadeHex(L.body, -20)), 0, 1.2, L.longTail ? -1.45 : -1.05, g); tail.rotation.x = -0.35;
   const head = new THREE.Group(); head.position.set(0, 2.05, 0.55); g.add(head);
   mesh(G('ico', 0.46, 1), M(L.head), 0, 0, 0, head);
   if (L.cap) mesh(G('ico', 0.2, 0), M(L.cap), 0, 0.35, -0.1, head);
+  if (L.comb){ [-0.18, 0, 0.18].forEach((z, i) => mesh(G('box', 0.1, 0.22 + (i === 1 ? 0.1 : 0), 0.16), M(L.comb), 0, 0.5, z, head)); mesh(G('box', 0.12, 0.22, 0.1), M(L.comb), 0, -0.3, 0.3, head); }
   [-1, 1].forEach(sx => { mesh(G('sph', 0.1, 8, 6), M('#ffffff'), sx * 0.28, 0.1, 0.3, head, false); mesh(G('sph', 0.06, 6, 5), M('#111111'), sx * 0.31, 0.1, 0.36, head, false); });
   const bk = new THREE.Group(); bk.position.set(0, -0.02, 0.38); head.add(bk); beakMesh(L.beakKind, L.beak, bk);
   root.userData.head = head;
@@ -82,15 +85,20 @@ function shadeHex(hex, amt){
 /* ---------- bosses ---------- */
 function bossModel(kind){
   const root = new THREE.Group(); let upd = () => {};
-  if (kind === 'crow' || kind === 'liar'){
+  if (kind === 'crow' || kind === 'liar' || kind === 'elster'){
     const b = birdModel(kind, 3.4); root.add(b);
     const head = b.userData.head;
+    if (kind === 'elster'){
+      [-1, 1].forEach(sx => mesh(G('sph', 0.07, 6, 5), M('#7fe3ff', { em:'#7fe3ff', emi:1 }), sx * 0.31, 0.1, 0.38, head, false));
+      for (let i = 0; i < 4; i++){ const e = mesh(G('sph', 0.55, 10, 8), M('#f6efd8', { rough:0.5 }), 0, 0, 0, root); e.scale.set(1, 1.3, 1); e.userData.egg = i * 1.6; }
+      upd = t => root.children.forEach(c => { if (c.userData.egg != null){ c.position.set(Math.cos(t * 0.9 + c.userData.egg) * 4.2, 6.5 + Math.sin(t * 2 + c.userData.egg) * 0.8, Math.sin(t * 0.9 + c.userData.egg) * 4.2); c.rotation.z = Math.sin(t + c.userData.egg) * 0.4; } });
+    }
     if (kind === 'crow'){
       const cr = new THREE.Group(); cr.position.set(0, 0.45, -0.05); head.add(cr);
       mesh(G('cyl', 0.36, 0.36, 0.2, 8), M('#f2b632', { metal:0.6, rough:0.3 }), 0, 0, 0, cr);
       for (let i = 0; i < 6; i++){ const a = i / 6 * Math.PI * 2; mesh(G('cone', 0.08, 0.28, 4), M('#f2b632', { metal:0.6, rough:0.3 }), Math.cos(a) * 0.3, 0.22, Math.sin(a) * 0.3, cr); }
       [-1, 1].forEach(sx => mesh(G('sph', 0.07, 6, 5), M('#ff2a2a', { em:'#ff2a2a', emi:1 }), sx * 0.31, 0.1, 0.38, head, false));
-    } else {
+    } else if (kind === 'liar'){
       mesh(G('box', 0.95, 0.2, 0.3), M('#111'), 0, 0.1, 0.3, head);
       for (let i = 0; i < 3; i++){ const q = textSprite('?', { color:'#ffc83d', size:1.6 }); q.userData.a = i * 2.1; root.add(q); }
       upd = t => root.children.forEach(c => { if (c.isSprite){ c.position.set(Math.cos(t + c.userData.a) * 4, 7 + Math.sin(t * 2 + c.userData.a), Math.sin(t + c.userData.a) * 4); } });
@@ -194,6 +202,12 @@ function treePine(parent, cols, x, y, z, s = 1, leaf = '#2e6a35', snow = false){
 function rock(parent, cols, x, y, z, s = 1, color = '#7d8793', solidRock = true){
   const r = mesh(G('dod', 1, 0), M(color), x, y + 0.5 * s, z, parent); r.scale.set(1.3 * s, 0.9 * s, 1.1 * s); r.rotation.y = x * 7 + z;
   if (solidRock) cols.push(makeCol(x, y + 0.45 * s, z, 2.2 * s, 0.9 * s, 1.9 * s));
+}
+function nestProp(parent, x, y, z, s = 1, rng = Math.random){
+  const n = mesh(G('torus', 0.9 * s, 0.32 * s, 7, 14), M('#8a6a3a', { rough:1 }), x, y + 0.3 * s, z, parent); n.rotation.x = Math.PI / 2;
+  mesh(G('cyl', 0.75 * s, 0.75 * s, 0.1, 12), M('#6b4f2a'), x, y + 0.12 * s, z, parent, false);
+  const k = 2 + Math.floor(rng() * 2);
+  for (let i = 0; i < k; i++){ const a = i / k * Math.PI * 2 + rng(); const e = mesh(G('sph', 0.26 * s, 8, 6), M(['#f6efd8', '#e8f0e6', '#f3dcc0'][i % 3], { rough:0.5 }), x + Math.cos(a) * 0.32 * s, y + 0.42 * s, z + Math.sin(a) * 0.32 * s, parent, false); e.scale.set(1, 1.25, 1); }
 }
 function crystal(parent, x, y, z, s = 1, color = '#a78bfa'){
   const c = mesh(G('oct', 0.6, 0), M(color, { em:color, emi:0.5, rough:0.3 }), x, y + 0.8 * s, z, parent); c.scale.set(0.6 * s, 1.6 * s, 0.6 * s); return c;

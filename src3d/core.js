@@ -30,7 +30,7 @@ function defaultState(){
   return { v:1, name:'Ranger', feathers:0, xp:0, hearts:5, maxHearts:5, jokers:2, zone:1, met:{}, bosses:{}, stations:{}, words:{}, badges:{},
     skin:{ shirt:'#2f6fed', pants:'#1f2a44', hat:'cap', trail:null }, owned:{ 'shirt-#2f6fed':1, 'pants-#1f2a44':1, 'hat-cap':1, 'hat-none':1 },
     settings:{ sound:true, tts:true, es:false, sens:1 }, stats:{ ms:0, days:{}, topic:{} }, exams:[], lastDaily:'', dailyDays:0,
-    arenaBest:0, artRight:0, bestCombo:0, pos:null, started:false, unlockAll:false };
+    arenaBest:0, artRight:0, bestCombo:0, explainPerfect:0, explainDone:0, pos:null, started:false, unlockAll:false };
 }
 function mergeState(o){
   const d = defaultState();
@@ -52,7 +52,7 @@ function ws(id){ return S.words[id] || (S.words[id] = { b:0, d:0, r:0, w:0 }); }
 function tier(id){ const w = S.words[id]; if (!w || w.b === 0) return 0; if (w.b <= 2) return 1; if (w.b <= 4) return 2; return 3; }
 const TIER_NAME = ['neu', 'Bronze', 'Silber', 'Gold'];
 function grade(id, result){
-  const w = WMAP[id]; if (!w) return;
+  const w = WMAP[id] || PMAP[id]; if (!w) return;
   const s = ws(id), now = Date.now();
   const ts = S.stats.topic[w.t] || (S.stats.topic[w.t] = { r:0, w:0 });
   if (result === 'right'){ s.r++; ts.r++; if (s.b === 0) s.b = 1; if (now >= s.d || s.b <= 1) s.b = Math.min(5, s.b + 1); s.d = now + BOX_MS[s.b]; }
@@ -72,7 +72,8 @@ function pickWords(ids, n){
   }).sort((a, b) => b[0] - a[0]).slice(0, n).map(x => x[1]);
 }
 function topicIds(t, filter){ return WORDS.filter(w => (t === 'all' || w.t === t) && (!filter || filter(w))).map(w => w.id); }
-function unlockedTopics(){ const t = []; for (let z = 1; z <= 5; z++) if (z <= S.zone) t.push(ZONES[z].topic); if (S.zone >= 5) t.push('op'); return t; }
+function unlockedTopics(){ const t = []; for (let z = 1; z <= ZN; z++) if (z <= S.zone || S.unlockAll) t.push(ZONES[z].topic); if (S.zone >= 5 || S.unlockAll) t.push('op'); return t; }
+function unlockedProcesses(){ const ts = unlockedTopics(); return PROCESSES.filter(P => ts.includes(P.t)); }
 function dueCount(){ const now = Date.now(); const ts = unlockedTopics(); return WORDS.filter(w => ts.includes(w.t) && S.words[w.id] && S.words[w.id].b > 0 && S.words[w.id].d <= now).length; }
 
 /* ---------- sound effects (Web Audio synth) ---------- */
@@ -182,11 +183,13 @@ function addFeathers(n){
 function badge(k){ if (S.badges[k]) return; S.badges[k] = Date.now(); const b = BADGES[k]; SFX.win(); toast(`${b.i} Abzeichen: <b>${b.n}</b>`, 'gold'); save(); }
 function onAnswer(result, q){
   if (q && q.id) grade(q.id, result);
+  if (q && q.type === 'explain'){ S.explainDone++; if (result === 'right'){ S.explainPerfect++; if (S.explainPerfect >= 10) badge('erklaer10'); } }
   if (result === 'right'){
     combo++; if (combo > S.bestCombo) S.bestCombo = combo; if (combo >= 10) badge('combo10');
     if (q && q.type === 'art'){ S.artRight++; if (S.artRight >= 30) badge('art30'); }
-    addFeathers(Math.round(5 * mult()));
-  } else if (result === 'wrong'){ combo = 0; }
+    addFeathers(Math.round((q && q.pts || 5) * mult()));
+  } else if (result === 'close' && q && q.pts){ addFeathers(Math.round(q.pts / 2)); }
+  else if (result === 'wrong'){ combo = 0; }
   hud();
 }
 function hurt(n = 1){

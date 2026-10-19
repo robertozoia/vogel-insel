@@ -12,6 +12,7 @@ Consejo: en una palabra compuesta, el artículo lo decide la **última** palabra
 4. [Die Schnäbel – Los picos](#4)
 5. [Die Merkmale – Las características](#5)
 6. [Aufgaben-Wörter – Palabras de los ejercicios](#6)
+7. [Die Fortpflanzung – La reproducción](#7)
 
 <a id="1"></a>
 ## 1. Äußerer Körperbau – Cuerpo por fuera
@@ -295,3 +296,74 @@ Consejo: en una palabra compuesta, el artículo lo decide la **última** palabra
 der Schnabel → der Kropf → der Drüsenmagen → der Kaumagen → der Darm → die Kloake
 
 *pico → buche → proventrículo → molleja → intestino → cloaca*
+
+<a id="7"></a>
+## 7. Die Fortpflanzung – La reproducción
+
+*Páginas 10–12*
+
+### Sustantivos
+
+| Alemán | Plural | Español | Nota |
+|---|---|---|---|
+| **die** Fortpflanzung | – | la reproducción | sich fortpflanzen = reproducirse |
+| **die** Paarung | die Paarungen | el apareamiento | das Paar = la pareja |
+| **die** Samenflüssigkeit | – | el líquido seminal | Samen (semilla/semen) + Flüssigkeit (líquido) |
+| **die** Samenzelle | die Samenzellen | el espermatozoide | = die Spermazelle |
+| **die** Befruchtung | die Befruchtungen | la fecundación | die Frucht = el fruto → be-frucht-ung |
+| **die** Schale | die Schalen | la cáscara |  |
+| **die** Kalkschale | die Kalkschalen | la cáscara de cal | der Kalk = la cal; die Schale = la cáscara → die Kalkschale. |
+| **der** Kalk | – | la cal (carbonato de calcio) | Se escribe Kalk, con k al final. |
+| **die** Keimscheibe | die Keimscheiben | el disco germinal | der Keim = el germen; die Scheibe = el disco |
+| **der** Embryo | die Embryonen | el embrión | ¡Ojo! DER Embryo (masculino, como en español). |
+| **der** Dottersack | die Dottersäcke | el saco vitelino | der Dotter (la yema) + der Sack (el saco) → der Dottersack. |
+| **der** Dotter | die Dotter | la yema | ¡Ojo! der Dotter, pero LA yema. |
+| **das** Eiklar | – | la clara (del huevo) | klar = claro → das Eiklar = la clara. |
+| **die** Eihaut | die Eihäute | la membrana del huevo | das Ei + die Haut (la piel) → die Eihaut. |
+| **die** Luftkammer | die Luftkammern | la cámara de aire | die Kammer = la cámara / el cuartito |
+| **die** Hagelschnur | die Hagelschnüre | la chalaza (cordón del huevo) | die Schnur = la cuerda. Plural: die Hagelschnüre. |
+| **der** Nährstoff | die Nährstoffe | el nutriente | ernähren = alimentar → der Nährstoff |
+| **der** Stoß | die Stöße | el golpe / la sacudida | Plural con diéresis: die Stöße. |
+| **das** Nest | die Nester | el nido |  |
+| **der** Nestflüchter | die Nestflüchter | el nidífugo (polluelo que deja pronto el nido) | flüchten = huir → el que «huye» del nido. Ejemplos: Huhn, Ente. |
+| **der** Nesthocker | die Nesthocker | el nidícola (polluelo que se queda en el nido) | hocken = estar agachado/sentado → el que se queda en el nido. Ejemplo: Amsel. |
+| **der** Jungvogel | die Jungvögel | el ave joven / el polluelo | jung (joven) + Vogel |
+| **das** Küken | die Küken | el pollito | ¡Ojo! DAS Küken (neutro). |
+| **das** Huhn | die Hühner | la gallina / el pollo | Plural: die Hühner. |
+| **die** Henne | die Hennen | la gallina |  |
+| **der** Hahn | die Hähne | el gallo |  |
+| **die** Ente | die Enten | el pato | ¡Ojo! die Ente, pero EL pato. |
+| **das** Blutgefäß | die Blutgefäße | el vaso sanguíneo | das Blut (la sangre) + das Gefäß (el recipiente / el vaso) |
+| **die** Daunenfeder | die Daunenfedern | la pluma de plumón | las Daunen = el plumón |
+| **die** Elster | die Elstern | la urraca | ¡Ojo! die Elster, LA urraca: ¡coincide! |
+
+### Verbos, adjetivos y expresiones
+
+| Alemán | Español | Ejemplo |
+|---|---|---|
+| innere Befruchtung | fecundación interna | Es findet also eine innere Befruchtung statt. |
+| bebrüten | incubar | Das Weibchen legt Eier ab, welche es bebrütet. |
+| schlüpfen | salir del huevo | Nach einiger Zeit schlüpfen die Jungen aus den Eiern. |
+| sich ernähren | alimentarse | Der Embryo ernährt sich vom Dotter. |
+| sich entwickeln | desarrollarse | Aus der Keimscheibe entwickelt sich der Embryo. |
+| abpuffern | amortiguar | Die Hagelschnüre puffern Stöße ab. |
+| begatten | aparearse con | Der Hahn begattet die Henne. |
+| übertragen | transferir | Dabei überträgt er seine Samenzellen in den Körper der Henne. |
+| verlassen | abandonar / dejar | Nestflüchter verlassen schnell das Nest. |
+| hart | duro | Die Eier haben eine sehr harte Schale. |
+| oben | arriba | Die Keimscheibe liegt immer oben. |
+
+### Procesos para explicar (frases modelo)
+
+- **Erkläre, was bei der Paarung der Vögel passiert.** Bei der Paarung drücken das Weibchen und das Männchen ihre Kloaken aufeinander. Dabei fließt die Samenflüssigkeit des Männchens in die Kloake des Weibchens. Es findet also eine innere Befruchtung statt.
+  - *En el apareamiento, la hembra y el macho juntan sus cloacas. El líquido seminal del macho pasa a la cloaca de la hembra. Es una fecundación interna.*
+- **Erkläre, wie sich der Embryo im Ei entwickelt und wovon er sich ernährt.** Aus der Keimscheibe entwickelt sich der Embryo. Der Dottersack enthält Nährstoffe. Der Embryo ernährt sich mit Hilfe von vielen Blutgefäßen vom Dotter.
+  - *Del disco germinal se desarrolla el embrión. El saco vitelino contiene nutrientes. El embrión se alimenta de la yema a través de muchos vasos sanguíneos.*
+- **Wozu dienen die Hagelschnüre?** Die Hagelschnüre puffern Stöße ab und halten den Dottersack in der Mitte.
+  - *Las chalazas amortiguan los golpes y mantienen el saco vitelino en el centro.*
+- **Beschreibe die Schale des Vogeleis.** Die Eier haben eine sehr harte Schale, die aus Kalk besteht.
+  - *Los huevos tienen una cáscara muy dura, hecha de cal.*
+- **Erkläre die Begriffe Nestflüchter und Nesthocker und nenne je ein Beispiel.** Nestflüchter verlassen nach dem Schlüpfen schnell das Nest, zum Beispiel Hühner und Enten. Nesthocker bleiben erstmal im Nest, weil ihr Federkleid noch nicht entwickelt ist, zum Beispiel die Amsel.
+  - *Los nidífugos dejan pronto el nido tras salir del huevo, por ejemplo gallinas y patos. Los nidícolas se quedan en el nido porque su plumaje aún no está desarrollado, por ejemplo el mirlo.*
+- **Beschreibe die Entwicklung im Hühnerei: Was passiert nach 12 Tagen, nach 20 Tagen und am 21. Tag?** Nach 12 Tagen kann man schon die Gliedmaßen erkennen, und der Kopf ist sehr groß. Nach 20 Tagen ist der junge Vogel so groß wie das Ei, er besitzt Federn und atmet mit den Lungen. Am 21. Tag schlüpft das Küken mit seinen Daunenfedern aus dem Ei.
+  - *A los 12 días ya se reconocen las extremidades y la cabeza es muy grande. A los 20 días el ave joven es tan grande como el huevo, tiene plumas y respira con los pulmones. El día 21 el pollito sale del huevo con su plumón.*

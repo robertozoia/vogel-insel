@@ -2,8 +2,8 @@
 /* ============================================================
    CONTENT — everything the game teaches comes from gz-biologia.pdf
    ============================================================ */
-const TOPICS = { aussen:'Äußerer Körperbau', skelett:'Das Skelett', organe:'Die Organe', schnabel:'Die Schnäbel', merkmale:'Die Merkmale', op:'Aufgaben-Wörter' };
-const TOPICS_ES = { aussen:'Cuerpo por fuera', skelett:'El esqueleto', organe:'Los órganos', schnabel:'Los picos', merkmale:'Las características', op:'Palabras de los ejercicios' };
+const TOPICS = { aussen:'Äußerer Körperbau', skelett:'Das Skelett', organe:'Die Organe', schnabel:'Die Schnäbel', merkmale:'Die Merkmale', fortpflanzung:'Die Fortpflanzung', op:'Aufgaben-Wörter' };
+const TOPICS_ES = { aussen:'Cuerpo por fuera', skelett:'El esqueleto', organe:'Los órganos', schnabel:'Los picos', merkmale:'Las características', fortpflanzung:'La reproducción', op:'Palabras de los ejercicios' };
 
 const WORDS = [];
 function slug(s){ return s.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
@@ -167,6 +167,49 @@ V('Eier legen','poner huevos','merkmale',null,'Alle Vögel legen Eier.');
 V('speichern','almacenar','merkmale',null,'Dadurch kann ihr Körper viel mehr Luft speichern.');
 V('bedecken','cubrir','merkmale',null,'Das Federkleid bedeckt den ganzen Körper.');
 
+/* ---- Seiten 10–12: die Fortpflanzung, das Ei, die Entwicklung im Hühnerei ---- */
+N('die','Fortpflanzung',null,'la reproducción','fortpflanzung','Wie Lebewesen Junge (Nachkommen) bekommen.','Bei der Fortpflanzung der Vögel findet eine innere Befruchtung statt.','sich fortpflanzen = reproducirse');
+N('die','Paarung','Paarungen','el apareamiento','fortpflanzung','Wenn sich Männchen und Weibchen paaren, um Junge zu bekommen.','Bei der Paarung drücken das Weibchen und das Männchen ihre Kloaken aufeinander.','das Paar = la pareja');
+N('die','Samenflüssigkeit',null,'el líquido seminal','fortpflanzung','Die Flüssigkeit des Männchens mit den Samenzellen.','Die Samenflüssigkeit des Männchens fließt in die Kloake des Weibchens.','Samen (semilla/semen) + Flüssigkeit (líquido)');
+N('die','Samenzelle','Samenzellen','el espermatozoide','fortpflanzung','Die männliche Zelle für die Befruchtung. Anderes Wort: Spermazelle.','Der Hahn überträgt seine Samenzellen in den Körper der Henne.','= die Spermazelle');
+N('die','Befruchtung','Befruchtungen','la fecundación','fortpflanzung','Wenn eine Samenzelle und eine Eizelle verschmelzen.','Nach der Befruchtung legt das Weibchen Eier ab.','die Frucht = el fruto → be-frucht-ung');
+V('innere Befruchtung','fecundación interna','fortpflanzung','Die Befruchtung findet im Körper des Weibchens statt.','Es findet also eine innere Befruchtung statt.','innen = dentro. ¡Nunca «innen Befruchtung»! Después de «eine» → innerE.');
+N('die','Schale','Schalen','la cáscara','fortpflanzung',null,'Diese Eier haben eine sehr harte Schale.');
+N('die','Kalkschale','Kalkschalen','la cáscara de cal','fortpflanzung','Die harte Schale des Eis. Sie besteht aus Kalk.','Außen hat das Ei eine harte Kalkschale.','der Kalk = la cal; die Schale = la cáscara → die Kalkschale.');
+N('der','Kalk',null,'la cal (carbonato de calcio)','fortpflanzung','Ein hartes, weißes Material, wie in Kreide oder Knochen.','Die Schale des Eis besteht aus Kalk.','Se escribe Kalk, con k al final.');
+N('die','Keimscheibe','Keimscheiben','el disco germinal','fortpflanzung','Die kleine helle Scheibe oben auf dem Dotter. Aus ihr entwickelt sich der Embryo.','Aus der Keimscheibe entwickelt sich der Embryo. Sie liegt immer oben.','der Keim = el germen; die Scheibe = el disco');
+N('der','Embryo','Embryonen','el embrión','fortpflanzung','Der junge Vogel, solange er sich im Ei entwickelt.','Der Embryo ernährt sich vom Dotter.','¡Ojo! DER Embryo (masculino, como en español).');
+N('der','Dottersack','Dottersäcke','el saco vitelino','fortpflanzung','Der Sack mit dem Dotter. Er enthält die Nährstoffe für den Embryo.','Der Dottersack im Inneren des Eis enthält Nährstoffe.','der Dotter (la yema) + der Sack (el saco) → der Dottersack.');
+N('der','Dotter','Dotter','la yema','fortpflanzung','Der gelbe Teil des Eis.','Der Embryo ernährt sich mit Hilfe von vielen Blutgefäßen vom Dotter.','¡Ojo! der Dotter, pero LA yema.');
+N('das','Eiklar',null,'la clara (del huevo)','fortpflanzung','Der durchsichtige Teil des Eis um den Dotter. Auch: das Eiweiß.','Um den Dotter liegt das Eiklar.','klar = claro → das Eiklar = la clara.');
+N('die','Eihaut','Eihäute','la membrana del huevo','fortpflanzung','Die dünne Haut direkt unter der Kalkschale.','Unter der Kalkschale liegt die Eihaut.','das Ei + die Haut (la piel) → die Eihaut.');
+N('die','Luftkammer','Luftkammern','la cámara de aire','fortpflanzung','Der Raum mit Luft am dicken Ende des Eis.','Am stumpfen Ende des Eis ist die Luftkammer.','die Kammer = la cámara / el cuartito');
+N('die','Hagelschnur','Hagelschnüre','la chalaza (cordón del huevo)','fortpflanzung','Eine Schnur an jeder Seite des Dottersacks. Sie puffert Stöße ab und hält den Dottersack in der Mitte.','Hagelschnüre an beiden Seiten des Dottersacks puffern Stöße ab.','die Schnur = la cuerda. Plural: die Hagelschnüre.',['die Hagelschnüre']);
+N('der','Nährstoff','Nährstoffe','el nutriente','fortpflanzung','Ein Stoff, den der Körper zum Wachsen braucht.','Der Dottersack enthält Nährstoffe, von denen sich der Embryo ernährt.','ernähren = alimentar → der Nährstoff');
+N('der','Stoß','Stöße','el golpe / la sacudida','fortpflanzung',null,'Hagelschnüre puffern Stöße ab.','Plural con diéresis: die Stöße.');
+N('das','Nest','Nester','el nido','fortpflanzung',null,'Nestflüchter verlassen schnell das Nest.');
+N('der','Nestflüchter','Nestflüchter','el nidífugo (polluelo que deja pronto el nido)','fortpflanzung','Ein Jungvogel, der nach dem Schlüpfen schnell das Nest verlässt. Zum Beispiel Hühner und Enten.','Hühner und Enten sind Nestflüchter.','flüchten = huir → el que «huye» del nido. Ejemplos: Huhn, Ente.');
+N('der','Nesthocker','Nesthocker','el nidícola (polluelo que se queda en el nido)','fortpflanzung','Ein Jungvogel, der nach dem Schlüpfen im Nest bleibt, weil sein Federkleid noch nicht entwickelt ist. Zum Beispiel die Amsel.','Die Amsel ist ein Nesthocker.','hocken = estar agachado/sentado → el que se queda en el nido. Ejemplo: Amsel.');
+N('der','Jungvogel','Jungvögel','el ave joven / el polluelo','fortpflanzung','Ein junger Vogel.','Manche Jungvögel verlassen nach dem Schlüpfen schnell das Nest.','jung (joven) + Vogel');
+N('das','Küken','Küken','el pollito','fortpflanzung','Der junge Vogel direkt nach dem Schlüpfen.','Am 21. Tag schlüpft das Küken aus dem Ei.','¡Ojo! DAS Küken (neutro).');
+N('das','Huhn','Hühner','la gallina / el pollo','fortpflanzung',null,'Hühner und Enten sind Nestflüchter.','Plural: die Hühner.');
+N('die','Henne','Hennen','la gallina','fortpflanzung','Das weibliche Huhn.','Der Hahn begattet die Henne.');
+N('der','Hahn','Hähne','el gallo','fortpflanzung','Das männliche Huhn.','Der Hahn überträgt seine Samenzellen in den Körper der Henne.');
+N('die','Ente','Enten','el pato','fortpflanzung',null,'Hühner und Enten verlassen schnell das Nest.','¡Ojo! die Ente, pero EL pato.');
+N('das','Blutgefäß','Blutgefäße','el vaso sanguíneo','fortpflanzung','Ein Rohr im Körper, durch das das Blut fließt.','Der Embryo ernährt sich mit Hilfe von vielen Blutgefäßen vom Dotter.','das Blut (la sangre) + das Gefäß (el recipiente / el vaso)');
+N('die','Daunenfeder','Daunenfedern','la pluma de plumón','fortpflanzung','Eine weiche, flauschige Feder. Küken haben Daunenfedern.','Das Küken hat Daunenfedern.','las Daunen = el plumón');
+N('die','Elster','Elstern','la urraca','fortpflanzung',null,'Die Elster stiehlt manchmal Eier aus anderen Nestern.','¡Ojo! die Elster, LA urraca: ¡coincide!');
+V('bebrüten','incubar','fortpflanzung','Auf den Eiern sitzen und sie warm halten.','Das Weibchen legt Eier ab, welche es bebrütet.','brüten = empollar');
+V('schlüpfen','salir del huevo','fortpflanzung','Aus dem Ei kommen.','Nach einiger Zeit schlüpfen die Jungen aus den Eiern.');
+V('sich ernähren','alimentarse','fortpflanzung',null,'Der Embryo ernährt sich vom Dotter.','sich ernähren VON + Dativ: vom Dotter.');
+V('sich entwickeln','desarrollarse','fortpflanzung',null,'Aus der Keimscheibe entwickelt sich der Embryo.');
+V('abpuffern','amortiguar','fortpflanzung','Einen Stoß weicher machen.','Die Hagelschnüre puffern Stöße ab.','der Puffer = el amortiguador');
+V('begatten','aparearse con','fortpflanzung',null,'Der Hahn begattet die Henne.');
+V('übertragen','transferir','fortpflanzung',null,'Dabei überträgt er seine Samenzellen in den Körper der Henne.');
+V('verlassen','abandonar / dejar','fortpflanzung',null,'Nestflüchter verlassen schnell das Nest.');
+V('hart','duro','fortpflanzung',null,'Die Eier haben eine sehr harte Schale.');
+V('oben','arriba','fortpflanzung',null,'Die Keimscheibe liegt immer oben.','oben = arriba, unten = abajo');
+
 /* ---- Wörter aus den Aufgaben (Operatoren) ---- */
 V('nennen','nombrar / mencionar (solo decir, sin explicar)','op',null,'Nenne die zehn Merkmale der Vögel.');
 V('beschriften','rotular (escribir los nombres en un dibujo)','op',null,'Beschrifte die Abbildung.');
@@ -281,7 +324,28 @@ const DIAGRAMS = {
       { n:9, id:'kloake', x:304, y:211, mx:362, my:236 },
     ],
   },
+  ei: {
+    title: 'Abb. 4: Der Aufbau eines Eis',
+    base: () => `
+      <path d="M60 150 C60 72 140 40 230 40 C325 40 382 102 382 150 C382 198 325 260 230 260 C140 260 60 228 60 150 Z" fill="#f1dfbd" stroke="#c9a877" stroke-width="7"/>
+      <path d="M78 150 C78 92 150 60 230 60 C310 60 364 108 364 150 C364 192 310 240 230 240 C150 240 78 208 78 150 Z" fill="#fbf6e6" stroke="#d9b98a" stroke-width="2.5" stroke-dasharray="6 4"/>
+      <path d="M78 150 C78 118 92 92 112 76 C98 100 92 125 92 150 C92 175 98 200 112 224 C92 208 78 182 78 150 Z" fill="#dcecf5" stroke="#9fc3d8" stroke-width="2"/>
+      <path d="M176 150 q-10 -9 -20 0 t-20 0 t-20 0 t-20 0" stroke="#d6bf96" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path d="M284 150 q10 -9 20 0 t20 0 t20 0 t20 0" stroke="#d6bf96" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <circle cx="230" cy="150" r="54" fill="#f6b531" stroke="#d9941a" stroke-width="3"/>
+      <circle cx="230" cy="102" r="9" fill="#fff4cf" stroke="#b58a2a" stroke-width="2.5"/>`,
+    labels: [
+      { n:1, id:'kalkschale', text:'die Kalkschale', accept:['die Schale'], x:300, y:52, mx:342, my:20 },
+      { n:2, id:'eihaut', x:122, y:72, mx:92, my:26 },
+      { n:3, id:'luftkammer', x:86, y:150, mx:26, my:150 },
+      { n:4, id:'eiklar', x:300, y:208, mx:332, my:274 },
+      { n:5, id:'dottersack', text:'der Dottersack', accept:['der Dotter'], x:196, y:188, mx:190, my:280 },
+      { n:6, id:'keimscheibe', x:230, y:98, mx:230, my:18 },
+      { n:7, id:'hagelschnur', text:'die Hagelschnüre', accept:['die Hagelschnur'], x:112, y:150, mx:96, my:276 },
+    ],
+  },
 };
+const DIAG_OF_TOPIC = { aussen:'aussen', skelett:'skelett', organe:'organe', fortpflanzung:'ei' };
 
 /* ============================================================
    CLOZE TEXTS (Lückentexte) from the worksheets
@@ -310,7 +374,103 @@ const CLOZE = {
     'Die Haut an den Beinen ist mit [[Schuppen]] bedeckt und an den Zehen befinden sich [[Krallen]]. Zusätzlich zur Lunge haben Vögel [[Luftsäcke]] und hohle [[Röhrenknochen]]. Die Körpertemperatur liegt zwischen 38 °C und 42 °C und bleibt immer gleich. Daher sind Vögel, so wie auch [[Säugetiere]], [[gleichwarme|gleichwarm]] Wirbeltiere.',
     'Fast alle Vögel können fliegen. Der [[Strauß]], der [[Emu]], der [[Pinguin]] und der [[Kiwi]] sind [[flugunfähige|flugunfaehig]] Vögel. Das liegt vor allem daran, dass sie zu [[schwer]] sind.',
   ]},
+  p12: { title:'Die Fortpflanzung', src:'Seite 12', parts:[
+    'Bei der [[Paarung]] drücken das Vogelweibchen und das Vogelmännchen ihre [[Kloaken|kloake]] aufeinander. Dabei fließt die [[Samenflüssigkeit]] des Männchens in die Kloake des Weibchens. Es findet also eine [[innere Befruchtung]] statt.',
+    'Nach der Befruchtung legt das [[Weibchen]] Eier ab, welche es [[bebrütet|bebrueten]]. Diese Eier haben eine sehr harte [[Schale]], die aus [[Kalk]] besteht. Aus der [[Keimscheibe]] entwickelt sich der [[Embryo]]. Sie liegt immer oben. Der [[Dottersack]] im Inneren des Eis enthält [[Nährstoffe]], von denen sich der Embryo ernährt.',
+    '[[Hagelschnüre]] an beiden Seiten des Dottersacks puffern [[Stöße]] ab und halten den Dottersack in der Mitte. Nach einiger Zeit [[schlüpfen]] die Jungen aus den Eiern. Manche Jungvögel, wie Hühner und Enten, verlassen danach schnell das [[Nest]]. Man nennt sie [[Nestflüchter]]. Andere, wie die Amsel, bleiben erstmal im Nest, da ihr [[Federkleid]] noch nicht entwickelt ist. Man nennt sie [[Nesthocker]].',
+  ]},
 };
+
+/* ============================================================
+   ZEITLEISTE (Seite 10) — von der Paarung bis zum Küken
+   ============================================================ */
+const TIMELINE = [
+  { k:'paarung', title:'1. Die Paarung', time:'Anfang', short:'Weibchen und Männchen drücken ihre Kloaken aufeinander.', de:'Bei der Paarung drücken das Weibchen und das Männchen ihre Kloaken aufeinander. Die Samenflüssigkeit fließt in die Kloake des Weibchens: Es findet eine innere Befruchtung statt.', es:'En el apareamiento, hembra y macho juntan sus cloacas. El líquido seminal pasa a la cloaca de la hembra: fecundación interna.' },
+  { k:'eiablage', title:'2. Die Eiablage', time:'danach', short:'Das Weibchen legt Eier mit harter Kalkschale ab und bebrütet sie.', de:'Nach der Befruchtung legt das Weibchen Eier mit einer harten Kalkschale ab und bebrütet sie.', es:'Tras la fecundación, la hembra pone huevos con cáscara dura de cal y los incuba.' },
+  { k:'embryo', title:'3. Der Embryo entsteht', time:'erste Tage', short:'Aus der Keimscheibe entwickelt sich der Embryo. Er ernährt sich vom Dotter.', de:'Aus der Keimscheibe entwickelt sich der Embryo. Er ernährt sich mit Hilfe von vielen Blutgefäßen vom Dotter.', es:'Del disco germinal se desarrolla el embrión. Se alimenta de la yema a través de muchos vasos sanguíneos.' },
+  { k:'tag12', title:'4. Nach 12 Tagen', time:'12 Tage', short:'Man erkennt schon die Gliedmaßen. Der Kopf mit Augen und Schnabel ist sehr groß.', de:'Nach 12 Tagen kann man schon die Gliedmaßen erkennen. Der Kopf mit den Augen und dem Schnabel ist sehr groß.', es:'A los 12 días ya se reconocen las extremidades. La cabeza, con los ojos y el pico, es muy grande.' },
+  { k:'tag20', title:'5. Nach 20 Tagen', time:'20 Tage', short:'Der junge Vogel ist so groß wie das Ei, hat Federn und atmet mit den Lungen.', de:'Nach 20 Tagen ist der junge Vogel so groß wie das Ei. Er besitzt bereits Federn und atmet mit den Lungen.', es:'A los 20 días el ave joven es tan grande como el huevo. Ya tiene plumas y respira con los pulmones.' },
+  { k:'tag21', title:'6. Am 21. Tag', time:'21. Tag', short:'Das Küken schlüpft aus dem Ei. Es hat Daunenfedern.', de:'Am 21. Tag schlüpft das Küken aus dem Ei. Es hat Daunenfedern.', es:'El día 21 el pollito sale del huevo. Tiene plumón.' },
+  { k:'nest', title:'7. Nach dem Schlüpfen', time:'Ende', short:'Nestflüchter verlassen schnell das Nest, Nesthocker bleiben noch im Nest.', de:'Nestflüchter wie Hühner und Enten verlassen schnell das Nest. Nesthocker wie die Amsel bleiben im Nest, weil ihr Federkleid noch nicht entwickelt ist.', es:'Los nidífugos (gallina, pato) dejan pronto el nido. Los nidícolas (mirlo) se quedan, porque su plumaje aún no está desarrollado.' },
+];
+
+/* ============================================================
+   SATZ-BAU (Blatt 6: Die Entwicklung im Hühnerei) — Wortgeländer wie auf dem Arbeitsblatt
+   ============================================================ */
+const SENTENCES = {
+  huehnerei: [
+    { title:'Bild 1: Hahn und Henne', target:['Der Hahn','begattet','die Henne.','Dabei','überträgt er','seine Samenzellen','in den Körper','der Henne.'], extra:['die Eier','in die Kloake'], es:'El gallo se aparea con la gallina. Así transfiere sus espermatozoides al cuerpo de la gallina.' },
+    { title:'Bild 2: Die Keimscheibe', target:['Der Embryo','entwickelt sich','in der Keimscheibe.','Er ernährt sich','vom Dotter','mit Hilfe von','vielen Blutgefäßen.'], extra:['vom Eiklar','entwickeln sich'], es:'El embrión se desarrolla en el disco germinal. Se alimenta de la yema con ayuda de muchos vasos sanguíneos.' },
+    { title:'Bild 3: Nach 12 Tagen', target:['Nach 12 Tagen','kann man schon','die Gliedmaßen','erkennen.','Der Kopf','mit den Augen','und dem Schnabel','ist sehr groß.'], extra:['die Federn','ist sehr klein.'], es:'A los 12 días ya se pueden reconocer las extremidades. La cabeza con los ojos y el pico es muy grande.' },
+    { title:'Bild 4: Nach 20 Tagen', target:['Nach 20 Tagen','ist','der junge Vogel','so groß','wie das Ei.','Er besitzt','bereits Federn','und atmet','mit den Lungen.'], extra:['mit den Kiemen.','wie die Henne.'], es:'A los 20 días el ave joven es tan grande como el huevo. Ya tiene plumas y respira con los pulmones.' },
+    { title:'Bild 5: Das Küken', target:['Am 21. Tag','schlüpft','der junge Vogel','aus dem Ei.','Er hat','Daunenfedern.','Junge Vögel','nennt man','Küken.'], extra:['Am 12. Tag','Nesthocker.'], es:'El día 21 el ave joven sale del huevo. Tiene plumón. A las aves jóvenes se les llama pollitos.' },
+  ],
+};
+
+/* ============================================================
+   PROZESSE ERKLÄREN — freie Antworten mit Bewertungsraster und Musterlösung
+   keys: Kernideen (Regex auf gefaltetem Text: ä→ae, ß→ss, klein), p = Punkte, hint = Stichwort
+   ============================================================ */
+const PROCESSES = [
+  { id:'p-koerperbau', t:'aussen', q:'Beschreibe den gemeinsamen Körperbau der Vögel.', es:'Describe la estructura común del cuerpo de las aves: ¿en qué partes se divide, qué son las alas y las patas, qué tienen todas?',
+    keys:[{ re:/kopf/, hint:'Kopf' }, { re:/rumpf/, hint:'Rumpf' }, { re:/schwanz/, hint:'Schwanz' }, { re:/fluegel|vordergliedmass/, hint:'Vordergliedmaßen → Flügel' }, { re:/krall|hintergliedmass/, hint:'Hintergliedmaßen mit Krallen' }, { re:/schnabel/, hint:'Schnabel' }],
+    bank:['gegliedert', 'Kopf', 'Rumpf', 'Schwanz', 'Vordergliedmaßen', 'Flügel', 'Hintergliedmaßen', 'Krallen', 'Schnabel'],
+    model:'Der Körper ist in Kopf, Rumpf und Schwanz gegliedert. Die Vordergliedmaßen sind zu Flügeln umgebildet. Die Hintergliedmaßen besitzen Krallen. Alle Vögel besitzen einen Schnabel.', modelEs:'El cuerpo se divide en cabeza, tronco y cola. Las extremidades anteriores son alas; las posteriores tienen garras. Todas las aves tienen pico.' },
+  { id:'p-skelett', t:'skelett', q:'Erkläre, warum das Skelett der Vögel gut zum Fliegen passt.', es:'Explica por qué el esqueleto de las aves es bueno para volar: ¿cómo son los huesos? ¿dónde están los músculos de las alas?',
+    keys:[{ re:/leicht/, hint:'leichte Knochen' }, { re:/hohl|roehrenknochen/, hint:'hohle Röhrenknochen' }, { re:/brustbein/, hint:'großes Brustbein' }, { re:/muskel/, hint:'Muskeln bewegen die Flügel' }],
+    bank:['sehr leicht', 'hohle Röhrenknochen', 'das große Brustbein', 'die Muskeln', 'die Flügel bewegen'],
+    model:'Das Skelett besteht aus sehr leichten, hohlen Röhrenknochen. Am großen Brustbein befinden sich die Muskeln, die die Flügel bewegen.', modelEs:'El esqueleto es de huesos muy ligeros y huecos. En el gran esternón están los músculos que mueven las alas.' },
+  { id:'p-nahrung', t:'organe', q:'Beschreibe den Weg der Nahrung durch den Körper des Vogels.', es:'Describe el camino de la comida por el cuerpo del ave, en orden: ¿a dónde va primero, después, al final?',
+    keys:[{ re:/kropf/, hint:'Kropf' }, { re:/druesenmagen/, hint:'Drüsenmagen' }, { re:/kaumagen/, hint:'Kaumagen' }, { re:/darm/, hint:'Darm' }, { re:/kloake/, hint:'Kloake' }], order:[/kropf/, /druesenmagen/, /kaumagen/, /darm/, /kloake/], orderHint:'richtige Reihenfolge',
+    bank:['zuerst', 'dann', 'danach', 'schließlich', 'Kropf', 'Drüsenmagen', 'Kaumagen', 'Darm', 'Kloake'],
+    model:'Die Nahrung kommt zuerst in den Kropf, dann in den Drüsenmagen, danach in den Kaumagen und schließlich in den Darm. Der Kot verlässt den Körper durch die Kloake.', modelEs:'La comida va primero al buche, luego al proventrículo, después a la molleja y por último al intestino. Las heces salen por la cloaca.' },
+  { id:'p-atmung', t:'organe', q:'Erkläre, wie die Luft in den Vogel kommt und wozu die Luftsäcke dienen.', es:'Explica cómo entra el aire en el ave y para qué sirven los sacos aéreos.',
+    keys:[{ re:/luftroehre/, hint:'Luftröhre' }, { re:/lunge/, hint:'Lunge' }, { re:/luftsa(e)?ck/, hint:'Luftsäcke' }, { re:/sauerstoff/, hint:'mehr Sauerstoff aufnehmen' }],
+    bank:['Luftröhre', 'transportiert', 'Lunge', 'mehrere Luftsäcke', 'Sauerstoff', 'besser aufnehmen'],
+    model:'Die Luftröhre transportiert die Luft von außen zur Lunge. Die Lunge besitzt mehrere Luftsäcke. Mit den Luftsäcken kann der Vogel besser den Sauerstoff aus der Luft aufnehmen.', modelEs:'La tráquea lleva el aire de fuera al pulmón. El pulmón tiene varios sacos aéreos. Con ellos el ave toma mejor el oxígeno del aire.' },
+  { id:'p-kloake', t:'organe', q:'Was ist eine Kloake? Erkläre.', es:'Explica qué es la cloaca: ¿qué tipo de abertura es? ¿qué sale por ella?',
+    keys:[{ re:/oeffnung|ausgang|loch|ausfuehr|verlass|raus|heraus|ausgeschieden/, hint:'gemeinsame Körperöffnung' }, { re:/kot/, hint:'Kot' }, { re:/urin|harn/, hint:'Urin' }, { re:/\beier?\b|sperma|samen/, hint:'Eier (oder Spermazellen)' }],
+    bank:['gemeinsame Körperöffnung', 'Kot', 'Urin', 'Eier', 'Spermazellen', 'verlassen den Körper'],
+    model:'Die Kloake ist eine gemeinsame Körperöffnung. Durch sie verlassen Kot, Urin und Eier (beim Männchen die Spermazellen) den Körper.', modelEs:'La cloaca es una abertura común del cuerpo. Por ella salen las heces, la orina y los huevos (en el macho, los espermatozoides).' },
+  { id:'p-schnabel', t:'schnabel', q:'Erkläre, warum der Schnabel verrät, was ein Vogel frisst. Nenne ein Beispiel.', es:'Explica por qué el pico revela lo que come un ave y da un ejemplo (ave, pico, comida).',
+    keys:[{ re:/werkzeug|form/, hint:'Schnäbel sind wie Werkzeuge / die Form passt' }, { re:/pinzette|meissel|zange|haken|seih|schlank|spitz|flach/, hint:'eine Schnabelform nennen' }, { re:/amsel|specht|bussard|storch|ente|baumlaeufer/, hint:'einen Vogel nennen' }, { re:/frisst|fressen|nahrung|wuerm|larve|insekt|maeuse|maus|tier|pflanz|beere/, hint:'seine Nahrung nennen' }],
+    bank:['wie Werkzeuge', 'die Form des Schnabels', 'zum Beispiel', 'der Buntspecht', 'Meißelschnabel', 'um … zu fressen'],
+    model:'Schnäbel sind wie Werkzeuge: Die Form des Schnabels passt zur Nahrung. Zum Beispiel hat der Buntspecht einen kräftigen Meißelschnabel, um Larven im Holz zu fressen.', modelEs:'Los picos son como herramientas: la forma del pico se ajusta a la comida. Por ejemplo, el pico picapinos tiene un pico de cincel para comer larvas en la madera.' },
+  { id:'p-merkmale', t:'merkmale', q:'Nenne fünf Merkmale der Vögel.', es:'Nombra cinco características de las aves.', merkmale:5,
+    keys:[], bank:['Flügel', 'Federkleid', 'Schnabel', 'keine Zähne', 'Eier', 'Kloake', 'Schuppen', 'Krallen', 'Luftsäcke', 'gleichwarm'],
+    model:'Vögel haben Flügel, ein Federkleid und einen Schnabel, aber keine echten Zähne. Sie legen Eier, besitzen eine Kloake, haben Schuppen an den Beinen und Krallen an den Zehen, Luftsäcke und hohle Knochen, und sie sind gleichwarm.', modelEs:'Alas, plumaje, pico, sin dientes, ponen huevos, cloaca, escamas en las patas, garras, sacos aéreos y huesos huecos, temperatura constante.' },
+  { id:'p-flug', t:'merkmale', q:'Welche Vögel können nicht fliegen? Begründe.', es:'Nombra las aves que no pueden volar y explica por qué (con «weil»).',
+    keys:[{ re:/strauss/, hint:'Strauß' }, { re:/emu/, hint:'Emu' }, { re:/pinguin/, hint:'Pinguin' }, { re:/kiwi/, hint:'Kiwi' }, { re:/schwer/, p:2, hint:'weil sie zu schwer sind' }],
+    bank:['der Strauß', 'der Emu', 'der Pinguin', 'der Kiwi', 'weil', 'zu schwer'],
+    model:'Der Strauß, der Emu, der Pinguin und der Kiwi können nicht fliegen, weil sie zu schwer sind.', modelEs:'El avestruz, el emú, el pingüino y el kiwi no pueden volar porque son demasiado pesados.' },
+  { id:'p-paarung', t:'fortpflanzung', q:'Erkläre, was bei der Paarung der Vögel passiert.', es:'Explica qué pasa en el apareamiento de las aves: ¿qué juntan? ¿qué pasa de uno a otro? ¿cómo se llama ese tipo de fecundación?',
+    keys:[{ re:/kloake/, hint:'Kloaken' }, { re:/aufeinander|druecken|aneinander/, hint:'aufeinander drücken' }, { re:/samen|sperma/, hint:'Samenflüssigkeit fließt in die Kloake des Weibchens' }, { re:/innere.{0,3}befruchtung|befruchtung.{0,12}inne/, hint:'innere Befruchtung' }],
+    bank:['bei der Paarung', 'Weibchen und Männchen', 'die Kloaken', 'aufeinander drücken', 'die Samenflüssigkeit', 'fließt in', 'innere Befruchtung'],
+    model:'Bei der Paarung drücken das Weibchen und das Männchen ihre Kloaken aufeinander. Dabei fließt die Samenflüssigkeit des Männchens in die Kloake des Weibchens. Es findet also eine innere Befruchtung statt.', modelEs:'En el apareamiento, la hembra y el macho juntan sus cloacas. El líquido seminal del macho pasa a la cloaca de la hembra. Es una fecundación interna.' },
+  { id:'p-ei', t:'fortpflanzung', q:'Erkläre, wie sich der Embryo im Ei entwickelt und wovon er sich ernährt.', es:'Explica cómo se desarrolla el embrión dentro del huevo y de qué se alimenta.',
+    keys:[{ re:/keimscheibe/, hint:'aus der Keimscheibe' }, { re:/dotter/, hint:'Dottersack / Dotter' }, { re:/naehrstoff/, hint:'Nährstoffe' }, { re:/blutgef/, hint:'mit Hilfe von Blutgefäßen' }],
+    bank:['aus der Keimscheibe', 'entwickelt sich', 'der Dottersack', 'enthält Nährstoffe', 'ernährt sich', 'Blutgefäße'],
+    model:'Aus der Keimscheibe entwickelt sich der Embryo. Der Dottersack enthält Nährstoffe. Der Embryo ernährt sich mit Hilfe von vielen Blutgefäßen vom Dotter.', modelEs:'Del disco germinal se desarrolla el embrión. El saco vitelino contiene nutrientes. El embrión se alimenta de la yema a través de muchos vasos sanguíneos.' },
+  { id:'p-hagel', t:'fortpflanzung', q:'Wozu dienen die Hagelschnüre?', es:'¿Para qué sirven las chalazas (Hagelschnüre)? Dos funciones.',
+    keys:[{ re:/stoss|stoess|puffer/, hint:'Stöße abpuffern' }, { re:/mitte|halten/, hint:'den Dottersack in der Mitte halten' }],
+    bank:['puffern … ab', 'Stöße', 'halten', 'den Dottersack', 'in der Mitte'],
+    model:'Die Hagelschnüre puffern Stöße ab und halten den Dottersack in der Mitte.', modelEs:'Las chalazas amortiguan los golpes y mantienen el saco vitelino en el centro.' },
+  { id:'p-schale', t:'fortpflanzung', q:'Beschreibe die Schale des Vogeleis.', es:'Describe la cáscara del huevo: ¿cómo es? ¿de qué está hecha?',
+    keys:[{ re:/hart/, hint:'sehr hart' }, { re:/kalk/, hint:'aus Kalk' }],
+    bank:['sehr hart', 'besteht aus', 'Kalk'],
+    model:'Die Eier haben eine sehr harte Schale, die aus Kalk besteht.', modelEs:'Los huevos tienen una cáscara muy dura, hecha de cal.' },
+  { id:'p-nest', t:'fortpflanzung', q:'Erkläre die Begriffe Nestflüchter und Nesthocker und nenne je ein Beispiel.', es:'Explica qué son los nidífugos (Nestflüchter) y los nidícolas (Nesthocker) y da un ejemplo de cada uno.',
+    keys:[{ re:/nestfluechter[^.]{0,60}(verlass|schnell)|(verlass|schnell)[^.]{0,60}nestfluechter/, hint:'Nestflüchter verlassen schnell das Nest' }, { re:/huhn|huehn|ente|hahn|henne|kueken/, hint:'Beispiel: Huhn, Ente' }, { re:/nesthocker[^.]{0,60}bleib|bleib[^.]{0,60}nesthocker/, hint:'Nesthocker bleiben im Nest' }, { re:/federkleid|federn|nicht entwickelt/, hint:'weil ihr Federkleid noch nicht entwickelt ist' }, { re:/amsel/, hint:'Beispiel: Amsel' }],
+    bank:['Nestflüchter', 'verlassen schnell das Nest', 'zum Beispiel Hühner und Enten', 'Nesthocker', 'bleiben im Nest', 'weil', 'Federkleid noch nicht entwickelt', 'zum Beispiel die Amsel'],
+    model:'Nestflüchter verlassen nach dem Schlüpfen schnell das Nest, zum Beispiel Hühner und Enten. Nesthocker bleiben erstmal im Nest, weil ihr Federkleid noch nicht entwickelt ist, zum Beispiel die Amsel.', modelEs:'Los nidífugos dejan pronto el nido tras salir del huevo, por ejemplo gallinas y patos. Los nidícolas se quedan en el nido porque su plumaje aún no está desarrollado, por ejemplo el mirlo.' },
+  { id:'p-entwicklung', t:'fortpflanzung', q:'Beschreibe die Entwicklung im Hühnerei: Was passiert nach 12 Tagen, nach 20 Tagen und am 21. Tag?', es:'Describe el desarrollo en el huevo de gallina: ¿qué pasa a los 12 días, a los 20 días y el día 21?',
+    keys:[{ re:/12[^.]{0,80}(gliedmass|kopf|augen|schnabel)/, hint:'12 Tage: Gliedmaßen erkennbar, großer Kopf' }, { re:/20[^.]{0,80}(gross|feder|lunge|atme)/, hint:'20 Tage: so groß wie das Ei, Federn, atmet mit den Lungen' }, { re:/21[^.]{0,60}(schluepf|kueken)|(schluepf|kueken)[^.]{0,60}21/, hint:'21. Tag: das Küken schlüpft' }, { re:/daunen/, hint:'Daunenfedern' }],
+    bank:['Nach 12 Tagen', 'die Gliedmaßen erkennen', 'der Kopf ist sehr groß', 'Nach 20 Tagen', 'so groß wie das Ei', 'Federn', 'atmet mit den Lungen', 'Am 21. Tag', 'schlüpft', 'Daunenfedern'],
+    model:'Nach 12 Tagen kann man schon die Gliedmaßen erkennen, und der Kopf ist sehr groß. Nach 20 Tagen ist der junge Vogel so groß wie das Ei, er besitzt Federn und atmet mit den Lungen. Am 21. Tag schlüpft das Küken mit seinen Daunenfedern aus dem Ei.', modelEs:'A los 12 días ya se reconocen las extremidades y la cabeza es muy grande. A los 20 días el ave joven es tan grande como el huevo, tiene plumas y respira con los pulmones. El día 21 el pollito sale del huevo con su plumón.' },
+];
+PROCESSES.forEach(P => { P.keys.forEach(k => { if (!k.p) k.p = 1; }); P.max = P.merkmale || (P.keys.reduce((a, k) => a + k.p, 0) + (P.order ? 1 : 0)); });
+const PMAP = {};
+PROCESSES.forEach(P => { PMAP[P.id] = P; });
 
 /* ============================================================
    RICHTIG / FALSCH
@@ -362,7 +522,67 @@ const TF = [
   { t:'merkmale', s:'Viele flugunfähige Vögel sind zu leicht zum Fliegen.', a:false, why:'Sie sind zu schwer.', es:'Falso: son demasiado PESADOS (zu schwer).' },
   { t:'merkmale', s:'Das Federkleid bedeckt nur die Flügel.', a:false, why:'Es bedeckt den ganzen Körper.', es:'Falso: el plumaje cubre TODO el cuerpo.' },
   { t:'merkmale', s:'Vögel und Säugetiere sind gleichwarm.', a:true, es:'Aves y mamíferos tienen temperatura constante. ✔' },
+  // fortpflanzung
+  { t:'fortpflanzung', s:'Bei den Vögeln findet eine innere Befruchtung statt.', a:true, es:'En las aves la fecundación es interna. ✔' },
+  { t:'fortpflanzung', s:'Bei der Paarung drücken Weibchen und Männchen ihre Schnäbel aufeinander.', a:false, why:'Sie drücken ihre Kloaken aufeinander.', es:'Falso: juntan las CLOACAS, no los picos.' },
+  { t:'fortpflanzung', s:'Die Samenflüssigkeit des Männchens fließt in die Kloake des Weibchens.', a:true, es:'El líquido seminal del macho pasa a la cloaca de la hembra. ✔' },
+  { t:'fortpflanzung', s:'Die Schale des Eis besteht aus Horn.', a:false, why:'Sie besteht aus Kalk.', es:'Falso: la cáscara es de CAL (Kalk), no de queratina.' },
+  { t:'fortpflanzung', s:'Die Keimscheibe liegt immer unten im Ei.', a:false, why:'Die Keimscheibe liegt immer oben.', es:'Falso: el disco germinal siempre queda ARRIBA.' },
+  { t:'fortpflanzung', s:'Der Embryo ernährt sich von den Nährstoffen im Dottersack.', a:true, es:'El embrión se alimenta de los nutrientes del saco vitelino. ✔' },
+  { t:'fortpflanzung', s:'Die Hagelschnüre halten den Dottersack in der Mitte.', a:true, es:'Las chalazas mantienen el saco vitelino en el centro. ✔' },
+  { t:'fortpflanzung', s:'Hühner und Enten sind Nesthocker.', a:false, why:'Hühner und Enten sind Nestflüchter.', es:'Falso: gallinas y patos son nidífugos (Nestflüchter): dejan pronto el nido.' },
+  { t:'fortpflanzung', s:'Die Amsel ist ein Nesthocker, weil ihr Federkleid noch nicht entwickelt ist.', a:true, es:'El mirlo es nidícola: se queda en el nido porque su plumaje no está desarrollado. ✔' },
+  { t:'fortpflanzung', s:'Das Männchen legt die Eier und bebrütet sie.', a:false, why:'Das Weibchen legt die Eier und bebrütet sie.', es:'Falso: la HEMBRA pone los huevos y los incuba.' },
+  { t:'fortpflanzung', s:'Das Küken schlüpft am 21. Tag aus dem Ei.', a:true, es:'El pollito sale del huevo el día 21. ✔' },
+  { t:'fortpflanzung', s:'Nach 12 Tagen atmet der Embryo schon mit den Lungen.', a:false, why:'Erst nach 20 Tagen atmet er mit den Lungen.', es:'Falso: respira con los pulmones a los 20 días, no a los 12.' },
+  { t:'fortpflanzung', s:'Die Luftkammer liegt am stumpfen Ende des Eis.', a:true, es:'La cámara de aire está en el extremo romo del huevo. ✔' },
 ];
+
+/* ============================================================
+   FAKTEN-FRAGEN (Multiple Choice zu Prozessen, Seiten 10–12)
+   ============================================================ */
+const FACTS = [
+  { t:'fortpflanzung', q:'Hühner und Enten verlassen nach dem Schlüpfen schnell das Nest. Sie sind …', a:'Nestflüchter', o:['Nesthocker', 'Embryonen'], es:'Gallinas y patos dejan pronto el nido → nidífugos.', say:'Hühner und Enten sind Nestflüchter.' },
+  { t:'fortpflanzung', q:'Welcher Vogel ist ein Nesthocker?', a:'die Amsel', o:['das Huhn', 'die Ente'], es:'El mirlo se queda en el nido → nidícola.', say:'Die Amsel ist ein Nesthocker.' },
+  { t:'fortpflanzung', q:'Warum bleiben Nesthocker nach dem Schlüpfen im Nest?', a:'Ihr Federkleid ist noch nicht entwickelt.', o:['Sie sind zu schwer.', 'Sie haben keine Kloake.', 'Sie haben noch keinen Schnabel.'], es:'Se quedan porque su plumaje aún no está desarrollado.', say:'Nesthocker bleiben im Nest, weil ihr Federkleid noch nicht entwickelt ist.' },
+  { t:'fortpflanzung', q:'Wie nennt man Jungvögel, die lange im Nest bleiben?', a:'Nesthocker', o:['Nestflüchter', 'Küken', 'Jungvögel'], es:'Se quedan «sentados» (hocken) en el nido: Nesthocker.', say:'Jungvögel, die lange im Nest bleiben, nennt man Nesthocker.' },
+  { t:'fortpflanzung', q:'Woraus besteht die Schale des Eis?', a:'aus Kalk', o:['aus Horn', 'aus Knochen', 'aus Federn'], es:'La cáscara es de cal.', say:'Die Schale des Eis besteht aus Kalk.' },
+  { t:'fortpflanzung', q:'Wo liegt die Keimscheibe?', a:'immer oben, auf dem Dotter', o:['immer unten im Ei', 'in der Luftkammer', 'in der Kalkschale'], es:'El disco germinal siempre queda arriba, sobre la yema.', say:'Die Keimscheibe liegt immer oben.' },
+  { t:'fortpflanzung', q:'Welche Befruchtung findet bei den Vögeln statt?', a:'eine innere Befruchtung', o:['eine äußere Befruchtung', 'keine Befruchtung'], es:'Fecundación interna: dentro del cuerpo de la hembra.', say:'Bei den Vögeln findet eine innere Befruchtung statt.' },
+  { t:'fortpflanzung', q:'Wovon ernährt sich der Embryo?', a:'von den Nährstoffen im Dottersack', o:['von der Kalkschale', 'von der Luft in der Luftkammer', 'von der Eihaut'], es:'Se alimenta de los nutrientes del saco vitelino.', say:'Der Embryo ernährt sich von den Nährstoffen im Dottersack.' },
+  { t:'fortpflanzung', q:'Wozu dienen die Hagelschnüre?', a:'Sie puffern Stöße ab und halten den Dottersack in der Mitte.', o:['Sie liefern dem Embryo Sauerstoff.', 'Sie bilden die harte Schale.', 'Sie halten das Ei warm.'], es:'Amortiguan golpes y centran el saco vitelino.', say:'Die Hagelschnüre puffern Stöße ab und halten den Dottersack in der Mitte.' },
+  { t:'fortpflanzung', q:'Was fließt bei der Paarung in die Kloake des Weibchens?', a:'die Samenflüssigkeit des Männchens', o:['der Dotter', 'das Eiklar', 'der Urin'], es:'El líquido seminal del macho.', say:'Die Samenflüssigkeit des Männchens fließt in die Kloake des Weibchens.' },
+  { t:'fortpflanzung', q:'Was macht das Weibchen nach der Befruchtung?', a:'Es legt Eier ab und bebrütet sie.', o:['Es bekommt lebende Junge.', 'Es verlässt das Nest.', 'Es überträgt Samenzellen.'], es:'Pone huevos y los incuba.', say:'Nach der Befruchtung legt das Weibchen Eier ab und bebrütet sie.' },
+  { t:'fortpflanzung', q:'Was passiert am 21. Tag im Hühnerei?', a:'Das Küken schlüpft aus dem Ei.', o:['Man erkennt die Gliedmaßen.', 'Der Embryo bekommt Federn.', 'Die Henne legt das Ei.'], es:'El día 21 el pollito sale del huevo.', say:'Am 21. Tag schlüpft das Küken aus dem Ei.' },
+  { t:'fortpflanzung', q:'Was hat das Küken direkt nach dem Schlüpfen?', a:'Daunenfedern', o:['Schuppen am ganzen Körper', 'Zähne', 'keine Federn'], es:'Tiene plumón.', say:'Das Küken hat Daunenfedern.' },
+];
+
+/* ============================================================
+   SCHREIB-FALLEN — typische Fehler aus den Arbeitsblättern (Rechtschreibung, Artikel, Endungen)
+   ============================================================ */
+const FIXES = {
+  aussen: [
+    { s:'Die Vordergliedmaßen sind zu ___ umgebildet.', o:['Flügeln', 'Flügen', 'Flügel', 'Flüglen'], a:'Flügeln', es:'Flügel con L. Aquí es dativo plural: zu FlügelN.' },
+    { s:'___ Gartenbaumläufer hat einen feinen Schnabel.', o:['Der', 'Die', 'Das', 'Den'], a:'Der', es:'der Läufer → DER Gartenbaumläufer (masculino).' },
+  ],
+  skelett: [
+    { s:'Am ___ befinden sich die Muskeln, die die Flügel bewegen.', o:['Brustbein', 'Bruntbein', 'Brustbain', 'Brustbeim'], a:'Brustbein', es:'Brust + Bein = Brustbein. ¡No «Bruntbein»!' },
+    { s:'Die hinteren Gliedmaßen sind durch ___ Becken mit der Wirbelsäule verbunden.', o:['das', 'der', 'die', 'dem'], a:'das', es:'das Becken (neutro) → durch DAS Becken (acusativo).' },
+  ],
+  organe: [
+    { s:'Der Urin aus der ___ verlässt durch die Kloake den Körper.', o:['Niere', 'Nire', 'Niehre', 'Nähre'], a:'Niere', es:'Se escribe Niere (ie = i larga).' },
+    { s:'Die Vögel besitzen wie die Reptilien eine ___.', o:['Kloake', 'Kloacke', 'Kloke', 'Cloake'], a:'Kloake', es:'Kloake, sin «ck»: Klo-a-ke.' },
+  ],
+  fortpflanzung: [
+    { s:'Dabei werden die ___ der beiden Partner aufeinander gedrückt.', o:['Kloaken', 'Kloacken', 'Kloake', 'Kloaker'], a:'Kloaken', es:'Plural de die Kloake: die Kloaken, sin «ck».' },
+    { s:'Bei den Vögeln findet eine ___ Befruchtung statt.', o:['innere', 'innen', 'inneren', 'äußere'], a:'innere', es:'Después de «eine» (femenino): eine innerE Befruchtung.' },
+    { s:'Die vom Weibchen gelegten Eier bestehen aus ___.', o:['Kalk', 'Kalg', 'Kalt', 'Kalck'], a:'Kalk', es:'Kalk, con k al final.' },
+    { s:'Der Embryo ernährt sich von Nährstoffen, welche sich im ___ befinden.', o:['Dottersack', 'Dotersack', 'Dottersak', 'Dottersäcke'], a:'Dottersack', es:'Dotter + Sack = Dottersack (singular, con dos t y ck).' },
+    { s:'Ein Nestflüchter ist ein Vogel, ___ schnell das Nest verlässt.', o:['der', 'das', 'wer', 'die'], a:'der', es:'ein Vogel (masculino) → «…, DER schnell das Nest verlässt».' },
+    { s:'Die Amsel bleibt im Nest, ___ ihr Federkleid noch nicht entwickelt ist.', o:['weil', 'dass', 'wenn', 'denn'], a:'weil', es:'«weil» = porque, y el verbo va al final: …, weil … ist.' },
+    { s:'Die ___ liegt immer oben.', o:['Keimscheibe', 'Keimschiebe', 'Kaimscheibe', 'Keimscheiben'], a:'Keimscheibe', es:'Keim + Scheibe. Singular: die Keimscheibe.' },
+  ],
+};
 
 /* ============================================================
    SCHNÄBEL (Seite 7)
@@ -393,7 +613,7 @@ const BEAKS = [
     es:'pico plano filtrador con láminas córneas → animalitos acuáticos y plantas', shape:'flat', col:{body:'#7a6048',belly:'#b99c7c',head:'#1f6b45',beak:'#d8b73a'},
     kwBeak:/flach|seih|lamelle/, kwFood:/wasser|pflanze/ },
 ];
-const BEAK_FIX = [
+const BEAK_FIX = FIXES.schnabel = [
   { s:'Die Stockente hat einen ___ Schnabel.', o:['flachen','flacher','flach','flache'], a:'flachen', es:'Después de «einen» (masculino, acusativo) el adjetivo termina en -en: einen flachEN Schnabel.' },
   { s:'Die Amsel hat einen ___ Schnabel.', o:['schlanken','Schlank','schlanker','schlank'], a:'schlanken', es:'einen schlankEN Schnabel. Los adjetivos van en minúscula.' },
   { s:'Der Gartenbaumläufer hat einen leicht ___ Schnabel.', o:['gebogenen','gebogener','gebogen','biegen'], a:'gebogenen', es:'einen leicht gebogenEN Schnabel = un pico ligeramente curvado.' },
@@ -441,13 +661,16 @@ const ZONES = [
   { z:3, name:'Magen-Moor', es:'Pantano del Estómago', topic:'organe', page:'Seite 4' },
   { z:4, name:'Schnabel-Wald', es:'Bosque de los Picos', topic:'schnabel', page:'Seiten 6, 7, 9' },
   { z:5, name:'Merkmal-Gipfel', es:'Cumbre de las Características', topic:'merkmale', page:'Seite 8' },
+  { z:6, name:'Nest-Bucht', es:'Bahía de los Nidos', topic:'fortpflanzung', page:'Seiten 10–12' },
 ];
+const ZN = 6; // number of zones
 const STATIONS = {
   1: [ { kind:'obby', arg:'aussen', name:'Artikel-Obby', icon:'🟦' }, { kind:'drones', arg:'aussen', name:'Drohnen-Jagd', icon:'🎯' }, { kind:'raid', arg:'aussen', name:'Beschriften-Raid', icon:'🏷️' }, { kind:'terminal', arg:'aussen', cloze:'p2', name:'Code-Terminal', icon:'💻' } ],
   2: [ { kind:'obby', arg:'skelett', name:'Artikel-Obby', icon:'🟦' }, { kind:'drones', arg:'skelett', name:'Drohnen-Jagd', icon:'🎯' }, { kind:'raid', arg:'skelett', name:'Beschriften-Raid', icon:'🦴' }, { kind:'terminal', arg:'skelett', cloze:'p3', name:'Code-Terminal', icon:'💻' } ],
   3: [ { kind:'foodrun', arg:'organe', name:'Verdauungs-Run', icon:'🚪' }, { kind:'drones', arg:'organe', name:'Drohnen-Jagd', icon:'🎯' }, { kind:'raid', arg:'organe', name:'Beschriften-Raid', icon:'🫁' }, { kind:'terminal', arg:'organe', cloze:'p4', name:'Code-Terminal', icon:'💻' } ],
   4: [ { kind:'beakblaster', arg:'schnabel', name:'Schnabel-Blaster', icon:'🔫' }, { kind:'beakrun', arg:'schnabel', name:'Schnabel-Türen', icon:'🚪' }, { kind:'obby', arg:'schnabel', name:'Artikel-Obby', icon:'🟦' }, { kind:'terminal', arg:'schnabel', cloze:'p6', name:'Code-Terminal', icon:'💻' } ],
   5: [ { kind:'collector', arg:'merkmale', name:'Merkmal-Jagd', icon:'🧭' }, { kind:'tfrun', arg:'all', name:'Wahr-oder-Falsch-Türen', icon:'🚪' }, { kind:'drones', arg:'op', name:'Aufgaben-Drohnen', icon:'🎯' }, { kind:'terminal', arg:'merkmale', cloze:'p8', name:'Code-Terminal', icon:'💻' } ],
+  6: [ { kind:'obby', arg:'fortpflanzung', name:'Artikel-Obby', icon:'🟦' }, { kind:'raid', arg:'ei', name:'Ei-Raid', icon:'🥚' }, { kind:'timeline', arg:'fortpflanzung', name:'Brut-Zeitleiste', icon:'📜' }, { kind:'terminal', arg:'fortpflanzung', cloze:'p12', build:'huehnerei', name:'Code-Terminal', icon:'💻' } ],
 };
 const STATION_INFO = {
   obby:{ de:'Spring auf die Plattform mit dem richtigen Artikel. Die falsche fällt in die Lava!', es:'Salta a la plataforma con el artículo correcto. ¡La incorrecta cae a la lava!', how:'WASD laufen · Leertaste springen · Maus: Kamera. Blau = der, Rot = die, Grün = das.' },
@@ -459,15 +682,17 @@ const STATION_INFO = {
   beakrun:{ de:'Welcher Vogel, welcher Schnabel, welches Futter? Wähle die richtige Tür.', es:'¿Qué ave, qué pico, qué comida? Elige la puerta correcta.', how:'Lies die Frage oben und wähle die Tür.' },
   collector:{ de:'Sammle die zehn echten Merkmale der Vögel. Die Lügen-Geister jagen dich!', es:'Recoge las diez características verdaderas. ¡Los fantasmas mentirosos te persiguen!', how:'Lauf in die goldenen Rollen. Schieß die Geister, um sie zu stoppen.' },
   tfrun:{ de:'Richtig oder falsch? Lauf durch die richtige Tür.', es:'¿Verdadero o falso? Pasa por la puerta correcta.', how:'Links und rechts: Richtig oder Falsch.' },
+  timeline:{ de:'Bring die sieben Ereignisse in die richtige Reihenfolge: von der Paarung bis zum Küken. Danach erklärst du zwei Schritte mit eigenen Worten.', es:'Ordena los siete sucesos: del apareamiento al pollito. Después explicas dos pasos con tus propias palabras.', how:'Lauf in eine Karte, um sie zu tragen. Lauf dann auf die richtige Nummer: 1 = Anfang, 7 = Ende.' },
 };
 const NPCS = {
   0: { name:'Professorin Eule', kind:'eule', lines:[
     ['Willkommen auf der Vogel-Insel! Ich bin Professorin Eule.','¡Bienvenido a la Isla de los Pájaros! Soy la profesora Búho.'],
     ['Der Vergess-Geier hat die Wörter der Insel gestohlen. Die Vögel wissen nicht mehr, wie ihre Körperteile heißen!','El Buitre del Olvido ha robado las palabras de la isla. ¡Los pájaros ya no saben cómo se llaman las partes de su cuerpo!'],
-    ['Geh durch die fünf Zonen. Sprich mit den Vögeln, spiele an den Schreinen und besiege die Bosse.','Recorre las cinco zonas. Habla con los pájaros, juega en los santuarios y vence a los jefes.'],
+    ['Geh durch die sechs Zonen. Sprich mit den Vögeln, spiele an den Schreinen und besiege die Bosse.','Recorre las seis zonas. Habla con los pájaros, juega en los santuarios y vence a los jefes.'],
     ['Steuerung: WASD oder Pfeiltasten zum Laufen. E zum Sprechen und Spielen. Esc öffnet das Menü, B das Lexikon.','Controles: WASD o flechas para caminar. E para hablar y jugar. Esc abre el menú, B el diccionario (Lexikon).'],
     ['Lerne jedes Wort MIT Artikel: der ist blau, die ist rot, das ist grün.','Aprende cada palabra CON su artículo: der es azul, die es rojo, das es verde.'],
-    ['Jeden Tag gibt es am Morgen-Altar ein kurzes Training. Das hilft dir, nichts zu vergessen!','Cada día hay un entrenamiento corto en el Altar de la Mañana. ¡Así no olvidas nada!'],
+    ['Jeden Tag gibt es im Dorf einen Tages-Run. Das hilft dir, nichts zu vergessen!','Cada día hay un Tages-Run en el pueblo. ¡Así no olvidas nada!'],
+    ['Im Test musst du auch erklären können, zum Beispiel den Weg der Nahrung oder die Fortpflanzung. Komm zu mir zum Erklär-Training, sobald du eine Zone geschafft hast!','En el examen también tienes que EXPLICAR, por ejemplo el camino de la comida o la reproducción. ¡Ven a mi Erklär-Training cuando termines una zona!'],
     ['Die erste Zone ist die Federwiese. Folge dem goldenen Pfeil!','La primera zona es el Prado de las Plumas. ¡Sigue la flecha dorada!'],
   ]},
   1: { name:'Die Amsel', kind:'amsel', lines:[
@@ -519,6 +744,17 @@ const NPCS = {
     ['Flugunfähig sind der Strauß, der Emu, der Pinguin und der Kiwi – vor allem, weil wir zu schwer sind.','No pueden volar el avestruz, el emú, el pingüino y el kiwi, sobre todo porque somos demasiado pesados.'],
     ['Der Falsch-Vogel erzählt Lügen über Vögel. Sammle die zehn echten Merkmale!','El Pájaro Mentiroso cuenta mentiras sobre las aves. ¡Recoge las diez características verdaderas!'],
   ]},
+  6: { name:'Die Henne', kind:'henne', lines:[
+    ['Gack-gack! Willkommen in der Nest-Bucht. Ich bin die Henne. Hier lernst du die Fortpflanzung der Vögel.','¡Co-co! Bienvenido a la Bahía de los Nidos. Soy la gallina. Aquí aprendes la reproducción de las aves.'],
+    ['Bei der Paarung drücken das Weibchen und das Männchen ihre Kloaken aufeinander. Dabei fließt die Samenflüssigkeit des Männchens in die Kloake des Weibchens.','En el apareamiento, la hembra y el macho juntan sus cloacas. Así el líquido seminal del macho pasa a la cloaca de la hembra.'],
+    ['Es findet also eine innere Befruchtung statt – im Körper des Weibchens.','Es decir: la fecundación es interna, dentro del cuerpo de la hembra.'],
+    ['Nach der Befruchtung lege ich Eier ab und bebrüte sie. Die Schale ist sehr hart. Sie besteht aus Kalk.','Tras la fecundación pongo huevos y los incubo. La cáscara es muy dura. Es de cal.'],
+    ['Im Ei: Aus der Keimscheibe entwickelt sich der Embryo. Sie liegt immer oben. Der Dottersack enthält Nährstoffe, von denen sich der Embryo ernährt.','Dentro del huevo: del disco germinal se desarrolla el embrión. Siempre queda arriba. El saco vitelino contiene los nutrientes de los que se alimenta el embrión.'],
+    ['Die Hagelschnüre an beiden Seiten puffern Stöße ab und halten den Dottersack in der Mitte.','Las chalazas, a ambos lados, amortiguan los golpes y mantienen el saco vitelino en el centro.'],
+    ['Nach 12 Tagen erkennt man die Gliedmaßen. Nach 20 Tagen hat der junge Vogel Federn und atmet mit den Lungen. Am 21. Tag schlüpft das Küken aus dem Ei.','A los 12 días se reconocen las extremidades. A los 20 días el ave joven tiene plumas y respira con los pulmones. El día 21 el pollito sale del huevo.'],
+    ['Meine Küken sind Nestflüchter: Sie verlassen schnell das Nest. Junge Amseln sind Nesthocker: Sie bleiben im Nest, weil ihr Federkleid noch nicht entwickelt ist.','Mis pollitos son nidífugos: dejan pronto el nido. Los mirlos jóvenes son nidícolas: se quedan en el nido porque su plumaje aún no está desarrollado.'],
+    ['Die Elster hat meine Eier gestohlen! Lerne alles über das Ei und hol sie dir zurück.','¡La urraca ha robado mis huevos! Aprende todo sobre el huevo y recupéralos.'],
+  ]},
 };
 const BOSSES = {
   1: { name:'Der Krähen-König', es:'El Rey Cuervo', hp:10, kind:'crow', intro:['Krah! Ohne Wörter bleibt ihr alle stumm!','¡Crah! ¡Sin palabras os quedáis todos mudos!'], win:['Nein! Kopf, Rumpf, Schwanz … du kennst sie alle!','¡No! Cabeza, tronco, cola… ¡te las sabes todas!'] },
@@ -526,13 +762,14 @@ const BOSSES = {
   3: { name:'Der Kropf-Krake', es:'El Kraken del Buche', hp:11, kind:'kraken', intro:['Blubb! Kaumagen oder Drüsenmagen? Du bringst alles durcheinander!','¡Blub! ¿Molleja o proventrículo? ¡Lo mezclas todo!'], win:['Blubb … die Nahrung geht den richtigen Weg …','Blub… la comida va por el camino correcto…'] },
   4: { name:'Der Werkzeug-Golem', es:'El Gólem de Herramientas', hp:12, kind:'golem', intro:['Pinzette, Meißel, Zange – ich bin alle Werkzeuge!','Pinza, cincel, tenaza: ¡soy todas las herramientas!'], win:['Mein Meißel … ist stumpf …','Mi cincel… está desafilado…'] },
   5: { name:'Der Falsch-Vogel', es:'El Pájaro Mentiroso', hp:12, kind:'liar', intro:['Vögel haben Zähne und ein Fell! Hihihi!','¡Las aves tienen dientes y pelaje! ¡Jijiji!'], win:['Die Wahrheit … sie tut weh!','La verdad… ¡duele!'] },
+  6: { name:'Die Ei-Diebin Elster', es:'La Urraca Ladrona de Huevos', hp:13, kind:'elster', intro:['Schack-schack! Die Eier gehören jetzt mir! Weißt du überhaupt, was da drin ist?','¡Chac-chac! ¡Los huevos ahora son míos! ¿Acaso sabes lo que hay dentro?'], win:['Schack … Keimscheibe, Dottersack, Hagelschnüre … du weißt alles! Nimm die Eier!','Chac… disco germinal, saco vitelino, chalazas… ¡lo sabes todo! ¡Toma los huevos!'] },
 };
 const GEIER = { name:'Der Vergess-Geier', es:'El Buitre del Olvido', intro:[
   ['HAHAHA! Ich bin der Vergess-Geier! Im Prüfungsturm ist alles auf Deutsch – wie im echten Test!','¡JAJAJA! ¡Soy el Buitre del Olvido! En la Torre del Examen todo está en alemán, ¡como en el examen de verdad!'],
   ['Jede richtige Antwort trifft mich. Ab 60 % bin ich besiegt. Spanische Hilfe kostet einen Joker!','Cada respuesta correcta me golpea. Con un 60 % me vences. ¡La ayuda en español cuesta un comodín (Joker)!'],
 ]};
 
-const LEVELS = [[0,'Küken','polluelo'],[120,'Nestling','pichón'],[300,'Jungvogel','pájaro joven'],[600,'Ranger','guardabosques'],[1000,'Ober-Ranger','guardabosques jefe'],[1600,'Vogel-Experte','experto en aves'],[2400,'Meister-Ornithologe','maestro ornitólogo']];
+const LEVELS = [[0,'Küken','polluelo'],[120,'Nestling','pichón'],[300,'Jungvogel','pájaro joven'],[600,'Ranger','guardabosques'],[1000,'Ober-Ranger','guardabosques jefe'],[1600,'Vogel-Experte','experto en aves'],[2400,'Meister-Ornithologe','maestro ornitólogo'],[3400,'Vogel-Professor','profesor de aves']];
 const BADGES = {
   first:  { n:'Erster Sieg', d:'Besiege ein Nebel-Monster.', i:'⚔️' },
   boss1:  { n:'Wiesen-Retter', d:'Besiege den Krähen-König.', i:'👑' },
@@ -540,12 +777,14 @@ const BADGES = {
   boss3:  { n:'Magen-Meister', d:'Besiege den Kropf-Kraken.', i:'🐙' },
   boss4:  { n:'Schnabel-Profi', d:'Besiege den Werkzeug-Golem.', i:'🔧' },
   boss5:  { n:'Wahrheits-Held', d:'Besiege den Falsch-Vogel.', i:'🎭' },
+  boss6:  { n:'Nest-Beschützer', d:'Besiege die Ei-Diebin Elster.', i:'🥚' },
+  erklaer10:{ n:'Erklär-Profi', d:'10 Prozesse mit voller Punktzahl erklärt.', i:'🎓' },
   combo10:{ n:'Feuer-Feder', d:'10 richtige Antworten in Folge.', i:'🔥' },
   art30:  { n:'Artikel-Profi', d:'30 richtige Artikel (der/die/das).', i:'🎨' },
   gold20: { n:'Gold-Sammler', d:'20 Gold-Karten im Lexikon.', i:'🏅' },
   daily3: { n:'Frühaufsteher', d:'Morgen-Training an 3 Tagen.', i:'🌅' },
   exam80: { n:'Prüfungs-Held', d:'Mindestens 80 % im Prüfungsturm.', i:'🏆' },
-  stars:  { n:'Sternen-Jäger', d:'Alle 20 Schreine mit 3 Sternen.', i:'⭐' },
+  stars:  { n:'Sternen-Jäger', d:'Alle 24 Schreine mit 3 Sternen.', i:'⭐' },
 };
 const SHOP = [
   { id:'hat-cap', type:'hat', name:'Kappe', price:60, emoji:'🧢' },

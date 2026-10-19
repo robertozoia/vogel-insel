@@ -148,6 +148,45 @@ function qMerkmal(){
     explain:'Flugunfähig: der Strauß, der Emu, der Pinguin und der Kiwi – sie sind zu schwer.', explainEs:'No pueden volar: avestruz, emú, pingüino y kiwi (son demasiado pesados).', es:'¿Qué ave NO puede volar?', sayAfter:nounLabel(fl) };
 }
 
+/* ---------- processes: free-text explanations with a rubric ---------- */
+function scoreExplain(text, P){
+  const t = fold(normT(text || ''));
+  const hits = [], misses = []; let p = 0;
+  if (P.merkmale){
+    const used = new Set(); MERKMALE.forEach((m, j) => { if (m.re.test(t)) used.add(j); });
+    let n = used.size; if (MERKMAL_EXTRA.re.test(t)) n++;
+    p = Math.min(P.max, n);
+    MERKMALE.forEach((m, j) => (used.has(j) ? hits : misses).push(m.short));
+    return { p, max:P.max, hits, misses: p >= P.max ? [] : misses.slice(0, P.max - p + 1) };
+  }
+  for (const k of P.keys){ if (k.re.test(t)){ p += k.p; hits.push(k.hint); } else misses.push(k.hint); }
+  if (P.order){
+    let last = -1, ok = true;
+    for (const re of P.order){ const m = re.exec(t); if (!m || m.index < last){ ok = false; break; } last = m.index; }
+    if (ok){ p += 1; hits.push(P.orderHint); } else misses.push(P.orderHint);
+  }
+  return { p:Math.min(P.max, p), max:P.max, hits, misses };
+}
+function qExplain(P, o = {}){
+  return { type:'explain', id:P.id, P, prompt:`<span class="op">Erkläre</span> ${esc(P.q)} ${speakBtn(P.q)}`, es:P.es, bank:o.bank ? shuffle(P.bank.slice()) : null, pts:6 * P.max,
+    placeholder:'Schreib ganze Sätze auf Deutsch …', sayAfter:P.model, explainEs:esc(P.modelEs), answerHTML:esc(P.model) };
+}
+function qFact(item){
+  return { type:'mc', prompt:esc(item.q), options:shuffle([{ html:esc(item.a), val:'ok' }, ...item.o.map((o, i) => ({ html:esc(o), val:'f' + i }))]), correct:'ok',
+    answerHTML:esc(item.a), explain:esc(item.say) + ' ' + speakBtn(item.say), explainEs:esc(item.es), es:'Elige la respuesta correcta.', sayAfter:item.say };
+}
+function qSeq(){
+  if (Math.random() < 0.5){
+    const i = Math.floor(Math.random() * (TIMELINE.length - 1)), nx = TIMELINE[i + 1];
+    const others = sample(TIMELINE.filter((e, k) => k !== i && k !== i + 1), 2);
+    return { type:'mc', prompt:`Was passiert als <b>Nächstes</b>?<div class="def">${esc(TIMELINE[i].short)}</div>`, options:shuffle([{ html:esc(nx.short), val:'ok' }, ...others.map((e, k) => ({ html:esc(e.short), val:'f' + k }))]), correct:'ok',
+      answerHTML:esc(nx.short), explain:esc(nx.title + ': ' + nx.de) + ' ' + speakBtn(nx.de), explainEs:esc(nx.es), es:'¿Qué pasa después de esto?', sayAfter:nx.de };
+  }
+  const [a, b] = sample(TIMELINE, 2), first = TIMELINE.indexOf(a) < TIMELINE.indexOf(b) ? a : b;
+  return { type:'mc', prompt:'Was passiert <b>zuerst</b>?', options:shuffle([a, b].map(e => ({ html:esc(e.short), val:e.k }))), correct:first.k,
+    answerHTML:esc(first.short), explain:esc(first.title + ': ' + first.de) + ' ' + speakBtn(first.de), explainEs:esc(first.es), es:'¿Cuál de los dos sucesos pasa primero?', sayAfter:first.de };
+}
+
 /* ---------- umlaut helper ---------- */
 function umlautBar(){ return `<div class="umlauts" aria-label="Sonderzeichen">${['ä','ö','ü','ß','Ä','Ö','Ü'].map(c => `<button type="button" class="uml" data-ch="${c}" tabindex="-1">${c}</button>`).join('')}</div>`; }
 let lastField = null;
@@ -175,6 +214,7 @@ function askQ(q, mount, o = {}){
     if (helpOn) h += `<div class="q-help" ${S.settings.es ? '' : 'hidden'}>${q.es}</div>`;
     h += `<div class="q-body">${q.media ? `<div class="q-media">${q.media}</div>` : ''}<div class="q-main">`;
     if (q.type === 'type') h += `<div class="typerow"><input class="answer" id="ans-${uid}" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${esc(q.placeholder || '')}" aria-label="Antwort"><button class="btn go" type="button">Prüfen ⏎</button></div>${umlautBar()}`;
+    else if (q.type === 'explain') h += `<textarea class="answer xl" id="ans-${uid}" rows="4" spellcheck="false" placeholder="${esc(q.placeholder || '')}" aria-label="Antwort"></textarea>${q.bank ? `<div class="bank"><span class="muted">Stichwörter:</span> ${q.bank.map(b => `<span class="bk">${esc(b)}</span>`).join('')}</div>` : ''}${umlautBar()}<div class="typerow end"><span class="muted small">Strg / ⌘ + Enter = Prüfen</span><button class="btn go" type="button">Prüfen</button></div>`;
     else h += `<div class="opts ${q.type}">` + q.options.map((op, i) => `<button class="opt ${op.cls || ''}" type="button" data-i="${i}"><kbd>${op.key || i + 1}</kbd><span>${op.html}</span></button>`).join('') + `</div>`;
     h += `</div></div>`;
     if (o.timeLimit) h += `<div class="timer"><i></i></div>`;
@@ -184,7 +224,7 @@ function askQ(q, mount, o = {}){
     if (q.say) setTimeout(() => speak(q.say), 250);
     const helpBtn = root.querySelector('.help');
     if (helpBtn) helpBtn.onclick = () => { usedHelp = true; root.querySelector('.q-help').hidden = false; helpBtn.disabled = true; };
-    const input = root.querySelector('input.answer');
+    const input = root.querySelector('.answer');
     if (input) setTimeout(() => input.focus(), 30);
     if (o.timeLimit){
       const bar = root.querySelector('.timer i');
@@ -199,6 +239,7 @@ function askQ(q, mount, o = {}){
         return false;
       }
       if (q.type === 'type'){ if (e.code === 'Enter' || e.code === 'NumpadEnter'){ answer(input.value); return true; } return false; }
+      if (q.type === 'explain'){ if ((e.code === 'Enter' || e.code === 'NumpadEnter') && (e.metaKey || e.ctrlKey)){ answer(input.value); return true; } return false; }
       if (typing) return false;
       let i = -1;
       if (/^Digit[1-9]$/.test(e.code)) i = +e.code.slice(5) - 1;
@@ -214,6 +255,10 @@ function askQ(q, mount, o = {}){
       if (q.type === 'type'){
         const r = checkTyped(val || '', q.accept); res = r.res; msg = r.msg; input.disabled = true;
         input.classList.add(res === 'right' ? 'right' : res === 'close' ? 'close' : 'wrong');
+      } else if (q.type === 'explain'){
+        const r = scoreExplain(val || '', q.P); q.score = r; input.disabled = true;
+        res = r.p >= r.max ? 'right' : r.p >= r.max / 2 ? 'close' : 'wrong';
+        input.classList.add(res);
       } else {
         const op = val == null ? null : q.options[val];
         res = op && op.val === q.correct ? 'right' : 'wrong';
@@ -224,7 +269,13 @@ function askQ(q, mount, o = {}){
       res === 'right' ? SFX.ok() : SFX.bad();
       if (q.sayAfter && (res !== 'right' || o.sayRight !== false)) setTimeout(() => speak(q.sayAfter), 150);
       const fb = root.querySelector('.fb');
-      let f = res === 'right' ? `<div class="fb-title ok">✔ Richtig!${combo >= 3 && !o.noReward ? ` <span class="combo">🔥 ${combo}</span>` : ''}</div>`
+      let f;
+      if (q.type === 'explain'){
+        const r = q.score;
+        f = `<div class="fb-title ${res === 'right' ? 'ok' : res === 'close' ? 'warn' : 'bad'}">${res === 'right' ? '✔ Vollständig erklärt!' : res === 'close' ? '≈ Gut, aber noch nicht vollständig.' : timeout ? '✘ Zeit ist um!' : '✘ Da fehlt noch einiges.'} <span class="pts">${r.p} / ${r.max} Punkte</span></div>
+          <div class="rubric">${r.hits.map(x => `<span class="rk hit">✔ ${esc(x)}</span>`).join('')}${r.misses.map(x => `<span class="rk miss">✘ fehlt: ${esc(x)}</span>`).join('')}</div>
+          <div class="fb-ex"><b>Musterantwort:</b> ${esc(q.P.model)} ${speakBtn(q.P.model)}</div>`;
+      } else f = res === 'right' ? `<div class="fb-title ok">✔ Richtig!${combo >= 3 && !o.noReward ? ` <span class="combo">🔥 ${combo}</span>` : ''}</div>`
         : res === 'close' ? `<div class="fb-title warn">≈ Fast richtig!</div><div>Richtig geschrieben: ${q.answerHTML}</div>`
         : `<div class="fb-title bad">✘ ${timeout ? 'Zeit ist um!' : 'Leider falsch.'}</div><div>Richtig ist: ${q.answerHTML}</div>`;
       if (msg && !timeout) f += `<div class="fb-msg">${msg}</div>`;
@@ -233,8 +284,8 @@ function askQ(q, mount, o = {}){
       f += `<div class="fb-actions"><button class="btn go-next" type="button">Weiter ⏎</button></div>`;
       fb.innerHTML = f; fb.hidden = false; fb.className = 'fb ' + res;
       fb.querySelector('.go-next').onclick = next;
-      if (res === 'right' && o.autoNext !== false) autoT = setTimeout(next, o.autoNext || 1300);
-      result = { result:res, ms, help:usedHelp, timeout:!!timeout };
+      if (res === 'right' && o.autoNext !== false && q.type !== 'explain') autoT = setTimeout(next, o.autoNext || 1300);
+      result = { result:res, ms, help:usedHelp, timeout:!!timeout, score:q.score || null };
       if (o.onResult) o.onResult(result);
     }
     let result = null, finished = false;

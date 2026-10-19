@@ -8,6 +8,7 @@ const ISL = {
   3:{ c:new V3(-125, 0, 0), dir:[-1, 0], top:'#6f8a4a', side:'#4a3a28', theme:'swamp', sky:['#7d9a86', '#d8e4c8'] },
   4:{ c:new V3(0, 0, -125), dir:[0, -1], top:'#3f8a3a', side:'#5a3d25', theme:'forest', sky:['#6fb58a', '#e2f3d0'] },
   5:{ c:new V3(150, 40, -150), dir:[1, 0], top:'#eef3f7', side:'#8a93a0', theme:'snow', sky:['#9cc8ee', '#f4f9ff'] },
+  6:{ c:new V3(-150, 36, 150), dir:[-1, 0], top:'#d8c48f', side:'#8a7352', theme:'coast', sky:['#ff9f6e', '#ffe7c4'] },
 };
 const HUB_SPAWN = new V3(0, 0, 17);
 function islPt(z, a, b, y = 0){ const I = ISL[z], d = I.dir; return new V3(I.c.x + d[0] * a - d[1] * b, I.c.y + y, I.c.z + d[1] * a + d[0] * b); }
@@ -29,7 +30,7 @@ function buildWorld(){
   mesh(G('box', 2.8, 4.2, 0.6), M('#3a2e22'), 0, 2.1, 3.9, g);
   world.towerField = mesh(G('plane', 2.6, 4.0), M('#b26bff', { basic:true, opacity:0.5, double:true }), 0, 2.1, 4.3, g, false);
   const tl = textSprite('Prüfungsturm', { size:1.0, color:'#ffc83d' }); tl.position.set(0, 6.2, 4.6); g.add(tl);
-  world.inter.push({ pos:new V3(0, 0, 5.4), r:3.2, text:() => (S.bosses[5] || S.unlockAll) ? 'Prüfungsturm betreten' : '🔒 Prüfungsturm (nach allen 5 Bossen)', act:() => enterTower() });
+  world.inter.push({ pos:new V3(0, 0, 5.4), r:3.2, text:() => (S.bosses[ZN] || S.unlockAll) ? 'Prüfungsturm betreten' : `🔒 Prüfungsturm (nach allen ${ZN} Bossen)`, act:() => enterTower() });
   // Eule
   const eule = npcModel('eule', 1.35); eule.position.set(-7, 0, 13); eule.rotation.y = 0.4; g.add(eule); world.npcs.push({ m:eule, z:0 });
   addNameTag(eule, 'Professorin Eule', 3.9);
@@ -39,14 +40,15 @@ function buildWorld(){
   kiosk(g, C, -18, 13, '#8a4b2f', 'Wort-Inventar 📖', () => openLexikon());
   world.portals.daily = hubPortal(g, 18, -16, '#ffc83d', 'Tages-Run', () => startDaily());
   world.portals.arena = hubPortal(g, -18, -16, '#ff5d6c', 'Arena', () => arenaConfirm());
-  world.portals.gipfel = hubPortal(g, 9, -22, '#bfe6ff', 'Merkmal-Gipfel', () => { if (S.zone < 5 && !S.unlockAll){ toast('🔒 Der Gipfel öffnet sich nach dem Werkzeug-Golem (Zone 4).'); return; } travelZ5(); });
+  world.portals.gipfel = hubPortal(g, 9, -22, '#bfe6ff', 'Merkmal-Gipfel', () => { if (S.zone < 5 && !S.unlockAll){ toast('🔒 Der Gipfel öffnet sich nach dem Werkzeug-Golem (Zone 4).'); return; } travelTo(5); });
+  world.portals.bucht = hubPortal(g, -9, -22, '#ffd27a', 'Nest-Bucht', () => { if (S.zone < 6 && !S.unlockAll){ toast('🔒 Die Nest-Bucht öffnet sich nach dem Falsch-Vogel (Zone 5).'); return; } travelTo(6); });
   // lamps & trees on the hub
   [[-26, -26], [26, -26], [-26, 26], [26, 26]].forEach(([x, z]) => treeRound(g, C, x, 0, z, 1.1, '#4f9a44'));
   [[-10, 24], [10, 24], [24, 0], [-24, 0], [0, -26]].forEach(([x, z]) => { mesh(G('cyl', 0.12, 0.15, 3.4, 6), M('#2b3140'), x, 1.7, z, g); mesh(G('sph', 0.35, 8, 6), M('#fff3c4', { em:'#ffd66b', emi:1 }), x, 3.5, z, g, false); });
   // ---- bridges ----
   [1, 2, 3, 4].forEach(z => buildBridge(z));
   // ---- islands ----
-  [1, 2, 3, 4, 5].forEach(z => buildIsland(z));
+  for (let z = 1; z <= ZN; z++) buildIsland(z);
   // arrow
   world.arrow = new THREE.Group();
   const cone = mesh(G('cone', 0.28, 0.8, 4), M('#ffc83d', { em:'#ffb31a', emi:0.7 }), 0, 0, 0, world.arrow, false); cone.rotation.x = Math.PI / 2;
@@ -118,10 +120,10 @@ function buildIsland(z){
   world.inter.push({ pos:bp, r:7.5, text:() => S.bosses[z] ? `${BOSSES[z].name} (Revanche)` : stationsDone(z) >= 3 ? `⚔️ Bosskampf: ${BOSSES[z].name}` : `🔒 Boss: noch ${3 - stationsDone(z)} Portal(e)`, act:() => {
     if (!S.bosses[z] && stationsDone(z) < 3){ toast(`🔒 Schaffe zuerst 3 Portale (${stationsDone(z)}/3).`); return; } bossConfirm(z); } });
   keep.push(bp);
-  if (z === 5){
-    const rp = islPt(5, -26, 0);
+  if (z >= 5){
+    const rp = islPt(z, -26, 0), hx = z === 5 ? 9 : -9;
     const back = portalModel('#ffc83d', '↩ Zurück zum Dorf'); back.position.copy(rp); back.rotation.y = Math.PI / 2; g.add(back);
-    world.inter.push({ pos:rp, r:3.4, text:() => 'Zurück zum Nest-Dorf', act:() => { SFX.portal(); teleport(HUB_SPAWN.clone().add(new V3(9, 0, -18)), Math.PI); } });
+    world.inter.push({ pos:rp, r:3.4, text:() => 'Zurück zum Nest-Dorf', act:() => { SFX.portal(); teleport(HUB_SPAWN.clone().add(new V3(hx, 0, -18)), Math.PI); } });
     keep.push(rp);
   }
   // decoration
@@ -138,6 +140,7 @@ function buildIsland(z){
       case 'swamp': rng() < 0.4 ? deadTree(g, C, p.x, c.y, p.z, s) : rng() < 0.7 ? pond(g, p.x, c.y, p.z, s) : reeds(g, p.x, c.y, p.z); break;
       case 'forest': rng() < 0.75 ? treePine(g, C, p.x, c.y, p.z, s * 1.2) : mushroom(g, p.x, c.y, p.z, s); break;
       case 'snow': rng() < 0.55 ? treePine(g, C, p.x, c.y, p.z, s, '#2f5f45', true) : rock(g, C, p.x, c.y, p.z, s * 1.2, '#9aa4b1'); break;
+      case 'coast': { const r = rng(); r < 0.3 ? nestProp(g, p.x, c.y, p.z, s, rng) : r < 0.55 ? reeds(g, p.x, c.y, p.z) : r < 0.75 ? pond(g, p.x, c.y, p.z, s) : treeRound(g, C, p.x, c.y, p.z, s, '#5fa84f'); break; }
     }
     n++;
   }
@@ -190,34 +193,38 @@ function refreshWorldLocks(){
     const open = z === 1 || z <= S.zone || S.unlockAll;
     f.field.visible = !open; f.col.active = !open; f.lab.visible = !open;
   }
-  world.towerField.visible = !(S.bosses[5] || S.unlockAll);
+  world.towerField.visible = !(S.bosses[ZN] || S.unlockAll);
   for (const z in world.bossStatues){
     const b = world.bossStatues[z];
     b.dome.visible = !S.bosses[z] && stationsDone(+z) < 3;
     b.B.root.visible = true;
   }
-  for (let z = 1; z <= 5; z++) (world.portals['z' + z] || []).forEach((pm, i) => setPortalSub(pm, starStr(S.stations[z + '-' + i] || 0)));
-  if (world.portals.gipfel) world.portals.gipfel.userData.ring.material = M(S.zone >= 5 || S.unlockAll ? '#bfe6ff' : '#555b66', { em:S.zone >= 5 || S.unlockAll ? '#bfe6ff' : '#222', emi:0.6, rough:0.4 });
+  for (let z = 1; z <= ZN; z++) (world.portals['z' + z] || []).forEach((pm, i) => setPortalSub(pm, starStr(S.stations[z + '-' + i] || 0)));
+  const ringCol = (p, open, col) => { if (p) p.userData.ring.material = M(open ? col : '#555b66', { em:open ? col : '#222', emi:0.6, rough:0.4 }); };
+  ringCol(world.portals.gipfel, S.zone >= 5 || S.unlockAll, '#bfe6ff');
+  ringCol(world.portals.bucht, S.zone >= 6 || S.unlockAll, '#ffd27a');
 }
 function stationsDone(z){ let n = 0; for (let i = 0; i < 4; i++) if ((S.stations[z + '-' + i] || 0) >= 1) n++; return n; }
 function objective(){
   if (!S.met[0]) return { text:'Sprich mit Professorin Eule.', es:'Habla con la profesora Búho.', target:new V3(-7, 0, 13) };
-  for (let z = 1; z <= 5; z++){
+  for (let z = 1; z <= ZN; z++){
     if (S.bosses[z]) continue;
     const Z = ZONES[z];
     if (z === 5 && world.zone !== 5 && !S.met[5]) return { text:'Nimm das Portal zum Merkmal-Gipfel im Dorf.', es:'Toma el portal a la Cumbre en el pueblo.', target:new V3(9, 0, -22) };
+    if (z === 6 && world.zone !== 6 && !S.met[6]) return { text:'Nimm das Portal zur Nest-Bucht im Dorf.', es:'Toma el portal a la Bahía de los Nidos en el pueblo.', target:new V3(-9, 0, -22) };
     if (!S.met[z]) return { text:`${Z.name}: Sprich mit ${NPCS[z].name.replace(/^Die /, 'der ').replace(/^Der /, 'dem ')}.`, es:`${Z.es}: habla con el guía.`, target:islPt(z, -18, 7) };
     const done = stationsDone(z);
     if (done < 3){ const spots = [[-4, -16], [-4, 16], [12, -16], [12, 16]]; const i = [0, 1, 2, 3].find(k => !(S.stations[z + '-' + k] >= 1)); return { text:`${Z.name}: Schaffe 3 von 4 Portalen (${done}/3).`, es:`Supera 3 de 4 portales (${done}/3).`, target:islPt(z, spots[i][0], spots[i][1]) }; }
     return { text:`Besiege ${BOSSES[z].name.replace(/^Der /, 'den ').replace(/^Das /, 'das ')}!`, es:`¡Vence a ${BOSSES[z].es}!`, target:world.bossStatues[z].pos };
   }
+  if (S.explainDone < 3) return { text:'Erklär-Training bei Professorin Eule: Übe, Prozesse zu erklären!', es:'Erklär-Training con la profesora Búho: practica explicar procesos.', target:new V3(-7, 0, 13) };
   if (!S.exams.some(e => e.pct >= 60)) return { text:'Stelle dich dem Vergess-Geier im Prüfungsturm!', es:'¡Enfréntate al Buitre del Olvido en la Torre!', target:new V3(0, 0, 5.4) };
-  return { text:'Alles geschafft! Farm Gold-Wörter im Tages-Run und in der Arena.', es:'¡Todo superado! Repasa en el Tages-Run y la Arena.', target:null };
+  return { text:'Alles geschafft! Farm Gold-Wörter im Tages-Run, in der Arena und im Erklär-Training.', es:'¡Todo superado! Repasa en el Tages-Run, la Arena y el Erklär-Training.', target:null };
 }
 let objCache = null, objT = 0;
 function refreshObjective(){ objCache = objective(); $('#quest').innerHTML = `<b>MISSION</b> ${esc(objCache.text)} <span class="es-inline">${esc(objCache.es)}</span>`; refreshWorldLocks(); }
 function zoneAt(p){
-  for (let z = 1; z <= 5; z++){ const c = ISL[z].c; if (Math.abs(p.x - c.x) < 34 && Math.abs(p.z - c.z) < 34 && Math.abs(p.y - c.y) < 30) return z; }
+  for (let z = 1; z <= ZN; z++){ const c = ISL[z].c; if (Math.abs(p.x - c.x) < 34 && Math.abs(p.z - c.z) < 34 && Math.abs(p.y - c.y) < 30) return z; }
   if (Math.abs(p.x) < 31 && Math.abs(p.z) < 31) return 0;
   return -1;
 }
@@ -227,7 +234,7 @@ function worldUpdate(dt){
   for (const k in world.portals){ const v = world.portals[k]; (Array.isArray(v) ? v : [v]).forEach(p => { p.userData.disc.rotation.z -= dt * 1.5; p.userData.ring.rotation.z += dt * 0.3; }); }
   world.flag.rotation.y = Math.sin(t * 2) * 0.3;
   for (const z in world.bossStatues) world.bossStatues[z].B.update(t);
-  world.npcs.forEach(n => { const h = n.m.userData.head; if (h) h.rotation.y = Math.sin(t * 0.8 + n.z) * 0.4; n.m.position.y = (n.z === 5 ? ISL[5].c.y : n.z === 0 ? 0 : 0) + Math.abs(Math.sin(t * 2 + n.z)) * 0.05; });
+  world.npcs.forEach(n => { const h = n.m.userData.head; if (h) h.rotation.y = Math.sin(t * 0.8 + n.z) * 0.4; n.m.position.y = (n.z >= 1 ? ISL[n.z].c.y : 0) + Math.abs(Math.sin(t * 2 + n.z)) * 0.05; });
   for (const z in world.fields){ const f = world.fields[z]; if (f.field.visible) f.field.material.opacity = 0.35 + Math.sin(t * 4) * 0.1; }
   // drones
   for (const d of world.drones){
@@ -264,8 +271,8 @@ function worldUpdate(dt){
   if (best){ pr.hidden = false; pr.innerHTML = `<kbd>E</kbd> ${esc(best.text())}`; } else pr.hidden = true;
 }
 function interactNear(){ if (world.near){ $('#prompt').hidden = true; world.near.act(); } }
-function travelZ5(){ SFX.portal(); teleport(islPt(5, -22, 0, 0.2), Math.PI / 2 * -1 + Math.PI); cam.yaw = -Math.PI / 2; }
+function travelTo(z){ const d = ISL[z].dir, face = Math.atan2(d[0], d[1]); SFX.portal(); teleport(islPt(z, -22, 0, 0.2), face); cam.yaw = face + Math.PI; }
 function enterTower(){
-  if (!(S.bosses[5] || S.unlockAll)){ toast('🔒 Der Prüfungsturm öffnet sich, wenn alle 5 Bosse besiegt sind.'); return; }
+  if (!(S.bosses[ZN] || S.unlockAll)){ toast(`🔒 Der Prüfungsturm öffnet sich, wenn alle ${ZN} Bosse besiegt sind.`); return; }
   startExam();
 }
