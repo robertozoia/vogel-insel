@@ -182,7 +182,7 @@ function hitWorldDrone(d){
     onAnswer('wrong', { id:d.id, type:'art' }); SFX.bad();
     popText(pos, `✘ Es heißt <b class="${artClass(w.art)}">${esc(nounLabel(w))}</b>`, 'bad'); speak(nounLabel(w));
     const tgt = P.pos.clone().add(new V3(0, 1.4, 0));
-    fireOrb(pos, tgt, 11); setTimeout(() => d.alive && fireOrb(d.g.position.clone(), P.pos.clone().add(new V3(0, 1.4, 0)), 11), 350);
+    fireOrb(pos, tgt, 9);
   }
 }
 

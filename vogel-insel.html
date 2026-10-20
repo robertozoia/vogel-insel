@@ -1961,7 +1961,24 @@ function shoot(){
     let o = hits[0].object; while (o && !o.userData.shoot) o = o.parent;
     tracer(hand, hits[0].point, col);
     if (o) o.userData.shoot.onHit(hits[0].point);
-  } else tracer(hand, ray.ray.at(90, new V3()), col);
+    return;
+  }
+  const near = aimAssist(list);
+  if (near){ tracer(hand, near.p, col); near.s.onHit(near.p); }
+  else tracer(hand, ray.ray.at(90, new V3()), col);
+}
+// aim assist: a near miss still hits the target closest to the crosshair (within ~6% of the screen height)
+const _aBox = new THREE.Box3(), _aC = new V3();
+function aimAssist(list){
+  let best = null, bestD = 0.06 * VH;
+  for (const s of list){
+    const o = s.obj; if (o.visible === false || !o.parent) continue;
+    _aBox.setFromObject(o); if (_aBox.isEmpty()) continue; _aBox.getCenter(_aC);
+    const p = _aC.clone().project(camera); if (p.z >= 1 || p.z <= -1) continue;
+    const d = Math.hypot(p.x * VW, p.y * VH) / 2;
+    if (d < bestD){ bestD = d; best = { s, p:_aC.clone() }; }
+  }
+  return best;
 }
 
 /* ---------- fx: tracers, particles, orbs, popups ---------- */
@@ -2003,7 +2020,7 @@ function orbsUpdate(dt){
     const o = orbs[i]; o.life -= dt; o.m.position.addScaledVector(o.v, dt);
     const p = o.m.position;
     const hit = p.x > P.pos.x - P.hx - o.r && p.x < P.pos.x + P.hx + o.r && p.z > P.pos.z - P.hx - o.r && p.z < P.pos.z + P.hx + o.r && p.y > P.pos.y - o.r && p.y < P.pos.y + P.h + o.r;
-    if (hit && P.inv <= 0){ P.inv = 1.5; hurt(1); burst(p, '#ff5d6c', 14, 7); o.life = 0; if (activity && activity.onHurt) activity.onHurt(); }
+    if (hit && P.inv <= 0){ P.inv = 2.2; hurt(1); burst(p, '#ff5d6c', 14, 7); o.life = 0; if (activity && activity.onHurt) activity.onHurt(); }
     if (o.life <= 0){ scene3.remove(o.m); orbs.splice(i, 1); }
   }
 }
@@ -2438,7 +2455,7 @@ function hitWorldDrone(d){
     onAnswer('wrong', { id:d.id, type:'art' }); SFX.bad();
     popText(pos, `✘ Es heißt <b class="${artClass(w.art)}">${esc(nounLabel(w))}</b>`, 'bad'); speak(nounLabel(w));
     const tgt = P.pos.clone().add(new V3(0, 1.4, 0));
-    fireOrb(pos, tgt, 11); setTimeout(() => d.alive && fireOrb(d.g.position.clone(), P.pos.clone().add(new V3(0, 1.4, 0)), 11), 350);
+    fireOrb(pos, tgt, 9);
   }
 }
 
@@ -2710,7 +2727,7 @@ class DoorRun extends Activity {
 
 /* ============ DROHNEN-JAGD / ARENA ============ */
 class DroneHunt extends Activity {
-  constructor(ids, o = {}){ super(); this.pool = ids; this.endless = !!o.endless; this.total = o.n || 12; this.shooting = true; this.drones = []; this.k = 0; this.cur = null; this.fireT = 4; this.wait = 0; this.fallPenalty = false; }
+  constructor(ids, o = {}){ super(); this.pool = ids; this.endless = !!o.endless; this.total = o.n || 12; this.shooting = true; this.drones = []; this.k = 0; this.cur = null; this.fireT = 5; this.wait = 0; this.fallPenalty = false; }
   setup(){
     setSky('#101a3a', '#4f6aa8', '#2a3a6a', 60, 200);
     this.B(0, -0.5, 0, 44, 1, 44, '#232b3d');
@@ -2719,7 +2736,7 @@ class DroneHunt extends Activity {
     [[-9, -6], [9, -6], [-12, 8], [12, 8], [0, 2]].forEach(([x, z]) => this.B(x, 1.25, z, 2.4, 2.5, 2.4, '#4b5570'));
     this.spawn = this.W(0, 0.05, 16);
     for (let i = 0; i < 5; i++){
-      const d = { g:droneModel('#9aa4c7'), ph:i * 1.3, word:null, label:null, flash:0, hl:false };
+      const d = { g:droneModel('#9aa4c7'), ph:i * 1.3, word:null, label:null, flash:0, hl:false, warn:0 };
       this.put(d.g, 0, 5, 0); registerShootable(d.g, () => this.hit(d), this.shoot); this.drones.push(d);
     }
     this.next();
@@ -2739,6 +2756,7 @@ class DroneHunt extends Activity {
     banner(P2[mode], 'Schieß die richtige Drohne ab · die anderen schießen zurück!');
     if (mode === 'audio') speak(nounLabel(w));
     this.cur = { w, mode, tries:0 };
+    this.fireT = Math.max(this.fireT, 3);
   }
   hit(d){
     if (!this.cur || this.wait > 0 || !d.g.visible) return;
@@ -2753,24 +2771,28 @@ class DroneHunt extends Activity {
       SFX.bad(); d.flash = 0.5;
       banner(`✘ Das ist ${wordHTML(d.word)} = <i>${esc(d.word.es)}</i>`, `Gesucht: ${wordHTML(w)} — die goldene Drohne!`);
       speak(nounLabel(d.word));
-      for (let i = 0; i < 2; i++) setTimeout(() => this.drones.includes(d) && fireOrb(d.g.getWorldPosition(new V3()), P.pos.clone().add(new V3((Math.random() - 0.5) * 2, 1.4, 0)), 11), i * 300);
+      setTimeout(() => this.drones.includes(d) && d.g.visible && fireOrb(d.g.getWorldPosition(new V3()), P.pos.clone().add(new V3(0, 1.4, 0)), 9), 300);
       const good = this.drones.find(x => x.word.id === w.id); good.hl = true; good.g.userData.eye.material = M('#ffc83d', { em:'#ffc83d', emi:1.4 });
     }
   }
   update(dt){
     this.baseUpdate(dt);
     this.drones.forEach((d, i) => {
-      const t = this.t * (0.35 + i * 0.04) + d.ph;
-      d.g.position.set(AO.x + Math.sin(t) * (10 + i), AO.y + 4 + Math.sin(t * 2.3) * 1.5 + i * 0.4, AO.z + Math.cos(t * 1.3) * 9 - 2);
+      const t = this.t * (0.22 + i * 0.03) + d.ph;
+      d.g.position.set(AO.x + Math.sin(t) * (9 + i * 0.8), AO.y + 4 + Math.sin(t * 2.3) * 0.9 + i * 0.4, AO.z + Math.cos(t * 1.3) * 7 - 2);
       d.g.rotation.y += dt * 1.5; d.flash = Math.max(0, d.flash - dt);
-      d.g.scale.setScalar(d.hl ? 1.25 + Math.sin(this.t * 10) * 0.1 : d.flash > 0 ? 1.3 : 1);
+      if (d.warn > 0){
+        // telegraph: the drone swells and turns red, then fires one slow orb
+        d.warn -= dt; d.g.scale.setScalar(1.35 + Math.sin(this.t * 18) * 0.15);
+        if (d.warn <= 0){ if (d.g.visible && this.cur) fireOrb(d.g.getWorldPosition(new V3()), P.pos.clone().add(new V3(0, 1.4, 0)), 8.5 + Math.min(2.5, this.k * 0.15)); d.g.userData.eye.material = M(d.hl ? '#ffc83d' : '#ff5d6c', { em:d.hl ? '#ffc83d' : '#ff5d6c', emi:d.hl ? 1.4 : 1 }); }
+      } else d.g.scale.setScalar(d.hl ? 1.25 + Math.sin(this.t * 10) * 0.1 : d.flash > 0 ? 1.3 : 1);
     });
     if (this.wait > 0){ this.wait -= dt; if (this.wait <= 0) this.next(); }
     this.fireT -= dt;
     if (this.fireT <= 0 && this.cur){
-      const d = pick(this.drones.filter(x => x.g.visible && x.word.id !== this.cur.w.id));
-      if (d) fireOrb(d.g.getWorldPosition(new V3()), P.pos.clone().add(new V3(0, 1.4, 0)), 11 + Math.min(6, this.k * 0.3));
-      this.fireT = Math.max(this.endless ? 0.9 : 1.6, 3.6 - this.k * 0.12);
+      const d = pick(this.drones.filter(x => x.g.visible && x.word.id !== this.cur.w.id && x.warn <= 0));
+      if (d){ d.warn = 0.8; d.g.userData.eye.material = M('#ffffff', { em:'#ff2a3a', emi:1.6 }); SFX.click(); }
+      this.fireT = Math.max(this.endless ? 1.8 : 3.4, 6 - this.k * 0.12);
     }
     if (S.hearts <= 0 && !this._done){ toast('💀 Keine Herzen mehr!', 'bad'); this.fail(); }
     astat(this.endless ? `Arena · Treffer: <b>${this.k}</b> · Rekord ${S.arenaBest}` : `⏱ ${hudTime(this.t)} · ✔ ${this.correct} · ${this.k}/${this.total}`);
@@ -3062,7 +3084,7 @@ class Collector extends Activity {
       [-1, 1].forEach(s => mesh(G('sph', 0.18, 8, 6), M('#ffffff', { em:'#ffffff', emi:0.5 }), s * 0.3, 0.2, 0.75, g, false));
       const sp = textSprite('Vögel ' + f.de, { size:0.42, color:'#ffd6ff', bg:'rgba(50,10,70,.8)', maxW:520 }); sp.position.set(0, 1.5, 0); g.add(sp);
       const gh = { f, g, stun:0, x:(i % 2 ? 1 : -1) * 15, z:-15 + i * 4 };
-      this.put(g, gh.x, 1.6, gh.z); registerShootable(g, () => { gh.stun = 4; SFX.hit(); burst(g.getWorldPosition(new V3()), '#b26bff', 16, 8); popText(g.getWorldPosition(new V3()), `Lüge! ${esc(f.es)}`); }, this.shoot);
+      this.put(g, gh.x, 1.6, gh.z); registerShootable(g, () => { gh.stun = 5; SFX.hit(); burst(g.getWorldPosition(new V3()), '#b26bff', 16, 8); popText(g.getWorldPosition(new V3()), `Lüge! ${esc(f.es)}`); }, this.shoot);
       this.ghosts.push(gh);
     });
     this.spawn = this.W(0, 0.05, 18);
@@ -3080,7 +3102,7 @@ class Collector extends Activity {
       const g = gh.g; gh.stun = Math.max(0, gh.stun - dt);
       g.children[0].material = gh.stun > 0 ? M('#8a8a9a', { opacity:0.6, flat:false }) : M('#7b4bb3', { opacity:0.75, flat:false });
       if (gh.stun <= 0 && !this.p2){
-        const dx = P.pos.x - g.position.x, dz = P.pos.z - g.position.z, d = Math.hypot(dx, dz) || 1, sp = 3.3 + this.got * 0.15;
+        const dx = P.pos.x - g.position.x, dz = P.pos.z - g.position.z, d = Math.hypot(dx, dz) || 1, sp = 2.6 + this.got * 0.1;
         g.position.x += dx / d * sp * dt; g.position.z += dz / d * sp * dt; g.position.y = AO.y + 1.6 + Math.sin(this.t * 3) * 0.3;
         if (d < 1.5 && P.inv <= 0){
           P.inv = 1.2; this.hits++; hurt(1); banner(`✘ „Vögel ${esc(gh.f.de)}“ ist eine Lüge!`, esc(gh.f.es));
@@ -3148,7 +3170,7 @@ function bossQ(z, phase){
   return r < 0.4 ? qLabelType('ei') : r < 0.7 ? wq(ids.filter(id => WMAP[id].art), ['type']) : qSeq();
 }
 class BossFight extends Activity {
-  constructor(z){ super(); this.z = z; this.Bdef = BOSSES[z]; this.hp = this.Bdef.hp; this.max = this.Bdef.hp; this.shooting = true; this.qCool = 3; this.volT = 3; this.waveT = 9; this.answers = []; this.q = null; this.waves = []; }
+  constructor(z){ super(); this.z = z; this.Bdef = BOSSES[z]; this.hp = this.Bdef.hp; this.max = this.Bdef.hp; this.shooting = true; this.qCool = 3; this.volT = 6; this.waveT = 11; this.answers = []; this.q = null; this.waves = []; }
   setup(){
     const sk = ISL[this.z].sky; setSky(shadeHex(sk[0], -40), sk[1], sk[1], 60, 220);
     const pl = lavaPlane(this.group, 0, '#ff6a1a'); pl.position.set(AO.x, AO.y - 16, AO.z);
@@ -3172,11 +3194,11 @@ class BossFight extends Activity {
     const mouth = b.position.clone().add(new V3(0, 6, 3));
     if (!this.typing){
       this.volT -= dt;
-      if (this.volT <= 0){ const n = 1 + ph; for (let i = 0; i < n; i++) setTimeout(() => !this._done && !this.typing && fireOrb(mouth.clone(), P.pos.clone().add(new V3((i - n / 2) * 1.5, 1.4, 0)), 9.5 + ph * 1.5), i * 260); this.volT = 4.6 - ph * 0.6; }
-      if (ph >= 1){ this.waveT -= dt; if (this.waveT <= 0){ this.wave(); this.waveT = 10 - ph; } }
+      if (this.volT <= 0){ const n = 1 + ph; for (let i = 0; i < n; i++) setTimeout(() => !this._done && !this.typing && fireOrb(mouth.clone(), P.pos.clone().add(new V3((i - n / 2) * 1.5, 1.4, 0)), 8 + ph * 1.2), i * 300); this.volT = 6.5 - ph * 0.8; }
+      if (ph >= 1){ this.waveT -= dt; if (this.waveT <= 0){ this.wave(); this.waveT = 12 - ph; } }
     }
     for (let i = this.waves.length - 1; i >= 0; i--){
-      const w = this.waves[i]; w.r += dt * 11; w.m.scale.set(w.r, w.r, 1); w.m.material.opacity = Math.max(0, 0.8 - w.r / 40);
+      const w = this.waves[i]; w.r += dt * 9; w.m.scale.set(w.r, w.r, 1); w.m.material.opacity = Math.max(0, 0.8 - w.r / 40);
       const d = Math.hypot(P.pos.x - w.c.x, P.pos.z - w.c.z);
       if (!w.hit && Math.abs(d - w.r) < 0.9 && P.pos.y - AO.y < 0.7 && P.inv <= 0){ w.hit = true; P.inv = 1; hurt(1); P.vel.y = 8; }
       if (w.r > 40){ this.group.remove(w.m); this.waves.splice(i, 1); }
@@ -3219,13 +3241,14 @@ class BossFight extends Activity {
     });
     banner(`${q.media ? `<span class="b-media">${q.media}</span>` : ''}${q.prompt}`, 'Schieß auf die richtige Antwort!');
     if (q.say) speak(q.say);
+    this.volT = Math.max(this.volT, 3.5);
     this.q = { q, t0:this.t, tries:0 };
   }
   answerHit(a){
     if (!this.q || !this.answers.includes(a)) return;
     const pos = a.g.getWorldPosition(new V3());
     if (a.o.ok){
-      const first = this.q.tries === 0, fast = first && this.t - this.q.t0 < 7;
+      const first = this.q.tries === 0, fast = first && this.t - this.q.t0 < 9;
       if (first) onAnswer('right', this.q.q); else if (this.q.q.id) grade(this.q.q.id, 'close');
       if (this.q.q.sayAfter) speak(this.q.q.sayAfter);
       this.clearAnswers(); this.damage(first ? (fast ? 2 : 1) : 0.5, fast);
@@ -3236,7 +3259,7 @@ class BossFight extends Activity {
       const good = this.answers.find(x => x.o.ok); if (good) good.hl = true;
       banner(`✘ Richtig ist: <b>${esc(stripTags(this.q.q.answerHTML || ''))}</b>`, this.q.q.explainEs || '');
       const m = this.boss.root.position.clone().add(new V3(0, 6, 3));
-      for (let i = 0; i < 3; i++) setTimeout(() => !this._done && fireOrb(m.clone(), P.pos.clone().add(new V3((i - 1) * 1.6, 1.4, 0)), 12), i * 200);
+      for (let i = 0; i < 2; i++) setTimeout(() => !this._done && fireOrb(m.clone(), P.pos.clone().add(new V3((i - 0.5) * 1.6, 1.4, 0)), 9.5), i * 300);
     }
   }
   clearAnswers(){ this.answers.forEach(a => this.group.remove(a.g)); this.shoot = this.shoot.filter(s => !this.answers.some(a => a.g === s.obj)); this.answers = []; }

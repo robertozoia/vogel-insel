@@ -353,7 +353,24 @@ function shoot(){
     let o = hits[0].object; while (o && !o.userData.shoot) o = o.parent;
     tracer(hand, hits[0].point, col);
     if (o) o.userData.shoot.onHit(hits[0].point);
-  } else tracer(hand, ray.ray.at(90, new V3()), col);
+    return;
+  }
+  const near = aimAssist(list);
+  if (near){ tracer(hand, near.p, col); near.s.onHit(near.p); }
+  else tracer(hand, ray.ray.at(90, new V3()), col);
+}
+// aim assist: a near miss still hits the target closest to the crosshair (within ~6% of the screen height)
+const _aBox = new THREE.Box3(), _aC = new V3();
+function aimAssist(list){
+  let best = null, bestD = 0.06 * VH;
+  for (const s of list){
+    const o = s.obj; if (o.visible === false || !o.parent) continue;
+    _aBox.setFromObject(o); if (_aBox.isEmpty()) continue; _aBox.getCenter(_aC);
+    const p = _aC.clone().project(camera); if (p.z >= 1 || p.z <= -1) continue;
+    const d = Math.hypot(p.x * VW, p.y * VH) / 2;
+    if (d < bestD){ bestD = d; best = { s, p:_aC.clone() }; }
+  }
+  return best;
 }
 
 /* ---------- fx: tracers, particles, orbs, popups ---------- */
@@ -395,7 +412,7 @@ function orbsUpdate(dt){
     const o = orbs[i]; o.life -= dt; o.m.position.addScaledVector(o.v, dt);
     const p = o.m.position;
     const hit = p.x > P.pos.x - P.hx - o.r && p.x < P.pos.x + P.hx + o.r && p.z > P.pos.z - P.hx - o.r && p.z < P.pos.z + P.hx + o.r && p.y > P.pos.y - o.r && p.y < P.pos.y + P.h + o.r;
-    if (hit && P.inv <= 0){ P.inv = 1.5; hurt(1); burst(p, '#ff5d6c', 14, 7); o.life = 0; if (activity && activity.onHurt) activity.onHurt(); }
+    if (hit && P.inv <= 0){ P.inv = 2.2; hurt(1); burst(p, '#ff5d6c', 14, 7); o.life = 0; if (activity && activity.onHurt) activity.onHurt(); }
     if (o.life <= 0){ scene3.remove(o.m); orbs.splice(i, 1); }
   }
 }
