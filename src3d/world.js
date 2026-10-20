@@ -40,8 +40,8 @@ function buildWorld(){
   kiosk(g, C, -18, 13, '#8a4b2f', 'Wort-Inventar 📖', () => openLexikon());
   world.portals.daily = hubPortal(g, 18, -16, '#ffc83d', 'Tages-Run', () => startDaily());
   world.portals.arena = hubPortal(g, -18, -16, '#ff5d6c', 'Arena', () => arenaConfirm());
-  world.portals.gipfel = hubPortal(g, 9, -22, '#bfe6ff', 'Merkmal-Gipfel', () => { if (S.zone < 5 && !S.unlockAll){ toast('🔒 Der Gipfel öffnet sich nach dem Werkzeug-Golem (Zone 4).'); return; } travelTo(5); });
-  world.portals.bucht = hubPortal(g, -9, -22, '#ffd27a', 'Nest-Bucht', () => { if (S.zone < 6 && !S.unlockAll){ toast('🔒 Die Nest-Bucht öffnet sich nach dem Falsch-Vogel (Zone 5).'); return; } travelTo(6); });
+  world.portals.gipfel = hubPortal(g, 9, -22, '#bfe6ff', 'Merkmal-Gipfel', () => travelTo(5));
+  world.portals.bucht = hubPortal(g, -9, -22, '#ffd27a', 'Nest-Bucht', () => travelTo(6));
   // lamps & trees on the hub
   [[-26, -26], [26, -26], [-26, 26], [26, 26]].forEach(([x, z]) => treeRound(g, C, x, 0, z, 1.1, '#4f9a44'));
   [[-10, 24], [10, 24], [24, 0], [-24, 0], [0, -26]].forEach(([x, z]) => { mesh(G('cyl', 0.12, 0.15, 3.4, 6), M('#2b3140'), x, 1.7, z, g); mesh(G('sph', 0.35, 8, 6), M('#fff3c4', { em:'#ffd66b', emi:1 }), x, 3.5, z, g, false); });
@@ -190,7 +190,7 @@ function hitWorldDrone(d){
 function refreshWorldLocks(){
   for (const z of [1, 2, 3, 4]){
     const f = world.fields[z]; if (!f) continue;
-    const open = z === 1 || z <= S.zone || S.unlockAll;
+    const open = zoneOpen(z);
     f.field.visible = !open; f.col.active = !open; f.lab.visible = !open;
   }
   world.towerField.visible = !(S.bosses[ZN] || S.unlockAll);
@@ -201,8 +201,8 @@ function refreshWorldLocks(){
   }
   for (let z = 1; z <= ZN; z++) (world.portals['z' + z] || []).forEach((pm, i) => setPortalSub(pm, starStr(S.stations[z + '-' + i] || 0)));
   const ringCol = (p, open, col) => { if (p) p.userData.ring.material = M(open ? col : '#555b66', { em:open ? col : '#222', emi:0.6, rough:0.4 }); };
-  ringCol(world.portals.gipfel, S.zone >= 5 || S.unlockAll, '#bfe6ff');
-  ringCol(world.portals.bucht, S.zone >= 6 || S.unlockAll, '#ffd27a');
+  ringCol(world.portals.gipfel, true, '#bfe6ff');
+  ringCol(world.portals.bucht, true, '#ffd27a');
 }
 function stationsDone(z){ let n = 0; for (let i = 0; i < 4; i++) if ((S.stations[z + '-' + i] || 0) >= 1) n++; return n; }
 function objective(){

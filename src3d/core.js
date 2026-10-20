@@ -72,7 +72,9 @@ function pickWords(ids, n){
   }).sort((a, b) => b[0] - a[0]).slice(0, n).map(x => x[1]);
 }
 function topicIds(t, filter){ return WORDS.filter(w => (t === 'all' || w.t === t) && (!filter || filter(w))).map(w => w.id); }
-function unlockedTopics(){ const t = []; for (let z = 1; z <= ZN; z++) if (z <= S.zone || S.unlockAll) t.push(ZONES[z].topic); if (S.zone >= 5 || S.unlockAll) t.push('op'); return t; }
+// Zones 1 and the two extra islands (Merkmal-Gipfel, Nest-Bucht) are always open; zones 2-4 open after the previous boss.
+function zoneOpen(z){ return z === 1 || z >= 5 || z <= S.zone || !!S.unlockAll; }
+function unlockedTopics(){ const t = []; for (let z = 1; z <= ZN; z++) if (zoneOpen(z)) t.push(ZONES[z].topic); t.push('op'); return t; }
 function unlockedProcesses(){ const ts = unlockedTopics(); return PROCESSES.filter(P => ts.includes(P.t)); }
 function dueCount(){ const now = Date.now(); const ts = unlockedTopics(); return WORDS.filter(w => ts.includes(w.t) && S.words[w.id] && S.words[w.id].b > 0 && S.words[w.id].d <= now).length; }
 

@@ -149,7 +149,7 @@ function arenaConfirm(){
 
 /* ---------- menu ---------- */
 function openMenu(){
-  const zs = [1, 2, 3, 4, 5, 6].filter(z => z <= S.zone || S.met[z] || S.unlockAll);
+  const zs = [1, 2, 3, 4, 5, 6].filter(z => zoneOpen(z) || S.met[z]);
   openModal(`<h2>Menü</h2><div class="menu-grid">
       <button class="btn" id="m-resume" type="button">▶ Weiter</button>
       ${activity ? '<button class="btn ghost" id="m-quit" type="button">🏳 Aufgeben</button>' : '<button class="btn alt" id="m-lex" type="button">📖 Wort-Inventar</button>'}

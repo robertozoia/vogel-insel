@@ -1156,7 +1156,9 @@ function pickWords(ids, n){
   }).sort((a, b) => b[0] - a[0]).slice(0, n).map(x => x[1]);
 }
 function topicIds(t, filter){ return WORDS.filter(w => (t === 'all' || w.t === t) && (!filter || filter(w))).map(w => w.id); }
-function unlockedTopics(){ const t = []; for (let z = 1; z <= ZN; z++) if (z <= S.zone || S.unlockAll) t.push(ZONES[z].topic); if (S.zone >= 5 || S.unlockAll) t.push('op'); return t; }
+// Zones 1 and the two extra islands (Merkmal-Gipfel, Nest-Bucht) are always open; zones 2-4 open after the previous boss.
+function zoneOpen(z){ return z === 1 || z >= 5 || z <= S.zone || !!S.unlockAll; }
+function unlockedTopics(){ const t = []; for (let z = 1; z <= ZN; z++) if (zoneOpen(z)) t.push(ZONES[z].topic); t.push('op'); return t; }
 function unlockedProcesses(){ const ts = unlockedTopics(); return PROCESSES.filter(P => ts.includes(P.t)); }
 function dueCount(){ const now = Date.now(); const ts = unlockedTopics(); return WORDS.filter(w => ts.includes(w.t) && S.words[w.id] && S.words[w.id].b > 0 && S.words[w.id].d <= now).length; }
 
@@ -2294,8 +2296,8 @@ function buildWorld(){
   kiosk(g, C, -18, 13, '#8a4b2f', 'Wort-Inventar 📖', () => openLexikon());
   world.portals.daily = hubPortal(g, 18, -16, '#ffc83d', 'Tages-Run', () => startDaily());
   world.portals.arena = hubPortal(g, -18, -16, '#ff5d6c', 'Arena', () => arenaConfirm());
-  world.portals.gipfel = hubPortal(g, 9, -22, '#bfe6ff', 'Merkmal-Gipfel', () => { if (S.zone < 5 && !S.unlockAll){ toast('🔒 Der Gipfel öffnet sich nach dem Werkzeug-Golem (Zone 4).'); return; } travelTo(5); });
-  world.portals.bucht = hubPortal(g, -9, -22, '#ffd27a', 'Nest-Bucht', () => { if (S.zone < 6 && !S.unlockAll){ toast('🔒 Die Nest-Bucht öffnet sich nach dem Falsch-Vogel (Zone 5).'); return; } travelTo(6); });
+  world.portals.gipfel = hubPortal(g, 9, -22, '#bfe6ff', 'Merkmal-Gipfel', () => travelTo(5));
+  world.portals.bucht = hubPortal(g, -9, -22, '#ffd27a', 'Nest-Bucht', () => travelTo(6));
   // lamps & trees on the hub
   [[-26, -26], [26, -26], [-26, 26], [26, 26]].forEach(([x, z]) => treeRound(g, C, x, 0, z, 1.1, '#4f9a44'));
   [[-10, 24], [10, 24], [24, 0], [-24, 0], [0, -26]].forEach(([x, z]) => { mesh(G('cyl', 0.12, 0.15, 3.4, 6), M('#2b3140'), x, 1.7, z, g); mesh(G('sph', 0.35, 8, 6), M('#fff3c4', { em:'#ffd66b', emi:1 }), x, 3.5, z, g, false); });
@@ -2444,7 +2446,7 @@ function hitWorldDrone(d){
 function refreshWorldLocks(){
   for (const z of [1, 2, 3, 4]){
     const f = world.fields[z]; if (!f) continue;
-    const open = z === 1 || z <= S.zone || S.unlockAll;
+    const open = zoneOpen(z);
     f.field.visible = !open; f.col.active = !open; f.lab.visible = !open;
   }
   world.towerField.visible = !(S.bosses[ZN] || S.unlockAll);
@@ -2455,8 +2457,8 @@ function refreshWorldLocks(){
   }
   for (let z = 1; z <= ZN; z++) (world.portals['z' + z] || []).forEach((pm, i) => setPortalSub(pm, starStr(S.stations[z + '-' + i] || 0)));
   const ringCol = (p, open, col) => { if (p) p.userData.ring.material = M(open ? col : '#555b66', { em:open ? col : '#222', emi:0.6, rough:0.4 }); };
-  ringCol(world.portals.gipfel, S.zone >= 5 || S.unlockAll, '#bfe6ff');
-  ringCol(world.portals.bucht, S.zone >= 6 || S.unlockAll, '#ffd27a');
+  ringCol(world.portals.gipfel, true, '#bfe6ff');
+  ringCol(world.portals.bucht, true, '#ffd27a');
 }
 function stationsDone(z){ let n = 0; for (let i = 0; i < 4; i++) if ((S.stations[z + '-' + i] || 0) >= 1) n++; return n; }
 function objective(){
@@ -3866,7 +3868,7 @@ function arenaConfirm(){
 
 /* ---------- menu ---------- */
 function openMenu(){
-  const zs = [1, 2, 3, 4, 5, 6].filter(z => z <= S.zone || S.met[z] || S.unlockAll);
+  const zs = [1, 2, 3, 4, 5, 6].filter(z => zoneOpen(z) || S.met[z]);
   openModal(`<h2>Menü</h2><div class="menu-grid">
       <button class="btn" id="m-resume" type="button">▶ Weiter</button>
       ${activity ? '<button class="btn ghost" id="m-quit" type="button">🏳 Aufgeben</button>' : '<button class="btn alt" id="m-lex" type="button">📖 Wort-Inventar</button>'}
